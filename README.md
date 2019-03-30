@@ -1,2 +1,2 @@
 # Virus
-Virus (by Trajin Games) *Currently in progress*
+Virus (by Tranjis Games) *Work in progress*
