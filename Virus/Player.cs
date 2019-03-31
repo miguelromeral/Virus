@@ -19,7 +19,13 @@ namespace Virus.Core
         private List<Card> hand;
         private Body body;
         private IA ia;
+        private int id;
 
+        public int ID
+        {
+            get { return id; }
+            set { id = value; }
+        }
         public List<Card> Hand
         {
             get { return hand; }
@@ -37,7 +43,7 @@ namespace Virus.Core
                 int count = 0;
                 foreach (var item in body.Organs)
                 {
-                    switch(item.Status)
+                    switch (item.Status)
                     {
                         case BodyItem.State.Free:
                         case BodyItem.State.Vaccinated:
@@ -49,6 +55,28 @@ namespace Virus.Core
                 return count;
             }
         }
+
+
+        public List<string> GetMovesWildcardMedicine()
+        {
+            List<string> moves = new List<string>();
+            BodyItem item;
+            BodyItem.State status;
+
+            for (int i = 0; i < body.Organs.Count; i++)
+            {
+                item = body.Organs.ElementAt(i);
+                status = item.Status;
+                if (status == BodyItem.State.Free ||
+                    status == BodyItem.State.Vaccinated)
+                {
+                    moves.Add(Scheduler.GetMoveItem(id, i));
+                }
+            }
+
+            return moves;
+        }
+
 
         public Player(bool human = false)
         {
@@ -88,7 +116,7 @@ namespace Virus.Core
 
             return printed;
         }
-        
+
 
         // Return false if there is no cards.
         public void PrintMyOptions(bool discarding = false)
@@ -118,7 +146,7 @@ namespace Virus.Core
                     return body.SetOrgan(myCard);
                 case Card.CardFace.Medicine:
                     return body.SetMedicine(myCard);
-                    
+
                 default:
                     return " UNKNOWN CARD PLAYED IN PLAYER";
             }

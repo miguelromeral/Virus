@@ -157,7 +157,14 @@ namespace Virus.Core
                         printed += "(@)";
                         break;
                     case Card.CardFace.Medicine:
-                        printed += "(+)";
+                        if (mod.Color == Card.CardColor.Wildcard)
+                        {
+                            printed += "(^)";
+                        }
+                        else
+                        {
+                            printed += "(+)";
+                        }
                         break;
                 }
             }

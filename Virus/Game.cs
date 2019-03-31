@@ -102,11 +102,11 @@ namespace Virus.Core
             }
 
             #endregion
-            /*      for (i = 0; i < NUM_WILDCARD_MEDICINES; i++)
+                  for (i = 0; i < NUM_WILDCARD_MEDICINES; i++)
                   {
                       deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Medicine));
                   }
-                  for (i = 0; i < NUM_WILDCARD_VIRUSES; i++)
+         /*         for (i = 0; i < NUM_WILDCARD_VIRUSES; i++)
                   {
                       deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Virus));
                   }
@@ -162,7 +162,7 @@ namespace Virus.Core
             players = new List<Player>();
             for(int i=0; i<numPlayers; i++)
             {
-                players.Add(new Player(i == 0));   
+                players.Add(new Player(i == 0) { ID = i });   
             }
             Console.WriteLine("Dealing cards.");
             for (int i = 0; i < numPlayers; i++)
@@ -285,6 +285,7 @@ namespace Virus.Core
         public const string ACTION_DISCARDING = "Discarding";
         public const string ACTION_CHOOSING = "ChoosingCars";
 
+        
         public void PrintGameState(string message = null, bool user = false, string action = ACTION_PLAYING, List<string>moves = null)
         {
             //Console.Clear();
@@ -297,10 +298,11 @@ namespace Virus.Core
 
                 if (message != null)
                 {
-                    Console.WriteLine("********************************************");
-                    Console.WriteLine("** MOVEMENT NOT ALLOWED:                  **");
-                    Console.WriteLine("** {0} **", message);
-                    Console.WriteLine("********************************************");
+                    Console.WriteLine(new string('*', 70));
+                    Console.WriteLine("** MOVEMENT NOT ALLOWED: "+new string(' ', 43)+"**");
+                    Console.WriteLine(String.Format("** {0,63} **", message));
+                    Console.WriteLine(new string('*', 70));
+
                 }
 
 
@@ -328,7 +330,6 @@ namespace Virus.Core
         }
 
 
-        public const char MOVE_SEPARATOR = '-';
 
         public bool ReadUserInput(string message = null, bool moveDone = false)
         {
@@ -350,7 +351,6 @@ namespace Virus.Core
                     while(todiscard != 0)
                     {
                         PrintGameState(message, true, ACTION_DISCARDING);
-                        Console.WriteLine("- Please, press the number of card to discard (0 to end discarding):");
                         if (me.Hand.Count > 0)
                         {
                             todiscard = Convert.ToInt32(Console.ReadLine());
@@ -402,65 +402,113 @@ namespace Virus.Core
             }
             
         }
+        
 
         public string PlayGameCard(Card myCard, bool user, Player player)
         {
-            switch (myCard.Face)
+            if (myCard.Color == Card.CardColor.Wildcard)
             {
-                case Card.CardFace.Organ:
-                case Card.CardFace.Medicine:
-                    return player.PlayCardPlayer(myCard, true);
+                switch (myCard.Face)
+                {
+                    case Card.CardFace.Organ:
+                        return player.PlayCardPlayer(myCard, true);
 
-                    
-                case Card.CardFace.Virus:
+                    case Card.CardFace.Medicine:
+                        List<string> moves = player.GetMovesWildcardMedicine();
 
-                    List<string> moves = MovesToSetVirus(myCard.Color, player);
-                    if (user)
-                    {
-                        PrintGameState(null, true, ACTION_CHOOSING, moves);
-
-                        string move = RequestActionToRivalOrgan(moves);
-
-                        if (move.ElementAt(1).Equals(MOVE_SEPARATOR))
+                        if(moves.Count > 0)
                         {
-                            int p = -1, c = -1;
-                            Int32.TryParse(move.Substring(0, 1), out p);
-                            Int32.TryParse(move.Substring(2, 1), out c);
-                            player.Hand.Remove(myCard);
-                            players[p].Body.SetVirus(myCard, this);
-                            return null;
+                            if (user)
+                            {
+                                Console.WriteLine("- Please, select the organ to use it.");
+                                int index = Convert.ToInt32(Console.ReadLine()) - 1;
+
+                                if(!Scheduler.IntInListString(moves, 2, index))
+                                {
+                                    return "Organ not valid to use this card over";
+                                }
+                                else
+                                {
+                                    return player.Body.SetMedicine(myCard, index);
+                                }
+                                
+                            }
+                            else
+                            {
+                                return "IN PROGRESS - IA WILDCARD MEDICINE";
+                            }
+
                         }
                         else
                         {
-                            // Error specified right there.
-                            return move;
+                            return "You cannot play the Wildcard medicine with any of your cards.";
                         }
-                    }
-                    else
-                    {
 
-                    }
 
-                    return "IN PROGRESS";
-                    
+                        /*
+                        case Card.CardFace.Virus:
+                    */
 
-                case Card.CardFace.Transplant:
-                    return "NOT IMPLEMENTED YET";
+                } return "WILDCARD!!!!!";
+            }
+            else
+            {
+                switch (myCard.Face)
+                {
+                    case Card.CardFace.Organ:
+                    case Card.CardFace.Medicine:
+                        return player.PlayCardPlayer(myCard, true);
+                        
+                    case Card.CardFace.Virus:
 
-                case Card.CardFace.OrganThief:
-                    return "NOT IMPLEMENTED YET";
+                        List<string> moves = MovesToSetVirus(myCard.Color, player);
+                        if (user)
+                        {
+                            PrintGameState(null, true, ACTION_CHOOSING, moves);
 
-                case Card.CardFace.Spreading:
-                    return "NOT IMPLEMENTED YET";
+                            string move = RequestActionToRivalOrgan(moves);
 
-                case Card.CardFace.LatexGlove:
-                    return "NOT IMPLEMENTED YET";
+                            if (move.ElementAt(1).Equals(Scheduler.MOVE_SEPARATOR))
+                            {
+                                int p = -1, c = -1;
+                                Int32.TryParse(move.Substring(0, 1), out p);
+                                Int32.TryParse(move.Substring(2, 1), out c);
+                                player.Hand.Remove(myCard);
+                                players[p].Body.SetVirus(myCard, this);
+                                return null;
+                            }
+                            else
+                            {
+                                // Error specified right there.
+                                return move;
+                            }
+                        }
+                        else
+                        {
 
-                case Card.CardFace.MedicalError:
-                    return "NOT IMPLEMENTED YET";
+                        }
 
-                default:
-                    return " UNKNOWN CARD PLAYED IN GAME";
+                        return "IN PROGRESS";
+
+
+                    case Card.CardFace.Transplant:
+                        return "NOT IMPLEMENTED YET";
+
+                    case Card.CardFace.OrganThief:
+                        return "NOT IMPLEMENTED YET";
+
+                    case Card.CardFace.Spreading:
+                        return "NOT IMPLEMENTED YET";
+
+                    case Card.CardFace.LatexGlove:
+                        return "NOT IMPLEMENTED YET";
+
+                    case Card.CardFace.MedicalError:
+                        return "NOT IMPLEMENTED YET";
+
+                    default:
+                        return " UNKNOWN CARD PLAYED IN GAME";
+                }
             }
         }
 
@@ -490,43 +538,17 @@ namespace Virus.Core
 
             Console.WriteLine("- Please, select the number of player to use this card:");
             int p = Convert.ToInt32(Console.ReadLine()) - 1;
-            if (!IntInListString(moves, 0, p))
+            if (!Scheduler.IntInListString(moves, 0, p))
                 return "You've not choosen a valid player number to put this card.";
 
             Console.WriteLine("- Please, select the number of card to use this card:");
             c = Convert.ToInt32(Console.ReadLine()) - 1;
-            if (!IntInListString(moves, 2, c))
+            if (!Scheduler.IntInListString(moves, 2, c))
                 return "You've not choosen a valid card number to put this card.";
             
             return p+"-"+c;
         }
 
-        public bool IntInListString(List<string> list, int index, int i)
-        {
-
-            foreach (var m in list)
-            {
-                if (IntInString(m, index, i))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        
-        public bool IntInString(string text, int index, int i)
-        {
-            try
-            {
-                int res = -1;
-                Int32.TryParse(text.Substring(index, 1), out res);
-                return res == i;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
 
         public List<string> MovesToSetVirus(Card.CardColor color, Player me)
         {

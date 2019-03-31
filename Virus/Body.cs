@@ -34,9 +34,11 @@ namespace Virus.Core
         {
             string printed = String.Empty;
 
+            int i = 1;
             foreach(BodyItem item in Organs)
             {
-                printed += item.ToString() + "\n";
+                printed += i +". "+ item.ToString() + "\n";
+                i++;
             }
 
             return printed;
@@ -107,7 +109,7 @@ namespace Virus.Core
             return "UNKNOWN VIRUS";
         }
 
-        public string SetMedicine(Card medicine)
+        public string SetMedicine(Card medicine, int index = 0)
         {
             if (medicine.Color != Card.CardColor.Wildcard)
             {
@@ -122,10 +124,8 @@ namespace Virus.Core
             }
             else
             {
-                // Wildcard medicine (TODO)
-                //return "WILDCARD MEDICINE (TODO)";
+                return organs[index].NewMedicine(medicine);
             }
-            return "UNKNOWN MEDICINE";
         }
     }
 }
