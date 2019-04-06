@@ -55,9 +55,20 @@ namespace Virus.Core
                 return false;
             }
         }
-
-
-
+        public static int GetStringInt(string text, int index)
+        {
+            try
+            {
+                int i = -1;
+                Int32.TryParse(text.Substring(index, 1), out i);
+                return i;
+            }
+            catch (Exception)
+            {
+                return -1;
+            }
+        }
+        
 
     }
 }

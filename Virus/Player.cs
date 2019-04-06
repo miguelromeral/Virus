@@ -55,28 +55,7 @@ namespace Virus.Core
                 return count;
             }
         }
-
-
-        public List<string> GetMovesWildcardMedicine()
-        {
-            List<string> moves = new List<string>();
-            BodyItem item;
-            BodyItem.State status;
-
-            for (int i = 0; i < body.Organs.Count; i++)
-            {
-                item = body.Organs.ElementAt(i);
-                status = item.Status;
-                if (status == BodyItem.State.Free ||
-                    status == BodyItem.State.Vaccinated)
-                {
-                    moves.Add(Scheduler.GetMoveItem(id, i));
-                }
-            }
-
-            return moves;
-        }
-
+        
 
         public Player(bool human = false)
         {
@@ -151,5 +130,8 @@ namespace Virus.Core
                     return " UNKNOWN CARD PLAYED IN PLAYER";
             }
         }
+
+
+
     }
 }

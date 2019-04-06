@@ -127,5 +127,10 @@ namespace Virus.Core
                 return organs[index].NewMedicine(medicine);
             }
         }
+
+
+
+
+
     }
 }
