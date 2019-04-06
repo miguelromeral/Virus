@@ -193,24 +193,24 @@ namespace Virus.Core
 
         public override string ToString()
         {
-            string printed = String.Format(" M:"+modifiers.Count+"    {0}: ", organ.ToString());
-            //string printed = String.Format("    {0}: ", organ.ToString());
+            //string printed = String.Format(" M:"+modifiers.Count+"    {0}: ", organ.ToString());
+            string printed = String.Format("    {0}: ", organ.ToString());
 
             foreach(var mod in modifiers)
             {
                 switch (mod.Face)
                 {
                     case Card.CardFace.Virus:
-                        printed += "(@)";
+                        printed += Scheduler.CHARS_VIRUS;
                         break;
                     case Card.CardFace.Medicine:
                         if (mod.Color == Card.CardColor.Wildcard)
                         {
-                            printed += "(^)";
+                            printed += Scheduler.CHARS_WILDCARD;
                         }
                         else
                         {
-                            printed += "(+)";
+                            printed += Scheduler.CHARS_MEDICINE;
                         }
                         break;
                 }

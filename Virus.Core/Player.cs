@@ -8,22 +8,20 @@ namespace Virus.Core
 {
     public class Player
     {
-        public enum IA
-        {
-            Human,
-            Easy,
-            Medium,
-            Hard
-        }
-
+        private ArtificialIntelligence.AICategory ai;
+        private ArtificialIntelligence computer = null;
         private List<Card> hand;
         private Body body;
-        private IA ia;
         private int id;
 
-        public IA Ia {
-            get { return ia; }
+        public ArtificialIntelligence.AICategory Ai {
+            get { return ai; }
         }
+        public ArtificialIntelligence Computer
+        {
+            get { return computer; }
+        }
+
         public int ID
         {
             get { return id; }
@@ -60,19 +58,18 @@ namespace Virus.Core
         }
         
 
-        public Player(bool human = false)
+        public Player(Game game, bool human = false)
         {
             Console.WriteLine("Creating new player.");
             body = new Body();
             if (human)
             {
-                ia = IA.Human;
-                Console.WriteLine("Human player created.");
+                ai = ArtificialIntelligence.AICategory.Human;
             }
             else
             {
-                ia = RandomIA();
-                Console.WriteLine(String.Format("Player created with IA {0}.", ia.ToString()));
+                computer = new ArtificialIntelligence(game, this);
+                ai = computer.RandomIA();
             }
         }
 
@@ -81,16 +78,11 @@ namespace Virus.Core
             hand = h;
         }
 
-        public static IA RandomIA()
-        {
-            return (IA)new Random().Next(1, Enum.GetValues(typeof(IA)).Length);
-        }
-
         public override string ToString()
         {
             string printed = String.Empty;
 
-            printed += "* IA: " + ia.ToString() + "\n";
+            printed += "* IA: " + ai.ToString() + "\n";
             printed += "* Body: \n";
             printed += body + "\n";
             //printed += "* Current Hand:\n";

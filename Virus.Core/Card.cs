@@ -69,7 +69,7 @@ namespace Virus.Core
             {
                 if(color == CardColor.Wildcard)
                 {
-                    value = String.Format(String.Format("{0} {1}", "(*)", value),
+                    value = String.Format(String.Format("{0} {1}", Scheduler.CHARS_WILDCARD, value),
                         color.ToString(),
                         face.ToString());
                 }

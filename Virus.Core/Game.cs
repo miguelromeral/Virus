@@ -159,9 +159,9 @@ namespace Virus.Core
             players = new List<Player>();
             for (int i = 0; i < numPlayers; i++)
             {
-                var p = new Player(i == 0) { ID = i };
+                var p = new Player(this, i == 0) { ID = i };
                 players.Add(p);
-                logger.Write("Player with ID "+i+" created. "+((i==0) ? "Human" : "IA: " + p.Ia));
+                logger.Write("Player with ID "+i+" created. "+((i==0) ? "Human" : "IA: " + p.Ai));
             }
             logger.Write("Dealing cards.", true);
             for (int i = 0; i < numPlayers; i++)
@@ -259,8 +259,9 @@ namespace Virus.Core
 
         public void PlayTurn()
         {
+            Player p = players[Turn];
             // Human Turn
-            if(Turn == 0)
+            if(p.Ai.Equals(ArtificialIntelligence.AICategory.Human))
             {
                 var pt = 1;
                 Console.WriteLine("Your turn ("+pt+")");
@@ -271,10 +272,11 @@ namespace Virus.Core
             else
             {
                 PrintGameState();
-                Console.WriteLine("Press to continue...");
-                //Console.ReadLine();
+                Console.WriteLine("Press to continue (It's computer turn!)...");
+                Console.ReadLine();
+                p.Computer.PlayTurn();
             }
-            DrawCardsToFill(players[Turn]);
+            DrawCardsToFill(p);
         }
 
         public void DrawCardsToFill(Player player)

@@ -24,6 +24,9 @@ namespace Virus.Core
         #endregion
 
         public const char MOVE_SEPARATOR = '-';
+        public const string CHARS_WILDCARD = "(^)";
+        public const string CHARS_MEDICINE = "(*)";
+        public const string CHARS_VIRUS = "(@)";
 
         public static string GetMoveItem(int playerid, int cardnum)
         {

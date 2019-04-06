@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArtificialIntelligence.cs" />
     <Compile Include="Body.cs" />
     <Compile Include="BodyItem.cs" />
     <Compile Include="Card.cs" />
