@@ -13,11 +13,16 @@ namespace Virus.Core
         private List<Card> deck;
         private List<Card> discards;
         private int turns;
-        private List<string> log;
+        public Logger logger;
         private ReaderInput reader;
         #endregion
 
         #region Properties
+        public List<Player> Players
+        {
+            get { return players; }
+        }
+
         public int Turn
         {
             get { return turns % players.Count; }
@@ -42,6 +47,7 @@ namespace Virus.Core
         #region Initializers
         public Game(int numPlayers)
         {
+            logger = new Logger();
             Console.WriteLine("We're getting ready Virus!");
             Console.WriteLine("Shuffling cards.");
             deck = Shuffle(InitializeCards());
@@ -69,10 +75,10 @@ namespace Virus.Core
                     {
                         deck.Add(new Card(color, Card.CardFace.Medicine));
                     }
-                    //for (i = 0; i < Scheduler.NUM_VIRUSES; i++)
-                    //{
-                    //    deck.Add(new Card(color, Card.CardFace.Virus));
-                    //}
+                    for (i = 0; i < Scheduler.NUM_VIRUSES; i++)
+                    {
+                        deck.Add(new Card(color, Card.CardFace.Virus));
+                    }
                 }
             }
             #endregion
@@ -82,19 +88,18 @@ namespace Virus.Core
             {
                 deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
             }
-
-            #endregion
+            
             for (i = 0; i < Scheduler.NUM_WILDCARD_MEDICINES; i++)
             {
                 deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Medicine));
             }
-            /*         for (i = 0; i < Scheduler.NUM_WILDCARD_VIRUSES; i++)
-                     {
-                         deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Virus));
-                     }
+            for (i = 0; i < Scheduler.NUM_WILDCARD_VIRUSES; i++)
+            {
+                deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Virus));
+            }
 
                      #endregion
-
+                     /*
                      #region THREATMENTS
                      for (i = 0; i < Scheduler.NUM_THREATMENT_SPREADING; i++)
                      {
@@ -450,35 +455,31 @@ namespace Virus.Core
 
 
                 case Card.CardFace.Virus:
-
-                   /* List<string> moves = MovesToSetVirus(myCard.Color, player);
-                    if (user)
+                    int p, c;
+                    moves = GetListMovements(player, myCard);
+                    if (moves.Count == 0)
                     {
-                        PrintGameState(null, true, ACTION_CHOOSING, moves);
-
-                        string move = RequestActionToRivalOrgan(moves);
-
-                        if (move.ElementAt(1).Equals(Scheduler.MOVE_SEPARATOR))
-                        {
-                            int p = -1, c = -1;
-                            Int32.TryParse(move.Substring(0, 1), out p);
-                            Int32.TryParse(move.Substring(2, 1), out c);
-                            player.Hand.Remove(myCard);
-                            players[p].Body.SetVirus(myCard, this);
-                            return null;
-                        }
-                        else
-                        {
-                            // Error specified right there.
-                            return move;
-                        }
+                        return "You don't have any organ available to play this virus.";
                     }
-                    else
+                    if (moves.Count == 1)
                     {
-
+                        p = Scheduler.GetStringInt(moves[0], 0);
+                        c = Scheduler.GetStringInt(moves[0], 2);
+                        return players[p].Body.SetVirus(myCard, c, this);
                     }
-                    */
-                    return "IN PROGRESS";
+                    if (moves.Count > 1)
+                    {
+                        string choosen = reader.RequestMovementChoosen(player, moves);
+
+                        if (choosen == null)
+                            throw new Exception("The input doesn't belong to any available move.");
+
+                        p = Scheduler.GetStringInt(choosen, 0);
+                        c = Scheduler.GetStringInt(choosen, 2);
+                        
+                        return players[p].Body.SetVirus(myCard, c, this);
+                    }
+                    break;
 
                 #region TO BE DEVELOPED
                 case Card.CardFace.Transplant:
@@ -502,46 +503,6 @@ namespace Virus.Core
             return "END OF SWITCH";
         }
     
-
-        public string RequestActionToRivalOrgan(List<string> moves)
-        {
-            int currentPlayer = -1;
-            int c = -1;
-            try
-            {
-                foreach (string m in moves)
-                {
-                    int mNum = -1;
-                    Int32.TryParse(m.Substring(0, 1), out mNum);
-                    if (currentPlayer != mNum)
-                    {
-                        currentPlayer = mNum;
-                        Console.WriteLine(String.Format("Player {0}:", mNum + 1));
-                    }
-                    Int32.TryParse(m.Substring(2, 1), out c);
-                    Console.WriteLine("-"+(c+1)+". "+players[mNum].Body.Organs[c]);
-                }
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("--> ERROR AL PASAR LOS VIRUS ");
-            }
-
-            Console.WriteLine("- Please, select the number of player to use this card:");
-            int p = Convert.ToInt32(Console.ReadLine()) - 1;
-            if (!Scheduler.IntInListString(moves, 0, p))
-                return "You've not choosen a valid player number to put this card.";
-
-            Console.WriteLine("- Please, select the number of card to use this card:");
-            c = Convert.ToInt32(Console.ReadLine()) - 1;
-            if (!Scheduler.IntInListString(moves, 2, c))
-                return "You've not choosen a valid card number to put this card.";
-            
-            return p+"-"+c;
-        }
-
-        
-
         public List<string> GetListMovements(Player me, Card myCard)
         {
             List<string> moves = new List<string>();
@@ -613,8 +574,7 @@ namespace Virus.Core
         {
             discards.Add(card);
         }
-
-
+        
         #endregion
     }
 }

@@ -49,8 +49,9 @@ namespace Virus.Core
 
         public bool CanPlayVirus(Card virus)
         {
-            if (!virus.Color.Equals(organ.Color) ||
-                !virus.Color.Equals(Card.CardColor.Wildcard))
+            if (!virus.Color.Equals(organ.Color) &&
+                !virus.Color.Equals(Card.CardColor.Wildcard) &&
+                !organ.Color.Equals(Card.CardColor.Wildcard))
             {
                 return false;
             }

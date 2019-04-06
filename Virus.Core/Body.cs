@@ -81,32 +81,26 @@ namespace Virus.Core
             }
         }
 
-        public string SetVirus(Card virus, Game game)
+        public string SetVirus(Card virus, int index, Game game)
         {
-            if (virus.Color != Card.CardColor.Wildcard)
+            BodyItem item = organs[index];
+
+            if (virus.Color == item.Organ.Color ||
+                virus.Color == Card.CardColor.Wildcard ||
+                item.Organ.Color == Card.CardColor.Wildcard)
             {
-                if (HaveThisOrgan(virus.Color))
+                string message = item.NewVirus(virus, game);
+                if (message != null && message.Equals(BodyItem.RULE_DELETEBODY))
                 {
-                    BodyItem item = GetOrganByColor(virus.Color);
-                    string message = item.NewVirus(virus, game);
-                    if (message != null && message.Equals(BodyItem.RULE_DELETEBODY))
-                    {
-                        organs.Remove(item);
-                        message = null;
-                    }
-                    return message;
+                    organs.Remove(item);
+                    message = null;
                 }
-                else
-                {
-                    return "PLAYER HAS NOT THIS ORGAN COLOR";
-                }
+                return message;
             }
             else
             {
-                // Wildcard virus (TODO)
-                //return "WILDCARD VIRUS (TODO)";
+                return "The virus and organ color don't match.";
             }
-            return "UNKNOWN VIRUS";
         }
 
         public string SetMedicine(Card medicine, int index = 0)
