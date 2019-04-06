@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Virus.Core
 {
-    class Game
+    public class Game
     {
         #region Variables
         private List<Player> players;
@@ -14,6 +14,7 @@ namespace Virus.Core
         private List<Card> discards;
         private int turns;
         private List<string> log;
+        private ReaderInput reader;
         #endregion
 
         #region Properties
@@ -37,26 +38,8 @@ namespace Virus.Core
             }
         }
         #endregion
-
-
-        #region Static fields
-        public const int NUM_ORGANS = 5;
-        public const int NUM_VIRUSES = 4;
-        public const int NUM_MEDICINES = 5;
-        public const int NUM_WILDCARD_ORGANS = 1;
-        public const int NUM_WILDCARD_VIRUSES = 1;
-        public const int NUM_WILDCARD_MEDICINES = 4;
-        public const int NUM_THREATMENT_TRANSPLANT = 3;
-        public const int NUM_THREATMENT_ORGANTHIEF = 3;
-        public const int NUM_THREATMENT_SPREADING = 2;
-        public const int NUM_THREATMENT_LATEXGLOVE = 1;
-        public const int NUM_THREATMENT_MEDICALERROR = 1;
-
-        public const int NUM_CARDS_HAND = 3;
-        #endregion
-
-
-        #region Constructor
+        
+        #region Initializers
         public Game(int numPlayers)
         {
             Console.WriteLine("We're getting ready Virus!");
@@ -65,77 +48,76 @@ namespace Virus.Core
             discards = new List<Card>();
             Console.WriteLine("Initializing players.");
             InitializePlayers(numPlayers);
+            reader = new ReaderInput(this);
         }
-        #endregion
 
-        #region Methods
         public List<Card> InitializeCards()
         {
             List<Card> deck = new List<Card>();
             int i;
 
             #region ORGANS. MEDICINES & VIRUS BY COLOR
-            foreach (Card.CardColor color in (Card.CardColor[]) Enum.GetValues(typeof(Card.CardColor)))
+            foreach (Card.CardColor color in (Card.CardColor[])Enum.GetValues(typeof(Card.CardColor)))
             {
-                if(color != Card.CardColor.Purple && color != Card.CardColor.Wildcard)
+                if (color != Card.CardColor.Purple && color != Card.CardColor.Wildcard)
                 {
-                    for (i = 0; i < NUM_ORGANS; i++)
+                    for (i = 0; i < Scheduler.NUM_ORGANS; i++)
                     {
                         deck.Add(new Card(color, Card.CardFace.Organ));
                     }
-                    for (i = 0; i < NUM_MEDICINES; i++)
+                    for (i = 0; i < Scheduler.NUM_MEDICINES; i++)
                     {
                         deck.Add(new Card(color, Card.CardFace.Medicine));
                     }
-                    for (i = 0; i < NUM_VIRUSES; i++)
-                    {
-                        deck.Add(new Card(color, Card.CardFace.Virus));
-                    }
+                    //for (i = 0; i < Scheduler.NUM_VIRUSES; i++)
+                    //{
+                    //    deck.Add(new Card(color, Card.CardFace.Virus));
+                    //}
                 }
             }
-            #endregion 
-            
+            #endregion
+
             #region WILDCARD CARDS
-            for (i = 0; i < NUM_WILDCARD_ORGANS; i++)
+            for (i = 0; i < Scheduler.NUM_WILDCARD_ORGANS; i++)
             {
                 deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
             }
 
             #endregion
-                  for (i = 0; i < NUM_WILDCARD_MEDICINES; i++)
-                  {
-                      deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Medicine));
-                  }
-         /*         for (i = 0; i < NUM_WILDCARD_VIRUSES; i++)
-                  {
-                      deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Virus));
-                  }
+            for (i = 0; i < Scheduler.NUM_WILDCARD_MEDICINES; i++)
+            {
+                deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Medicine));
+            }
+            /*         for (i = 0; i < Scheduler.NUM_WILDCARD_VIRUSES; i++)
+                     {
+                         deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Virus));
+                     }
 
-                  #endregion
+                     #endregion
 
-                  #region THREATMENTS
-                  for (i = 0; i < NUM_THREATMENT_SPREADING; i++)
-                  {
-                      deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Spreading));
-                  }
-                  for (i = 0; i < NUM_THREATMENT_ORGANTHIEF; i++)
-                  {
-                      deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.OrganThief));
-                  }
-                  for (i = 0; i < NUM_THREATMENT_TRANSPLANT; i++)
-                  {
-                      deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Transplant));
-                  }
-                  for (i = 0; i < NUM_THREATMENT_LATEXGLOVE; i++)
-                  {
-                      deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.LatexGlove));
-                  }
-                  for (i = 0; i < NUM_THREATMENT_MEDICALERROR; i++)
-                  {
-                      deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.MedicalError));
-                  }
-                  #endregion
-      */
+                     #region THREATMENTS
+                     for (i = 0; i < Scheduler.NUM_THREATMENT_SPREADING; i++)
+                     {
+                         deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Spreading));
+                     }
+                     for (i = 0; i < Scheduler.NUM_THREATMENT_ORGANTHIEF; i++)
+                     {
+                         deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.OrganThief));
+                     }
+                     for (i = 0; i < Scheduler.NUM_THREATMENT_TRANSPLANT; i++)
+                     {
+                         deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Transplant));
+                     }
+                     for (i = 0; i < Scheduler.NUM_THREATMENT_LATEXGLOVE; i++)
+                     {
+                         deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.LatexGlove));
+                     }
+                     for (i = 0; i < Scheduler.NUM_THREATMENT_MEDICALERROR; i++)
+                     {
+                         deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.MedicalError));
+                     }
+                     #endregion
+         */
             return deck;
         }
 
@@ -160,15 +142,15 @@ namespace Virus.Core
         {
             Console.WriteLine("Creating players.");
             players = new List<Player>();
-            for(int i=0; i<numPlayers; i++)
+            for (int i = 0; i < numPlayers; i++)
             {
-                players.Add(new Player(i == 0) { ID = i });   
+                players.Add(new Player(i == 0) { ID = i });
             }
             Console.WriteLine("Dealing cards.");
             for (int i = 0; i < numPlayers; i++)
             {
                 List<Card> hand = new List<Card>();
-                for (int j = 0; j < NUM_CARDS_HAND; j++)
+                for (int j = 0; j < Scheduler.NUM_CARDS_HAND; j++)
                 {
                     hand.Add(DrawNewCard());
                 }
@@ -178,6 +160,10 @@ namespace Virus.Core
             }
             return true;
         }
+
+        #endregion
+
+        #region Methods
 
         public Card DrawNewCard()
         {
@@ -238,6 +224,7 @@ namespace Virus.Core
             Console.WriteLine("Press any key to begin the Virus!");
             Console.ReadLine();
             // DATA TO TEST:
+            players[0].Body.SetOrgan(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
             players[1].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
             players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
             players[1].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
@@ -275,7 +262,7 @@ namespace Virus.Core
 
         public void DrawCardsToFill(Player player)
         {
-            for(int i=player.Hand.Count; i<NUM_CARDS_HAND; i++)
+            for(int i=player.Hand.Count; i< Scheduler.NUM_CARDS_HAND; i++)
             {
                 player.Hand.Add(DrawNewCard());
             }
@@ -340,7 +327,7 @@ namespace Virus.Core
                 Card myCard;
                 PrintGameState(message, true);
                 int myCardIndex = Convert.ToInt32(Console.ReadLine());
-                if(myCardIndex < 0 || myCardIndex > NUM_CARDS_HAND)
+                if(myCardIndex < 0 || myCardIndex > Scheduler.NUM_CARDS_HAND)
                 {
                     throw new Exception("The number of card is not in range.");
                 }
@@ -361,7 +348,7 @@ namespace Virus.Core
                             }
                             else if (todiscard == 0)
                             {
-                                if (me.Hand.Count == NUM_CARDS_HAND)
+                                if (me.Hand.Count == Scheduler.NUM_CARDS_HAND)
                                 {
                                     throw new Exception("You have to discard, at least, one card. Discarding cancelled");
                                 }
@@ -384,7 +371,7 @@ namespace Virus.Core
                 else
                 {
                     myCard = players[0].Hand[(myCardIndex - 1)];
-                    message = PlayGameCardUser(players[0], myCard);
+                    message = PlayGameCardByUser(players[0], myCard);
                     ThrowExceptionIfMessage(message);
                     if(message == null)
                     {
@@ -404,32 +391,117 @@ namespace Virus.Core
         }
         
 
-        public string PlayGameCardUser(Player player, Card myCard)
+        //public string PlayGameCardUser(Player player, Card myCard)
+        //{
+        //    string message = null;
+
+        //    List<string> moves = GetListMovements(player, myCard);
+
+        //    if(moves.Count == 0)
+        //    {
+        //        return "Movement not allowed";
+        //    }
+        //    if(moves.Count == 1)
+        //    {
+        //        int ip = Scheduler.GetStringInt(moves[0], 0);
+        //        int ic = Scheduler.GetStringInt(moves[0], 2);
+        //        players[]
+        //    }
+
+
+        //    return message;
+        //}
+
+
+
+
+        public string PlayGameCardByUser(Player player, Card myCard)
         {
-            string message = null;
-
-            List<string> moves = GetListMovements(player, myCard);
-
-            if(moves.Count == 0)
+            List<string> moves = new List<string>();
+            switch (myCard.Face)
             {
-                return "Movement not allowed";
+                #region PLAY ORGAN
+                case Card.CardFace.Organ:
+                    return player.Body.SetOrgan(myCard);
+                #endregion
+
+                #region PLAY MEDICINE
+                case Card.CardFace.Medicine:
+                    moves = GetListMovements(player, myCard);
+                    if(moves.Count == 0)
+                    {
+                        return "You don't have any organ available to play this medicine.";
+                    }
+                    if(moves.Count == 1)
+                    {
+                        return player.Body.SetMedicine(myCard, Scheduler.GetStringInt(moves[0],2));
+                    }
+                    if (moves.Count > 1)
+                    {
+                        string choosen = reader.RequestMovementChoosen(player, moves);
+
+                        if (choosen == null)
+                            throw new Exception("The input doesn't belong to any available move.");
+
+                        return player.Body.SetMedicine(myCard, Scheduler.GetStringInt(choosen, 2));
+                    }
+                    break;
+                #endregion
+
+
+                case Card.CardFace.Virus:
+
+                   /* List<string> moves = MovesToSetVirus(myCard.Color, player);
+                    if (user)
+                    {
+                        PrintGameState(null, true, ACTION_CHOOSING, moves);
+
+                        string move = RequestActionToRivalOrgan(moves);
+
+                        if (move.ElementAt(1).Equals(Scheduler.MOVE_SEPARATOR))
+                        {
+                            int p = -1, c = -1;
+                            Int32.TryParse(move.Substring(0, 1), out p);
+                            Int32.TryParse(move.Substring(2, 1), out c);
+                            player.Hand.Remove(myCard);
+                            players[p].Body.SetVirus(myCard, this);
+                            return null;
+                        }
+                        else
+                        {
+                            // Error specified right there.
+                            return move;
+                        }
+                    }
+                    else
+                    {
+
+                    }
+                    */
+                    return "IN PROGRESS";
+
+                #region TO BE DEVELOPED
+                case Card.CardFace.Transplant:
+                    return "NOT IMPLEMENTED YET";
+
+                case Card.CardFace.OrganThief:
+                    return "NOT IMPLEMENTED YET";
+
+                case Card.CardFace.Spreading:
+                    return "NOT IMPLEMENTED YET";
+
+                case Card.CardFace.LatexGlove:
+                    return "NOT IMPLEMENTED YET";
+
+                case Card.CardFace.MedicalError:
+                    return "NOT IMPLEMENTED YET";
+                #endregion
+                default:
+                    return " UNKNOWN CARD PLAYED IN GAME";
             }
-            if(moves.Count == 1)
-            {
-                int ip = Scheduler.GetStringInt(moves[0], 0);
-                int ic = Scheduler.GetStringInt(moves[0], 2);
-                players[]
-            }
-
-
-            return message;
+            return "END OF SWITCH";
         }
-
-
-        public string PlayGameCard(Player player, Card myCard)
-        {
-
-        }
+    
 
         public string RequestActionToRivalOrgan(List<string> moves)
         {

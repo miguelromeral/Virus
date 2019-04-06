@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Virus.Core
 {
-    class Card
+    public class Card
     {
 
         public enum CardColor

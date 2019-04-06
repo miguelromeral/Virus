@@ -7,7 +7,7 @@ using Virus.Core;
 
 namespace Virus.Core
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {

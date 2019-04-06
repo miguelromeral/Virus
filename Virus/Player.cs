@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Virus.Core
 {
-    class Player
+    public class Player
     {
         public enum IA
         {
@@ -116,22 +116,6 @@ namespace Virus.Core
             }
 
         }
-
-        public string PlayCardPlayer(Card myCard, bool user = false)
-        {
-            switch (myCard.Face)
-            {
-                case Card.CardFace.Organ:
-                    return body.SetOrgan(myCard);
-                case Card.CardFace.Medicine:
-                    return body.SetMedicine(myCard);
-
-                default:
-                    return " UNKNOWN CARD PLAYED IN PLAYER";
-            }
-        }
-
-
-
+        
     }
 }

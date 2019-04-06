@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Virus.Core
 {
-    class Body
+    public class Body
     {
         private int points;
 
@@ -111,26 +111,20 @@ namespace Virus.Core
 
         public string SetMedicine(Card medicine, int index = 0)
         {
-            if (medicine.Color != Card.CardColor.Wildcard)
-            {
-                if (HaveThisOrgan(medicine.Color))
-                {
-                    return GetOrganByColor(medicine.Color).NewMedicine(medicine);
-                }
-                else
-                {
-                    return "You don't have an organ available to put this medicine.";
-                }
-            }
-            else
+            BodyItem item = organs[index];
+
+            if (medicine.Color == item.Organ.Color ||
+                medicine.Color == Card.CardColor.Wildcard ||
+                item.Organ.Color == Card.CardColor.Wildcard)
             {
                 return organs[index].NewMedicine(medicine);
             }
+            else
+            {
+                return "The medicine and organ color don't match.";
+            }
         }
-
-
-
-
+        
 
     }
 }

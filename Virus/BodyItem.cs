@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Virus.Core
 {
-    class BodyItem
+    public class BodyItem
     {
         #region PROPERTIES
         private Card organ;
@@ -28,7 +28,8 @@ namespace Virus.Core
 
         public bool CanPlayMedicine(Card medicine)
         {
-            if (!medicine.Color.Equals(organ.Color) ||
+            if (!organ.Color.Equals(Card.CardColor.Wildcard) &&
+                !medicine.Color.Equals(organ.Color) &&
                 !medicine.Color.Equals(Card.CardColor.Wildcard))
             {
                 return false;
