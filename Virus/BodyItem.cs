@@ -8,9 +8,10 @@ namespace Virus.Core
 {
     class BodyItem
     {
+        #region PROPERTIES
         private Card organ;
         private List<Card> modifiers;
-        
+
         public Card Organ
         {
             get { return organ; }
@@ -24,23 +25,6 @@ namespace Virus.Core
             // Return points based on a IA function (TO DO)
             get { return 1; }
         }
-
-
-        public BodyItem(Card o)
-        {
-            organ = o;
-            modifiers = new List<Card>();
-        }
-
-        public enum State
-        {
-            Free,
-            Infected,
-            Vaccinated,
-            Immunized,
-            NOTINGAME
-        }
-
         public State Status
         {
             get
@@ -77,6 +61,27 @@ namespace Virus.Core
             }
         }
 
+        #endregion
+
+        #region CONSTRUCTOR
+        public BodyItem(Card o)
+        {
+            organ = o;
+            modifiers = new List<Card>();
+        }
+        #endregion
+
+        #region ENUMS
+        public enum State
+        {
+            Free,
+            Infected,
+            Vaccinated,
+            Immunized,
+            NOTINGAME
+        }
+        #endregion
+        
 
         public string NewMedicine(Card medicine)
         {
@@ -146,8 +151,8 @@ namespace Virus.Core
 
         public override string ToString()
         {
-            //string printed = String.Format(" M:"+modifiers.Count+"    {0}: ", organ.ToString());
-            string printed = String.Format("    {0}: ", organ.ToString());
+            string printed = String.Format(" M:"+modifiers.Count+"    {0}: ", organ.ToString());
+            //string printed = String.Format("    {0}: ", organ.ToString());
 
             foreach(var mod in modifiers)
             {
