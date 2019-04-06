@@ -48,11 +48,11 @@ namespace Virus.Core
         public Game(int numPlayers)
         {
             logger = new Logger();
-            Console.WriteLine("We're getting ready Virus!");
-            Console.WriteLine("Shuffling cards.");
+            logger.Write("We're getting ready Virus!", true);
             deck = Shuffle(InitializeCards());
+            logger.Write(deck.Count+" cards shuffled.", true);
             discards = new List<Card>();
-            Console.WriteLine("Initializing players.");
+            logger.Write("Discard stack created.");
             InitializePlayers(numPlayers);
             reader = new ReaderInput(this);
         }
@@ -71,14 +71,20 @@ namespace Virus.Core
                     {
                         deck.Add(new Card(color, Card.CardFace.Organ));
                     }
+                    logger.Write(Scheduler.NUM_ORGANS+" "+color+" organs created.");
+
                     for (i = 0; i < Scheduler.NUM_MEDICINES; i++)
                     {
                         deck.Add(new Card(color, Card.CardFace.Medicine));
                     }
+                    logger.Write(Scheduler.NUM_MEDICINES + " " + color + " medicines created.");
+
                     for (i = 0; i < Scheduler.NUM_VIRUSES; i++)
                     {
                         deck.Add(new Card(color, Card.CardFace.Virus));
                     }
+                    logger.Write(Scheduler.NUM_VIRUSES + " " + color + " viruses created.");
+
                 }
             }
             #endregion
@@ -88,41 +94,45 @@ namespace Virus.Core
             {
                 deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
             }
-            
+            logger.Write(Scheduler.NUM_WILDCARD_ORGANS + " wildcard organs created.");
+
             for (i = 0; i < Scheduler.NUM_WILDCARD_MEDICINES; i++)
             {
                 deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Medicine));
             }
+            logger.Write(Scheduler.NUM_WILDCARD_MEDICINES + " wildcard medicines created.");
+
             for (i = 0; i < Scheduler.NUM_WILDCARD_VIRUSES; i++)
             {
                 deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Virus));
             }
-
-                     #endregion
-                     /*
-                     #region THREATMENTS
-                     for (i = 0; i < Scheduler.NUM_THREATMENT_SPREADING; i++)
-                     {
-                         deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Spreading));
-                     }
-                     for (i = 0; i < Scheduler.NUM_THREATMENT_ORGANTHIEF; i++)
-                     {
-                         deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.OrganThief));
-                     }
-                     for (i = 0; i < Scheduler.NUM_THREATMENT_TRANSPLANT; i++)
-                     {
-                         deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Transplant));
-                     }
-                     for (i = 0; i < Scheduler.NUM_THREATMENT_LATEXGLOVE; i++)
-                     {
-                         deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.LatexGlove));
-                     }
-                     for (i = 0; i < Scheduler.NUM_THREATMENT_MEDICALERROR; i++)
-                     {
-                         deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.MedicalError));
-                     }
-                     #endregion
-         */
+            logger.Write(Scheduler.NUM_WILDCARD_VIRUSES + " wildcard viruses created.");
+            #endregion
+            
+            /*
+            #region THREATMENTS
+            for (i = 0; i < Scheduler.NUM_THREATMENT_SPREADING; i++)
+            {
+                deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Spreading));
+            }
+            for (i = 0; i < Scheduler.NUM_THREATMENT_ORGANTHIEF; i++)
+            {
+                deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.OrganThief));
+            }
+            for (i = 0; i < Scheduler.NUM_THREATMENT_TRANSPLANT; i++)
+            {
+                deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Transplant));
+            }
+            for (i = 0; i < Scheduler.NUM_THREATMENT_LATEXGLOVE; i++)
+            {
+                deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.LatexGlove));
+            }
+            for (i = 0; i < Scheduler.NUM_THREATMENT_MEDICALERROR; i++)
+            {
+                deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.MedicalError));
+            }
+            #endregion
+*/
             return deck;
         }
 
@@ -145,13 +155,15 @@ namespace Virus.Core
 
         public bool InitializePlayers(int numPlayers)
         {
-            Console.WriteLine("Creating players.");
+            logger.Write("Creating players.", true);
             players = new List<Player>();
             for (int i = 0; i < numPlayers; i++)
             {
-                players.Add(new Player(i == 0) { ID = i });
+                var p = new Player(i == 0) { ID = i };
+                players.Add(p);
+                logger.Write("Player with ID "+i+" created. "+((i==0) ? "Human" : "IA: " + p.Ia));
             }
-            Console.WriteLine("Dealing cards.");
+            logger.Write("Dealing cards.", true);
             for (int i = 0; i < numPlayers; i++)
             {
                 List<Card> hand = new List<Card>();

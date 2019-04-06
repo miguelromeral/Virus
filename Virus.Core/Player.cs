@@ -21,6 +21,9 @@ namespace Virus.Core
         private IA ia;
         private int id;
 
+        public IA Ia {
+            get { return ia; }
+        }
         public int ID
         {
             get { return id; }
