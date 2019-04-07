@@ -201,12 +201,19 @@ namespace Virus.Core
                 switch (mod.Face)
                 {
                     case Card.CardFace.Virus:
-                        printed += Scheduler.CHARS_VIRUS;
+                        if (mod.Color == Card.CardColor.Wildcard)
+                        {
+                            printed += Scheduler.CHARS_WILD_VIRUS;
+                        }
+                        else
+                        {
+                            printed += Scheduler.CHARS_VIRUS;
+                        }
                         break;
                     case Card.CardFace.Medicine:
                         if (mod.Color == Card.CardColor.Wildcard)
                         {
-                            printed += Scheduler.CHARS_WILDCARD;
+                            printed += Scheduler.CHARS_WILD_MEDICINE;
                         }
                         else
                         {

@@ -81,8 +81,7 @@ namespace Virus.Core
 
             }
         }
-
-
+        
         public string RequestMovementChoosenMedicalError(Player user, List<string> moves)
         {
             try

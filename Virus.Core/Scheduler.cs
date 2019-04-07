@@ -16,11 +16,11 @@ namespace Virus.Core
         public const int NUM_WILDCARD_VIRUSES = 1;
         public const int NUM_WILDCARD_MEDICINES = 4;
         public const int NUM_THREATMENT_TRANSPLANT = 3;
-        public const int NUM_THREATMENT_ORGANTHIEF = 3;
+        //public const int NUM_THREATMENT_ORGANTHIEF = 3;
+        public const int NUM_THREATMENT_ORGANTHIEF = 20;
         public const int NUM_THREATMENT_SPREADING = 2;
         public const int NUM_THREATMENT_LATEXGLOVE = 1;
-        //public const int NUM_THREATMENT_MEDICALERROR = 1;
-        public const int NUM_THREATMENT_MEDICALERROR = 10;
+        public const int NUM_THREATMENT_MEDICALERROR = 1;
         public const int NUM_CARDS_HAND = 3;
         #endregion
 
@@ -29,6 +29,9 @@ namespace Virus.Core
         public const string CHARS_MEDICINE = "(*)";
         public const string CHARS_VIRUS = "(@)";
         public const string CHARS_THREATMENT = "(+)";
+        public const string CHARS_WILD_VIRUS = "(^@)";
+        public const string CHARS_WILD_MEDICINE = "(^*)";
+
 
         public static string GetMoveItem(int playerid, int cardnum)
         {

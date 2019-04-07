@@ -498,8 +498,8 @@ namespace Virus.Core
                     }
                     break;
                 #endregion
+                    
 
-                #region TO BE DEVELOPED
                 case Card.CardFace.Transplant:
                     return "NOT IMPLEMENTED YET";
 
@@ -521,6 +521,7 @@ namespace Virus.Core
                     return null;
                 #endregion
 
+                #region PLAY MEDICAL ERROR
                 case Card.CardFace.MedicalError:
                     moves = GetListMovements(player, myCard);
                     if (moves.Count == 0)
@@ -541,8 +542,8 @@ namespace Virus.Core
                         return PlayMedicalError(player, moves[0]);
                     }
                     break;
-
                 #endregion
+
                 default:
                     return " UNKNOWN CARD PLAYED IN GAME";
             }
