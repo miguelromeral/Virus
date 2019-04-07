@@ -18,9 +18,9 @@ namespace Virus.Core
         public const int NUM_THREATMENT_TRANSPLANT = 3;
         public const int NUM_THREATMENT_ORGANTHIEF = 3;
         public const int NUM_THREATMENT_SPREADING = 2;
-        //public const int NUM_THREATMENT_LATEXGLOVE = 1;
-        public const int NUM_THREATMENT_LATEXGLOVE = 10;
-        public const int NUM_THREATMENT_MEDICALERROR = 1;
+        public const int NUM_THREATMENT_LATEXGLOVE = 1;
+        //public const int NUM_THREATMENT_MEDICALERROR = 1;
+        public const int NUM_THREATMENT_MEDICALERROR = 10;
         public const int NUM_CARDS_HAND = 3;
         #endregion
 

@@ -35,6 +35,7 @@ namespace Virus.Core
         public Body Body
         {
             get { return body; }
+            set { body = value; }
         }
 
         public int HealthyOrgans

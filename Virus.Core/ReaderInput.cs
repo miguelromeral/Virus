@@ -16,7 +16,7 @@ namespace Virus.Core
             game = g;
         }
 
-        public string RequestMovementChoosen(Player user, List<string> moves) 
+        public string RequestMovementChoosen(Player user, List<string> moves)
         {
             if (OnlyMyMoves(user, moves))
             {
@@ -58,28 +58,56 @@ namespace Virus.Core
                         Int32.TryParse(m.Substring(2, 1), out c);
                         Console.WriteLine("-" + (c + 1) + ". " + game.Players[mNum].Body.Organs[c]);
                     }
-                
-                Console.WriteLine("- Please, select the number of player to use this card:");
-                int p = Convert.ToInt32(Console.ReadLine()) - 1;
-                if (!Scheduler.IntInListString(moves, 0, p))
-                    return "You've not choosen a valid player number to put this card.";
 
-                Console.WriteLine("- Please, select the number of card to use this card:");
-                c = Convert.ToInt32(Console.ReadLine()) - 1;
-                if (!Scheduler.IntInListString(moves, 2, c))
-                    return "You've not choosen a valid card number to put this card.";
+                    Console.WriteLine("- Please, select the number of player to use this card:");
+                    int p = Convert.ToInt32(Console.ReadLine()) - 1;
+                    if (!Scheduler.IntInListString(moves, 0, p))
+                        return "You've not choosen a valid player number to put this card.";
+
+                    Console.WriteLine("- Please, select the number of card to use this card:");
+                    c = Convert.ToInt32(Console.ReadLine()) - 1;
+                    if (!Scheduler.IntInListString(moves, 2, c))
+                        return "You've not choosen a valid card number to put this card.";
 
 
-                return Scheduler.GetMoveItem(p, c);
+                    return Scheduler.GetMoveItem(p, c);
 
 
                 }
                 catch (Exception)
                 {
-                    throw new Exception("THE INPUT IS NOT VALID."); 
+                    throw new Exception("THE INPUT IS NOT VALID.");
                 }
 
             }
+        }
+
+
+        public string RequestMovementChoosenMedicalError(Player user, List<string> moves)
+        {
+            try
+            {
+                Console.WriteLine("- Please, type the player number to switch the body.");
+                foreach (string m in moves)
+                {
+                    int mNum = -1;
+                    Int32.TryParse(m.Substring(0, 1), out mNum);
+                    Console.WriteLine(String.Format("- Player {0}.", mNum + 1));
+                }
+
+                int p = Convert.ToInt32(Console.ReadLine()) - 1;
+
+                if (!Scheduler.IntInListString(moves, 0, p))
+                    return "You've not choosen a valid player number to switch your bodies.";
+                
+                return Scheduler.GetMoveItem(p, 0);
+            }
+            catch (Exception)
+            {
+                throw new Exception("THE INPUT IS NOT VALID.");
+            }
+
+
         }
 
         public bool OnlyMyMoves(Player user, List<string> moves)

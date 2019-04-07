@@ -109,9 +109,9 @@ namespace Virus.Core
             logger.Write(Scheduler.NUM_WILDCARD_VIRUSES + " wildcard viruses created.");
             #endregion
             
-            /*
+            
             #region THREATMENTS
-            for (i = 0; i < Scheduler.NUM_THREATMENT_SPREADING; i++)
+     /*       for (i = 0; i < Scheduler.NUM_THREATMENT_SPREADING; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Spreading));
             }
@@ -127,12 +127,12 @@ namespace Virus.Core
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.LatexGlove));
             }
-         /*   for (i = 0; i < Scheduler.NUM_THREATMENT_MEDICALERROR; i++)
+            for (i = 0; i < Scheduler.NUM_THREATMENT_MEDICALERROR; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.MedicalError));
             }
             #endregion
-*/
+
             return deck;
         }
 
@@ -522,18 +522,56 @@ namespace Virus.Core
                 #endregion
 
                 case Card.CardFace.MedicalError:
-                    return "NOT IMPLEMENTED YET";
+                    moves = GetListMovements(player, myCard);
+                    if (moves.Count == 0)
+                    {
+                        return "You don't have any player to change yours bodies.";
+                    }
+                    if (moves.Count == 1)
+                    {
+                        return PlayMedicalError(player, moves[0]);
+                    }
+                    if (moves.Count > 1)
+                    {
+                        string choosen = reader.RequestMovementChoosenMedicalError(player, moves);
+                        
+                        if (choosen == null)
+                            throw new Exception("The input doesn't belong to any available move.");
+
+                        return PlayMedicalError(player, moves[0]);
+                    }
+                    break;
+
                 #endregion
                 default:
                     return " UNKNOWN CARD PLAYED IN GAME";
             }
             return "END OF SWITCH";
         }
+
+        public string PlayMedicalError(Player me, string move)
+        {
+            try
+            {
+                Player toswitch = players[Scheduler.GetStringInt(move, 0)];
+
+                Body aux = me.Body;
+                me.Body = toswitch.Body;
+                toswitch.Body = aux;
+
+                return null;
+            }
+            catch (Exception)
+            {
+                return "EXCEPTION: CAN'T ABLE TO SWITCH BODIES.";
+            }
+        }
     
         public List<string> GetListMovements(Player me, Card myCard)
         {
             List<string> moves = new List<string>();
             Body body;
+            int myId;
 
             switch (myCard.Face)
             {
@@ -550,7 +588,7 @@ namespace Virus.Core
                     break;
 
                 case Card.CardFace.Virus:
-                    int myId = me.ID;
+                    myId = me.ID;
                     for(int i=0; i<players.Count; i++)
                     {
                         Player rival = players[i];
@@ -568,6 +606,18 @@ namespace Virus.Core
                         }
                     }
                     break;
+
+                case Card.CardFace.MedicalError:
+                    myId = me.ID;
+                    for (int i = 0; i < players.Count; i++)
+                    {
+                        Player rival = players[i];
+                        if (rival.ID != me.ID)
+                        {
+                            moves.Add(Scheduler.GetMoveItem(rival.ID, 0));
+                        }
+                    }
+                    return moves;
             }
 
 
