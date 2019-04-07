@@ -15,9 +15,9 @@ namespace Virus.Core
         public const int NUM_WILDCARD_ORGANS = 1;
         public const int NUM_WILDCARD_VIRUSES = 1;
         public const int NUM_WILDCARD_MEDICINES = 4;
-        public const int NUM_THREATMENT_TRANSPLANT = 3;
-        //public const int NUM_THREATMENT_ORGANTHIEF = 3;
-        public const int NUM_THREATMENT_ORGANTHIEF = 20;
+        //public const int NUM_THREATMENT_TRANSPLANT = 3;
+        public const int NUM_THREATMENT_TRANSPLANT = 20;
+        public const int NUM_THREATMENT_ORGANTHIEF = 3;
         public const int NUM_THREATMENT_SPREADING = 2;
         public const int NUM_THREATMENT_LATEXGLOVE = 1;
         public const int NUM_THREATMENT_MEDICALERROR = 1;
@@ -45,6 +45,15 @@ namespace Virus.Core
             }
         }
 
+        public static string GetManyMoveItem(string[] moves)
+        {
+            string res = moves[0];
+            for(int i=1; i<moves.Length; i++)
+            {
+                res += "," + moves[i];
+            }
+            return res;
+        }
 
         public static bool IntInListString(List<string> list, int index, int i)
         {

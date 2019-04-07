@@ -194,7 +194,7 @@ namespace Virus.Core
         public override string ToString()
         {
             //string printed = String.Format(" M:"+modifiers.Count+"    {0}: ", organ.ToString());
-            string printed = String.Format("    {0}: ", organ.ToString());
+            string printed = String.Format("{0}: ", organ.ToString());
 
             foreach(var mod in modifiers)
             {

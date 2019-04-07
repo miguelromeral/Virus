@@ -77,7 +77,45 @@ namespace Virus.Core
                 
             }
         }
-        
+
+        public int RequestMovementChoosenTransplant(List<string> moves, Game game)
+        {
+            try
+            {
+                Player one, two;
+                BodyItem bone, btwo;
+                int p1, p2, o1, o2, c = 1;
+
+                Console.WriteLine("- Please, type the number of the combination to switch the appropiate organs.");
+                foreach (string move in moves)
+                {
+                    p1 = Scheduler.GetStringInt(move, 0);
+                    o1 = Scheduler.GetStringInt(move, 2);
+                    p2 = Scheduler.GetStringInt(move, 4);
+                    o2 = Scheduler.GetStringInt(move, 6);
+                    one = game.Players[p1];
+                    two = game.Players[p2];
+                    bone = one.Body.Organs[o1];
+                    btwo = two.Body.Organs[o2];
+                    Console.WriteLine("{0}.     {1,20}       {2,20}", c, one.ShortDescription, two.ShortDescription);
+                    Console.WriteLine("        [{0,20}] <---> [{1,20}]\n", bone, btwo);
+                    c++;
+                }
+
+                int p = Convert.ToInt32(Console.ReadLine()) - 1;
+
+                if (p < 0 || p >= moves.Count)
+                    throw new Exception("You've not choosen a valid combination to transplant organs.");
+                
+                return p;
+            }
+            catch (Exception)
+            {
+                throw new Exception("THE INPUT IS NOT VALID.");
+            }
+
+
+        }
         public string RequestMovementChoosenMedicalError(Player user, List<string> moves)
         {
             try
@@ -93,8 +131,8 @@ namespace Virus.Core
                 int p = Convert.ToInt32(Console.ReadLine()) - 1;
 
                 if (!Scheduler.IntInListString(moves, 0, p))
-                    return "You've not choosen a valid player number to switch your bodies.";
-                
+                    throw new Exception("You've not choosen a valid player number to switch your bodies.");
+
                 return Scheduler.GetMoveItem(p, 0);
             }
             catch (Exception)

@@ -119,11 +119,11 @@ namespace Virus.Core
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.OrganThief));
             }
-         /*   for (i = 0; i < Scheduler.NUM_THREATMENT_TRANSPLANT; i++)
+            for (i = 0; i < Scheduler.NUM_THREATMENT_TRANSPLANT; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Transplant));
             }
-        */    for (i = 0; i < Scheduler.NUM_THREATMENT_LATEXGLOVE; i++)
+            for (i = 0; i < Scheduler.NUM_THREATMENT_LATEXGLOVE; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.LatexGlove));
             }
@@ -500,8 +500,23 @@ namespace Virus.Core
                 #endregion
                     
                 case Card.CardFace.Transplant:
-                    return "NOT IMPLEMENTED YET";
+                    moves = GetListMovements(player, myCard);
+                    if (moves.Count == 0)
+                    {
+                        return "You currently can't swith any organ between you and your rivals.";
+                    }
+                    if (moves.Count == 1)
+                    {
+                        return PlayTransplant(moves[0]);
+                    }
+                    if (moves.Count > 1)
+                    {
+                        int opt = reader.RequestMovementChoosenTransplant(moves, this);
+                        return PlayTransplant(moves[opt]);
+                    }
+                    break;
 
+                #region PLAY ORGAN THIEF
                 case Card.CardFace.OrganThief:
                     moves = GetListMovements(player, myCard);
                     if (moves.Count == 0)
@@ -528,6 +543,7 @@ namespace Virus.Core
                         return PlayOrganThief(player, choosen);
                     }
                     break;
+                #endregion
 
                 case Card.CardFace.Spreading:
                     return "NOT IMPLEMENTED YET";
@@ -573,6 +589,32 @@ namespace Virus.Core
             return "END OF SWITCH";
         }
 
+        public string PlayTransplant(string move)
+        {
+            try
+            {
+                Player one, two;
+                BodyItem bone, btwo, aux;
+                int p1, p2, o1, o2;
+                p1 = Scheduler.GetStringInt(move, 0);
+                o1 = Scheduler.GetStringInt(move, 2);
+                p2 = Scheduler.GetStringInt(move, 4);
+                o2 = Scheduler.GetStringInt(move, 6);
+                one = players[p1];
+                two = players[p2];
+                bone = one.Body.Organs[o1];
+                btwo = two.Body.Organs[o2];
+
+                players[p1].Body.Organs[o1] = btwo;
+                players[p2].Body.Organs[o2] = bone;
+                
+                return null;
+            }
+            catch (Exception)
+            {
+                return "EXCEPTION: CAN'T ABLE TO TRANSPLANT ORGANS.";
+            }
+        }
         public string PlayOrganThief(Player me, string move)
         {
             try
@@ -644,6 +686,38 @@ namespace Virus.Core
                                 if (item.CanPlayVirus(myCard))
                                 {
                                     moves.Add(Scheduler.GetMoveItem(rival.ID, j));
+                                }
+                            }
+                        }
+                    }
+                    break;
+
+                case Card.CardFace.Transplant:
+                    Player one, two;
+                    BodyItem bone, btwo;
+                    for (int i = 0; i < players.Count; i++)
+                    {
+                        for (int j = i+1; j < players.Count; j++)
+                        {
+                            one = players[i];
+                            two = players[j];
+                            
+                            for(int x=0; x<one.Body.Organs.Count; x++)
+                            {
+                                for(int y=0; y<two.Body.Organs.Count; y++)
+                                {
+                                    bone = one.Body.Organs[x];
+                                    btwo = two.Body.Organs[y];
+                                    if(!one.Body.HaveThisOrgan(btwo.Organ.Color) &&
+                                        !two.Body.HaveThisOrgan(bone.Organ.Color))
+                                    {
+                                        moves.Add(Scheduler.GetManyMoveItem(new string[]
+                                        {
+                                            Scheduler.GetMoveItem(i, x),
+                                            Scheduler.GetMoveItem(j, y)
+                                        }));
+
+                                    }
                                 }
                             }
                         }

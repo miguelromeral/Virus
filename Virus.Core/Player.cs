@@ -22,6 +22,12 @@ namespace Virus.Core
             get { return computer; }
         }
 
+        public string ShortDescription
+        {
+            get { return "Player " + id; }
+        }
+
+
         public int ID
         {
             get { return id; }
