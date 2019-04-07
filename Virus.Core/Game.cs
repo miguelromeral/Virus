@@ -123,11 +123,11 @@ namespace Virus.Core
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Transplant));
             }
-            for (i = 0; i < Scheduler.NUM_THREATMENT_LATEXGLOVE; i++)
+        */    for (i = 0; i < Scheduler.NUM_THREATMENT_LATEXGLOVE; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.LatexGlove));
             }
-            for (i = 0; i < Scheduler.NUM_THREATMENT_MEDICALERROR; i++)
+         /*   for (i = 0; i < Scheduler.NUM_THREATMENT_MEDICALERROR; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.MedicalError));
             }
@@ -260,24 +260,27 @@ namespace Virus.Core
         public void PlayTurn()
         {
             Player p = players[Turn];
-            // Human Turn
-            if(p.Ai.Equals(ArtificialIntelligence.AICategory.Human))
+            if (p.Hand.Count > 0)
             {
-                var pt = 1;
-                Console.WriteLine("Your turn ("+pt+")");
-                ReadUserInput();
-                pt++;
-            }
-            // IA Turn
-            else
-            {
-                PrintGameState();
-                Console.WriteLine("Press to continue (It's computer turn!)...");
-                Console.ReadLine();
-                p.Computer.PlayTurn();
+                // Human Turn
+                if (p.Ai.Equals(ArtificialIntelligence.AICategory.Human))
+                {
+                    var pt = 1;
+                    Console.WriteLine("Your turn (" + pt + ")");
+                    ReadUserInput();
+                    pt++;
+                }
+                // IA Turn
+                else
+                {
+                    PrintGameState();
+                    Console.WriteLine("Press to continue (It's computer turn!)...");
+                    Console.ReadLine();
+                    p.Computer.PlayTurn();
+                }
             }
             DrawCardsToFill(p);
-        }
+         }
 
         public void DrawCardsToFill(Player player)
         {
@@ -389,12 +392,12 @@ namespace Virus.Core
                 }
                 else
                 {
-                    myCard = players[0].Hand[(myCardIndex - 1)];
+                    myCard = me.Hand[(myCardIndex - 1)];
                     message = PlayGameCardByUser(players[0], myCard);
                     ThrowExceptionIfMessage(message);
                     if(message == null)
                     {
-                        me.Hand.Remove(myCard);
+                        DiscardFromHand(me, myCard);
                     }
                 }
                 return true;
@@ -467,7 +470,7 @@ namespace Virus.Core
                     break;
                 #endregion
 
-
+                #region PLAY VIRUS
                 case Card.CardFace.Virus:
                     int p, c;
                     moves = GetListMovements(player, myCard);
@@ -494,6 +497,7 @@ namespace Virus.Core
                         return players[p].Body.SetVirus(myCard, c, this);
                     }
                     break;
+                #endregion
 
                 #region TO BE DEVELOPED
                 case Card.CardFace.Transplant:
@@ -505,8 +509,17 @@ namespace Virus.Core
                 case Card.CardFace.Spreading:
                     return "NOT IMPLEMENTED YET";
 
+                #region PLAY LATEX GLOVE
                 case Card.CardFace.LatexGlove:
-                    return "NOT IMPLEMENTED YET";
+                    foreach(Player rival in players)
+                    {
+                        if (!rival.Equals(player))
+                        {
+                            DiscardAllHand(rival);
+                        }
+                    }
+                    return null;
+                #endregion
 
                 case Card.CardFace.MedicalError:
                     return "NOT IMPLEMENTED YET";
@@ -582,6 +595,20 @@ namespace Virus.Core
             Card card = player.Hand[index];
             discards.Add(card);
             player.Hand.Remove(card);
+        }
+
+        public void DiscardFromHand(Player player, Card card)
+        {
+            discards.Add(card);
+            player.Hand.Remove(card);
+        }
+
+        public void DiscardAllHand(Player player)
+        {
+            for(int i=player.Hand.Count - 1; i>=0; i--)
+            {
+                DiscardFromHand(player, i);
+            }
         }
         
         public void MoveToDiscards(Card card)

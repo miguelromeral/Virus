@@ -85,9 +85,7 @@ namespace Virus.Core
             printed += "* IA: " + ai.ToString() + "\n";
             printed += "* Body: \n";
             printed += body + "\n";
-            //printed += "* Current Hand:\n";
-            //printed += PrintHand() + "\n";
-
+            
             return printed;
         }
 

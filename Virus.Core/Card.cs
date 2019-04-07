@@ -82,7 +82,7 @@ namespace Virus.Core
             }
             else
             {
-                value = String.Format(value, face, null);
+                value = String.Format(value, Scheduler.CHARS_THREATMENT, face);
             }
 
             return value;
