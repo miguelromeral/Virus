@@ -32,7 +32,10 @@ namespace Virus.Core
                 int c;
                 try
                 {
-                    c = Convert.ToInt32(Console.ReadLine());
+                    c = Convert.ToInt32(Console.ReadLine()) - 1;
+
+                    if (!Scheduler.IntInListString(moves, 2, c))
+                        throw new Exception("You've not choosen a valid card number to put this card.");
                 }
                 catch (Exception)
                 {
@@ -44,8 +47,6 @@ namespace Virus.Core
             {
                 int currentPlayer = -1;
                 int c = -1;
-                try
-                {
                     foreach (string m in moves)
                     {
                         int mNum = -1;
@@ -62,23 +63,18 @@ namespace Virus.Core
                     Console.WriteLine("- Please, select the number of player to use this card:");
                     int p = Convert.ToInt32(Console.ReadLine()) - 1;
                     if (!Scheduler.IntInListString(moves, 0, p))
-                        return "You've not choosen a valid player number to put this card.";
+                        throw new Exception("You've not choosen a valid player number to put this card.");
 
                     Console.WriteLine("- Please, select the number of card to use this card:");
                     c = Convert.ToInt32(Console.ReadLine()) - 1;
                     if (!Scheduler.IntInListString(moves, 2, c))
-                        return "You've not choosen a valid card number to put this card.";
+                        throw new Exception ("You've not choosen a valid card number to put this card.");
 
 
                     return Scheduler.GetMoveItem(p, c);
 
 
-                }
-                catch (Exception)
-                {
-                    throw new Exception("THE INPUT IS NOT VALID.");
-                }
-
+                
             }
         }
         

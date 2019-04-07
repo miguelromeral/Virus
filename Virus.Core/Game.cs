@@ -115,11 +115,11 @@ namespace Virus.Core
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Spreading));
             }
-            for (i = 0; i < Scheduler.NUM_THREATMENT_ORGANTHIEF; i++)
+         */   for (i = 0; i < Scheduler.NUM_THREATMENT_ORGANTHIEF; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.OrganThief));
             }
-            for (i = 0; i < Scheduler.NUM_THREATMENT_TRANSPLANT; i++)
+         /*   for (i = 0; i < Scheduler.NUM_THREATMENT_TRANSPLANT; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Transplant));
             }
@@ -440,6 +440,7 @@ namespace Virus.Core
         public string PlayGameCardByUser(Player player, Card myCard)
         {
             List<string> moves = new List<string>();
+            int p, c;
             switch (myCard.Face)
             {
                 #region PLAY ORGAN
@@ -472,7 +473,6 @@ namespace Virus.Core
 
                 #region PLAY VIRUS
                 case Card.CardFace.Virus:
-                    int p, c;
                     moves = GetListMovements(player, myCard);
                     if (moves.Count == 0)
                     {
@@ -499,12 +499,35 @@ namespace Virus.Core
                     break;
                 #endregion
                     
-
                 case Card.CardFace.Transplant:
                     return "NOT IMPLEMENTED YET";
 
                 case Card.CardFace.OrganThief:
-                    return "NOT IMPLEMENTED YET";
+                    moves = GetListMovements(player, myCard);
+                    if (moves.Count == 0)
+                    {
+                        return "You currently can't steal any body of your rivals.";
+                    }
+                    if (moves.Count == 1)
+                    {
+                        p = Scheduler.GetStringInt(moves[0], 0);
+                        c = Scheduler.GetStringInt(moves[0], 2);
+
+                        return PlayOrganThief(player, moves[0]);
+                    }
+                    if (moves.Count > 1)
+                    {
+                        string choosen = reader.RequestMovementChoosen(player, moves);
+
+                        if (choosen == null)
+                            throw new Exception("The input doesn't belong to any available move.");
+
+                        p = Scheduler.GetStringInt(choosen, 0);
+                        c = Scheduler.GetStringInt(choosen, 2);
+
+                        return PlayOrganThief(player, choosen);
+                    }
+                    break;
 
                 case Card.CardFace.Spreading:
                     return "NOT IMPLEMENTED YET";
@@ -550,6 +573,25 @@ namespace Virus.Core
             return "END OF SWITCH";
         }
 
+        public string PlayOrganThief(Player me, string move)
+        {
+            try
+            {
+                Player rival = players[Scheduler.GetStringInt(move, 0)];
+                BodyItem stealed = rival.Body.Organs[Scheduler.GetStringInt(move, 2)];
+                rival.Body.Organs.Remove(stealed);
+
+                me.Body.Organs.Add(stealed);
+
+                return null;
+            }
+            catch (Exception)
+            {
+                return "EXCEPTION: CAN'T ABLE TO STEAL ORGAN.";
+            }
+        }
+
+
         public string PlayMedicalError(Player me, string move)
         {
             try
@@ -567,7 +609,7 @@ namespace Virus.Core
                 return "EXCEPTION: CAN'T ABLE TO SWITCH BODIES.";
             }
         }
-    
+
         public List<string> GetListMovements(Player me, Card myCard)
         {
             List<string> moves = new List<string>();
@@ -600,6 +642,26 @@ namespace Virus.Core
                             {
                                 var item = body.Organs[j];
                                 if (item.CanPlayVirus(myCard))
+                                {
+                                    moves.Add(Scheduler.GetMoveItem(rival.ID, j));
+                                }
+                            }
+                        }
+                    }
+                    break;
+
+                case Card.CardFace.OrganThief:
+                    myId = me.ID;
+                    for (int i = 0; i < players.Count; i++)
+                    {
+                        Player rival = players[i];
+                        if (rival.ID != me.ID)
+                        {
+                            body = rival.Body;
+                            for (int j = 0; j < body.Organs.Count; j++)
+                            {
+                                var item = body.Organs[j];
+                                if (!me.Body.HaveThisOrgan(item.Organ.Color) && !item.Status.Equals(BodyItem.State.Immunized))
                                 {
                                     moves.Add(Scheduler.GetMoveItem(rival.ID, j));
                                 }
