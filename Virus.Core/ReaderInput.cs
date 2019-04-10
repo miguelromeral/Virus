@@ -16,65 +16,50 @@ namespace Virus.Core
             game = g;
         }
 
-        public string RequestMovementChoosen(Player user, List<string> moves)
+        public string RequestMovementChoosen(Player player, List<string> moves)
         {
-            if (OnlyMyMoves(user, moves))
+            Console.WriteLine("- Please, enter the number of your organ you want to play this card.");
+            BodyItem item;
+            int c, o1;
+            if (OnlyMyMoves(player, moves))
             {
-                // PRINT ONLY USER ORGANS
-                Console.WriteLine("- Please, enter the number of your organ you want to play this card.");
-                for (int i = 0; i < moves.Count; i++)
+                c = 0;
+                foreach (string move in moves)
                 {
-                    string move = moves[i];
-                    Console.WriteLine("{0}. {1}",
-                        (Scheduler.GetStringInt(move, 2) + 1),
-                        user.Body.Organs[Scheduler.GetStringInt(move, 2)]);
+                    o1 = Scheduler.GetStringInt(move, 2);
+                    item = player.Body.Organs[o1];
+                    Console.WriteLine("{0}.- {1,20}", (c+1), item);
+                    c++;
                 }
-                int c;
-                try
-                {
-                    c = Convert.ToInt32(Console.ReadLine()) - 1;
 
-                    if (!Scheduler.IntInListString(moves, 2, c))
-                        throw new Exception("You've not choosen a valid card number to put this card.");
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
-                return Scheduler.GetMoveItem(user.ID, c - 1);
+                int p = Convert.ToInt32(Console.ReadLine()) - 1;
+
+                if (p < 0 || p >= moves.Count)
+                    throw new Exception("You've not choosen a valid option.");
+
+                return moves[p];
+
             }
             else
             {
-                int currentPlayer = -1;
-                int c = -1;
-                    foreach (string m in moves)
-                    {
-                        int mNum = -1;
-                        Int32.TryParse(m.Substring(0, 1), out mNum);
-                        if (currentPlayer != mNum)
-                        {
-                            currentPlayer = mNum;
-                            Console.WriteLine(String.Format("Player {0}:", mNum + 1));
-                        }
-                        Int32.TryParse(m.Substring(2, 1), out c);
-                        Console.WriteLine("-" + (c + 1) + ". " + game.Players[mNum].Body.Organs[c]);
-                    }
+                int p1;
+                c = 0;
+                foreach (string move in moves)
+                {
+                    p1 = Scheduler.GetStringInt(move, 0);
+                    o1 = Scheduler.GetStringInt(move, 2);
+                    player = game.Players[p1];
+                    item = player.Body.Organs[o1];
+                    Console.WriteLine("{0}.     {1,20} : {2,20}", (c+1), player.ShortDescription, item);
+                    c++;
+                }
 
-                    Console.WriteLine("- Please, select the number of player to use this card:");
-                    int p = Convert.ToInt32(Console.ReadLine()) - 1;
-                    if (!Scheduler.IntInListString(moves, 0, p))
-                        throw new Exception("You've not choosen a valid player number to put this card.");
+                int p = Convert.ToInt32(Console.ReadLine()) - 1;
 
-                    Console.WriteLine("- Please, select the number of card to use this card:");
-                    c = Convert.ToInt32(Console.ReadLine()) - 1;
-                    if (!Scheduler.IntInListString(moves, 2, c))
-                        throw new Exception ("You've not choosen a valid card number to put this card.");
+                if (p < 0 || p >= moves.Count)
+                    throw new Exception("You've not choosen a valid option.");
 
-
-                    return Scheduler.GetMoveItem(p, c);
-
-
-                
+                return moves[p];
             }
         }
 

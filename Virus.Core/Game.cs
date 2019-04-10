@@ -607,7 +607,7 @@ namespace Virus.Core
 
                 players[p1].Body.Organs[o1] = btwo;
                 players[p2].Body.Organs[o2] = bone;
-                
+
                 return null;
             }
             catch (Exception)
