@@ -144,6 +144,18 @@ namespace Virus.Core
             
         }
 
+        public Card GetLastModifier()
+        {
+            if(modifiers.Count > 0)
+            {
+                return modifiers.ElementAt(modifiers.Count - 1);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public List<Card> GetAllCardsInBody()
         {
             List<Card> list = new List<Card>();

@@ -109,13 +109,12 @@ namespace Virus.Core
             logger.Write(Scheduler.NUM_WILDCARD_VIRUSES + " wildcard viruses created.");
             #endregion
             
-            
             #region THREATMENTS
-     /*       for (i = 0; i < Scheduler.NUM_THREATMENT_SPREADING; i++)
+            for (i = 0; i < Scheduler.NUM_THREATMENT_SPREADING; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Spreading));
             }
-         */   for (i = 0; i < Scheduler.NUM_THREATMENT_ORGANTHIEF; i++)
+            for (i = 0; i < Scheduler.NUM_THREATMENT_ORGANTHIEF; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.OrganThief));
             }
@@ -242,6 +241,9 @@ namespace Virus.Core
             Console.ReadLine();
             // DATA TO TEST:
             players[0].Body.SetOrgan(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
+            players[0].Body.SetVirus(new Card(Card.CardColor.Red, Card.CardFace.Virus), 0, this);
+            players[0].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
+            players[0].Body.SetVirus(new Card(Card.CardColor.Yellow, Card.CardFace.Virus), 1, this);
             players[1].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
             players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
             players[1].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
@@ -545,8 +547,36 @@ namespace Virus.Core
                     break;
                 #endregion
 
+                #region PLAY SPREADING
                 case Card.CardFace.Spreading:
-                    return "NOT IMPLEMENTED YET";
+                    List<List<string>> wholeMoves = GetListMovementsSrepading(player);
+                    if (wholeMoves.Count == 0)
+                    {
+                        return "You currently can't spread your virus to any free organ of your rival's bodies.";
+                    }
+                    if (wholeMoves.Count > 0)
+                    {
+                        List<string> choosen = new List<string>();
+                        foreach(var move in wholeMoves)
+                        {
+                            string input = ProcessSpreadingItem(move);
+                            if(input == null)
+                            {
+                                return "One or more input in spreading options is not valid.";
+                            }
+                            else
+                            {
+                                choosen.Add(input);
+                            }
+                        }
+                        foreach(var move in choosen)
+                        {
+                            DoSpreadingOneItem(move);
+                        }
+                        return null;
+                    }
+                    break;
+                #endregion
 
                 #region PLAY LATEX GLOVE
                 case Card.CardFace.LatexGlove:
@@ -589,12 +619,50 @@ namespace Virus.Core
             return "END OF SWITCH";
         }
 
+        public string DoSpreadingOneItem(string moves)
+        {
+            Player one, two;
+            BodyItem bone, btwo;
+            int p1, p2, o1, o2;
+
+            p1 = Scheduler.GetStringInt(moves, 0);
+            o1 = Scheduler.GetStringInt(moves, 2);
+            one = players[p1];
+            bone = one.Body.Organs[o1];
+
+            p2 = Scheduler.GetStringInt(moves, 4);
+            o2 = Scheduler.GetStringInt(moves, 6);
+            two = players[p2];
+            btwo = two.Body.Organs[o2];
+
+            Card virus = bone.GetLastModifier();
+            bone.Modifiers.Remove(virus);
+            btwo.NewVirus(virus, this);
+            
+
+            return null;
+        }
+            
+
+        public string ProcessSpreadingItem(List<string> spreadmoves)
+        {
+            if(spreadmoves.Count == 1)
+            {
+                return spreadmoves[0];
+            }
+            if(spreadmoves.Count > 1)
+            {
+                return spreadmoves[reader.RequestMovementChoosenSpreading(spreadmoves, this)];
+            }
+            return null;
+        }
+
         public string PlayTransplant(string move)
         {
             try
             {
                 Player one, two;
-                BodyItem bone, btwo, aux;
+                BodyItem bone, btwo;
                 int p1, p2, o1, o2;
                 p1 = Scheduler.GetStringInt(move, 0);
                 o1 = Scheduler.GetStringInt(move, 2);
@@ -615,6 +683,21 @@ namespace Virus.Core
                 return "EXCEPTION: CAN'T ABLE TO TRANSPLANT ORGANS.";
             }
         }
+
+        public bool SameColorOrWildcard(Card.CardColor color1, Card.CardColor color2)
+        {
+            if(color1 == color2 || 
+                color1 == Card.CardColor.Wildcard ||
+                color2 == Card.CardColor.Wildcard)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public string PlayOrganThief(Player me, string move)
         {
             try
@@ -674,13 +757,13 @@ namespace Virus.Core
 
                 case Card.CardFace.Virus:
                     myId = me.ID;
-                    for(int i=0; i<players.Count; i++)
+                    for (int i = 0; i < players.Count; i++)
                     {
                         Player rival = players[i];
                         if (rival.ID != me.ID)
                         {
                             body = rival.Body;
-                            for(int j=0; j<body.Organs.Count; j++)
+                            for (int j = 0; j < body.Organs.Count; j++)
                             {
                                 var item = body.Organs[j];
                                 if (item.CanPlayVirus(myCard))
@@ -697,18 +780,18 @@ namespace Virus.Core
                     BodyItem bone, btwo;
                     for (int i = 0; i < players.Count; i++)
                     {
-                        for (int j = i+1; j < players.Count; j++)
+                        for (int j = i + 1; j < players.Count; j++)
                         {
                             one = players[i];
                             two = players[j];
-                            
-                            for(int x=0; x<one.Body.Organs.Count; x++)
+
+                            for (int x = 0; x < one.Body.Organs.Count; x++)
                             {
-                                for(int y=0; y<two.Body.Organs.Count; y++)
+                                for (int y = 0; y < two.Body.Organs.Count; y++)
                                 {
                                     bone = one.Body.Organs[x];
                                     btwo = two.Body.Organs[y];
-                                    if(!one.Body.HaveThisOrgan(btwo.Organ.Color) &&
+                                    if (!one.Body.HaveThisOrgan(btwo.Organ.Color) &&
                                         !two.Body.HaveThisOrgan(bone.Organ.Color))
                                     {
                                         moves.Add(Scheduler.GetManyMoveItem(new string[]
@@ -721,6 +804,43 @@ namespace Virus.Core
                                 }
                             }
                         }
+                    }
+                    break;
+
+                case Card.CardFace.Spreading:
+                    int myCardIndex = 0;
+                    Card modifier;
+                    foreach (BodyItem item in me.Body.Organs)
+                    {
+                        modifier = item.GetLastModifier();
+                        if (modifier != null)
+                        {
+                            if (item.Status.Equals(BodyItem.State.Infected))
+                            {
+                                int j = 0;
+                                foreach (Player rival in players)
+                                {
+                                    if (rival.ID != me.ID)
+                                    {
+                                        int k = 0;
+                                        foreach (BodyItem ri in rival.Body.Organs)
+                                        {
+                                            if (SameColorOrWildcard(modifier.Color, ri.Organ.Color) &&
+                                                ri.Status.Equals(BodyItem.State.Free))
+                                            {
+                                                moves.Add(Scheduler.GetManyMoveItem(new string[] {
+                                                Scheduler.GetMoveItem(me.ID, myCardIndex),
+                                                Scheduler.GetMoveItem(j, k)
+                                            }));
+                                            }
+                                            k++;
+                                        }
+                                    }
+                                    j++;
+                                }
+                            }
+                        }
+                        myCardIndex++;
                     }
                     break;
 
@@ -759,6 +879,55 @@ namespace Virus.Core
 
 
             return moves;
+        }
+
+
+        public List<List<string>> GetListMovementsSrepading(Player me)
+        {
+            List<List<string>> wholeMoves = new List<List<string>>();
+            List<string> moves;
+
+            int myCardIndex = 0;
+            Card modifier;
+            foreach (BodyItem item in me.Body.Organs)
+            {
+                modifier = item.GetLastModifier();
+                if (modifier != null)
+                {
+                    if (item.Status.Equals(BodyItem.State.Infected))
+                    {
+                        moves = new List<string>();
+                        int j = 0;
+                        foreach (Player rival in players)
+                        {
+                            if (rival.ID != me.ID)
+                            {
+                                int k = 0;
+                                foreach (BodyItem ri in rival.Body.Organs)
+                                {
+                                    if (SameColorOrWildcard(modifier.Color, ri.Organ.Color) &&
+                                        ri.Status.Equals(BodyItem.State.Free))
+                                    {
+                                        moves.Add(Scheduler.GetManyMoveItem(new string[] {
+                                                Scheduler.GetMoveItem(me.ID, myCardIndex),
+                                                Scheduler.GetMoveItem(j, k)
+                                            }));
+                                    }
+                                    k++;
+                                }
+                            }
+                            j++;
+                        }
+                        if(moves.Count > 0)
+                        {
+                            wholeMoves.Add(moves);
+                        }
+                    }
+                }
+                myCardIndex++;
+            }
+
+            return wholeMoves;
         }
 
 
