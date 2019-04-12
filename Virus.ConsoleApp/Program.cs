@@ -1,18 +1,18 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Virus.Core;
 
-namespace Virus.Core
+namespace Virus.ConsoleApp
 {
-    public class Program
+    class Program
     {
         static void Main(string[] args)
         {
-            Game virus = new Game(3);
-            //virus.Play();
+            GameConsoleApp game = new GameConsoleApp(3, firstHuman:true);
+            game.Play();
         }
     }
 }
