@@ -64,30 +64,51 @@ namespace Virus.Core
         public override string ToString()
         {
             string value = "{0} {1}";
-
-            if(color != CardColor.Purple)
+            
+            if (color != CardColor.Purple)
             {
-                if(color == CardColor.Wildcard)
-                {
-                    value = String.Format(String.Format("{0} {1}", Scheduler.CHARS_WILDCARD, value),
-                        color.ToString(),
-                        face.ToString());
-                }
-                else
-                {
-                    value = String.Format(value,
-                        color.ToString(),
-                        face.ToString());
-                }
+                value = String.Format(value,
+                    color.ToString(),
+                    face.ToString());
             }
             else
             {
-                value = String.Format(value, Scheduler.CHARS_THREATMENT, face);
+                value = String.Format(value, ToStringShort(), face);
             }
 
             return value;
         }
-        
+
+
+
+
+        public string ToStringShort()
+        {
+            char? charColor = null;
+            char charFace = ' ';
+
+            switch (Color)
+            {
+                case CardColor.Red: charColor = 'R'; break;
+                case CardColor.Yellow: charColor = 'Y'; break;
+                case CardColor.Green: charColor = 'G'; break;
+                case CardColor.Blue: charColor = 'B'; break;
+                case CardColor.Purple: charColor = null; break;
+                case CardColor.Wildcard: charColor = '^'; break;
+            }
+
+            switch (Face)
+            {
+                case CardFace.Organ: charFace = 'O'; break;
+                case CardFace.Medicine:  charFace = '*'; break;
+                case CardFace.Virus: charFace = '@'; break;
+                    default: charFace = '+'; break;
+            }
+
+            return String.Format("({0}{1})", charColor, charFace);
+            
+        }
+
 
     }
 }

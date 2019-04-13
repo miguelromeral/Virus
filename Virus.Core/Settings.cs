@@ -12,7 +12,8 @@ namespace Virus.Core
         public Game Game { get; set; }
         
         public const string FILE_PREFERENCES = "virus settings.conf";
-        
+
+        #region Strings labels for file
         private const string strNumberOrgans = "NumberOrgans";
         private const string strNumberMedicines = "NumberMedicines";
         private const string strNumberViruses = "NumberViruses";
@@ -25,9 +26,10 @@ namespace Virus.Core
         private const string strNumberWildcardViruses = "NumberWildcardViruses";
         private const string strNumberWildcardMedicines = "NumberWildcardMedicines";
         private const string strNumberCardInHand = "NumberCardInHand";
-
         private const char splitter = ' ';
+        #endregion
 
+        #region Default settings
         private const int nNumberOrgans = 5;
         private const int nNumberMedicines = 5;
         private const int nNumberViruses = 4;
@@ -40,10 +42,9 @@ namespace Virus.Core
         private const int nNumberWildcardViruses = 1;
         private const int nNumberWildcardMedicines = 4;
         private const int nNumberCardInHand = 3;
+        #endregion
 
-
-        
-
+        #region Properties of the current game
         public int NumberOrgans { get; set; }
         public int NumberMedicines { get; set; }
         public int NumberViruses { get; set; }
@@ -56,7 +57,7 @@ namespace Virus.Core
         public int NumberWildcardMedicines { get; set; }
         public int NumberWildcardViruses { get; set; }
         public int NumberCardInHand { get; set; }
-        
+        #endregion
 
         public Settings(Game g)
         {
@@ -190,41 +191,52 @@ namespace Virus.Core
 ";
                 defaultSettings += "# Number of organs by color (default: 5).\n";
                 defaultSettings += String.Format("{0}{1}{2}\n", strNumberOrgans, splitter, nNumberOrgans);
-                
+                defaultSettings += "\n";
+
                 defaultSettings += "# Number of medicines by color (default: 5).\n";
                 defaultSettings += String.Format("{0}{1}{2}\n", strNumberMedicines, splitter, nNumberMedicines);
+                defaultSettings += "\n";
 
                 defaultSettings += "# Number of viruses by color (default: 4).\n";
                 defaultSettings += String.Format("{0}{1}{2}\n", strNumberViruses, splitter, nNumberViruses);
+                defaultSettings += "\n";
 
                 defaultSettings += "# Number of threatment spreading (default: 2).\n";
                 defaultSettings += String.Format("{0}{1}{2}\n", strNumberThreatmentsSpreading, splitter, nNumberThreatmentsSpreading);
+                defaultSettings += "\n";
 
                 defaultSettings += "# Number of threatment transplant (default: 3).\n";
                 defaultSettings += String.Format("{0}{1}{2}\n", strNumberThreatmentsTransplant, splitter, nNumberThreatmentsTransplant);
+                defaultSettings += "\n";
 
                 defaultSettings += "# Number of threatment organ thief (default: 3).\n";
                 defaultSettings += String.Format("{0}{1}{2}\n", strNumberThreatmentsOrganThief, splitter, nNumberThreatmentsOrganThief);
+                defaultSettings += "\n";
 
                 defaultSettings += "# Number of threatment latex glove (default: 1).\n";
                 defaultSettings += String.Format("{0}{1}{2}\n", strNumberThreatmentsLatexGlove, splitter, nNumberThreatmentsLatexGlove);
+                defaultSettings += "\n";
 
                 defaultSettings += "# Number of threatment medical error (default: 1).\n";
                 defaultSettings += String.Format("{0}{1}{2}\n", strNumberThreatmentsMedicalError, splitter, nNumberThreatmentsMedicalError);
+                defaultSettings += "\n";
 
                 defaultSettings += "# Number of wildcard organs (default: 1).\n";
                 defaultSettings += String.Format("{0}{1}{2}\n", strNumberWildcardOrgans, splitter, nNumberWildcardOrgans);
+                defaultSettings += "\n";
 
                 defaultSettings += "# Number of wildcard viruses (default: 1).\n";
                 defaultSettings += String.Format("{0}{1}{2}\n", strNumberWildcardViruses, splitter, nNumberWildcardViruses);
+                defaultSettings += "\n";
 
                 defaultSettings += "# Number of wildcard medicines (default: 4).\n";
                 defaultSettings += String.Format("{0}{1}{2}\n", strNumberWildcardMedicines, splitter, nNumberWildcardMedicines);
+                defaultSettings += "\n";
 
                 defaultSettings += "# Number of cards in hand (default: 3).\n";
                 defaultSettings += String.Format("{0}{1}{2}\n", strNumberCardInHand, splitter, nNumberCardInHand);
+                defaultSettings += "\n";
                 
-
                 #endregion
                 using (StreamWriter sw = File.AppendText(FILE_PREFERENCES))
                 {

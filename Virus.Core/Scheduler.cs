@@ -9,13 +9,9 @@ namespace Virus.Core
     public static class Scheduler
     {
         public const char MOVE_SEPARATOR = '-';
-        public const string CHARS_WILDCARD = "(^)";
-        public const string CHARS_MEDICINE = "(*)";
-        public const string CHARS_VIRUS = "(@)";
-        public const string CHARS_THREATMENT = "(+)";
-        public const string CHARS_WILD_VIRUS = "(^@)";
-        public const string CHARS_WILD_MEDICINE = "(^*)";
-
+        public const string CHARS_MEDICINE = "({0}*)";
+        public const string CHARS_VIRUS = "({0}@)";
+        
 
         public static string GetMoveItem(int playerid, int cardnum)
         {

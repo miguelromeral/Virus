@@ -210,29 +210,7 @@ namespace Virus.Core
 
             foreach(var mod in modifiers)
             {
-                switch (mod.Face)
-                {
-                    case Card.CardFace.Virus:
-                        if (mod.Color == Card.CardColor.Wildcard)
-                        {
-                            printed += Scheduler.CHARS_WILD_VIRUS;
-                        }
-                        else
-                        {
-                            printed += Scheduler.CHARS_VIRUS;
-                        }
-                        break;
-                    case Card.CardFace.Medicine:
-                        if (mod.Color == Card.CardColor.Wildcard)
-                        {
-                            printed += Scheduler.CHARS_WILD_MEDICINE;
-                        }
-                        else
-                        {
-                            printed += Scheduler.CHARS_MEDICINE;
-                        }
-                        break;
-                }
+                printed += mod.ToStringShort();
             }
             return printed;
         }
