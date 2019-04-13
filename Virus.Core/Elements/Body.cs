@@ -8,14 +8,19 @@ namespace Virus.Core
 {
     public class Body
     {
-        private int points;
-
         private List<BodyItem> organs;
 
         
         public int Points
         {
-            get { return points; }
+            get {
+                int p = 0;
+                foreach(var item in organs)
+                {
+                    p += item.Points;
+                }
+                return p;
+            }
         }
         public List<BodyItem> Organs
         {
@@ -25,7 +30,6 @@ namespace Virus.Core
         
         public Body()
         {
-            points = 0;
             organs = new List<BodyItem>();
         }
 

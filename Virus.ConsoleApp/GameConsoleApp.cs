@@ -61,14 +61,14 @@ namespace Virus.ConsoleApp
             Console.WriteLine();
         }
 
-        public void PrintGameState(string message = null, bool user = false, string action = ACTION_PLAYING, List<string> moves = null)
+        public void PrintGameState(string message = null, bool user = false, string action = Scheduler.ACTION_PLAYING, List<string> moves = null)
         {
             //Console.Clear();
             Console.WriteLine("------------------------------------------------------------");
 
             if (user)
             {
-                if (!action.Equals(ACTION_CHOOSING))
+                if (!action.Equals(Scheduler.ACTION_CHOOSING))
                     Console.WriteLine(this);
 
                 if (message != null)
@@ -82,15 +82,15 @@ namespace Virus.ConsoleApp
 
                 switch (action)
                 {
-                    case ACTION_PLAYING:
+                    case Scheduler.ACTION_PLAYING:
                         Console.WriteLine("- Please, press the number of card to play:");
                         Players[0].PrintMyOptions(false);
                         break;
-                    case ACTION_DISCARDING:
+                    case Scheduler.ACTION_DISCARDING:
                         Console.WriteLine("- Please, press the number of card to discard:");
                         Players[0].PrintMyOptions(true);
                         break;
-                    case ACTION_CHOOSING:
+                    case Scheduler.ACTION_CHOOSING:
 
                         break;
                 }
@@ -125,7 +125,7 @@ namespace Virus.ConsoleApp
                     int todiscard = -1;
                     while (todiscard != 0)
                     {
-                        PrintGameState(message, true, ACTION_DISCARDING);
+                        PrintGameState(message, true, Scheduler.ACTION_DISCARDING);
                         if (me.Hand.Count > 0)
                         {
                             todiscard = Convert.ToInt32(Console.ReadLine());
@@ -318,7 +318,7 @@ namespace Virus.ConsoleApp
 
                 #region PLAY SPREADING
                 case Card.CardFace.Spreading:
-                    List<List<string>> wholeMoves = GetListMovementsSrepading(player);
+                    List<List<string>> wholeMoves = Scheduler.GetListOfListsSpreadingMoves(GetListMovements(player, myCard));
                     if (wholeMoves.Count == 0)
                     {
                         return "You currently can't spread your virus to any free organ of your rival's bodies.";

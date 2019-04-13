@@ -9,9 +9,16 @@ namespace Virus.Core
     public static class Scheduler
     {
         public const char MOVE_SEPARATOR = '-';
+        public const char MULTI_MOVE_SEPARATOR = ',';
+
         public const string CHARS_MEDICINE = "({0}*)";
         public const string CHARS_VIRUS = "({0}@)";
         
+        public const string ACTION_PLAYING = "Playing";
+        public const string ACTION_DISCARDING = "Discarding";
+        public const string ACTION_CHOOSING = "ChoosingCars";
+
+
 
         public static string GetMoveItem(int playerid, int cardnum)
         {
@@ -30,9 +37,42 @@ namespace Virus.Core
             string res = moves[0];
             for(int i=1; i<moves.Length; i++)
             {
-                res += "," + moves[i];
+                res += MULTI_MOVE_SEPARATOR + moves[i];
             }
             return res;
+        }
+
+        public static List<List<string>> GetListOfListsSpreadingMoves(List<string> moves)
+        {
+            List<List<string>> wholeMoves = new List<List<string>>();
+            int lastPlayerIndex = -1;
+            List<string> movesOnePlayer = new List<string>();
+            string move;
+
+            int index = 0;
+            do
+            {
+                move = moves[index];
+                int p = Scheduler.GetStringInt(move, 2);
+                if (p != lastPlayerIndex)
+                {
+                    if (lastPlayerIndex != -1)
+                    {
+                        wholeMoves.Add(movesOnePlayer);
+                    }
+                    lastPlayerIndex = p;
+                    movesOnePlayer = new List<string>();
+                }
+                movesOnePlayer.Add(move);
+                index++;
+            }
+            while (index < moves.Count);
+            if (lastPlayerIndex != -1)
+            {
+                wholeMoves.Add(movesOnePlayer);
+            }
+
+            return wholeMoves;
         }
 
         public static bool IntInListString(List<string> list, int index, int i)

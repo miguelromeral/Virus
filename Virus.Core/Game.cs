@@ -211,7 +211,15 @@ namespace Virus.Core
         }
 
         public void Start() {
-            Console.WriteLine("In progress!");
+            Console.WriteLine("Press any key to begin the Virus!");
+            Console.ReadLine();
+
+            while (!GameOver)
+            {
+                PlayTurn();
+            }
+
+            logger.Write("The game has been finished.", true);
         }
 
         public override string ToString()
@@ -262,13 +270,6 @@ namespace Virus.Core
                 player.Hand.Add(DrawNewCard(player));
             }
         }
-
-        public const string ACTION_PLAYING = "Playing";
-        public const string ACTION_DISCARDING = "Discarding";
-        public const string ACTION_CHOOSING = "ChoosingCars";
-
-        
-        
         
 
         public string DoSpreadingOneItem(string moves)
@@ -295,9 +296,7 @@ namespace Virus.Core
 
             return null;
         }
-            
-
-
+        
         public string PlayTransplant(string move)
         {
             try
@@ -360,8 +359,7 @@ namespace Virus.Core
                 return "EXCEPTION: CAN'T ABLE TO STEAL ORGAN.";
             }
         }
-
-
+        
         public string PlayMedicalError(Player me, string move)
         {
             try
@@ -421,7 +419,7 @@ namespace Virus.Core
                         }
                     }
                     break;
-
+                
                 case Card.CardFace.Transplant:
                     Player one, two;
                     BodyItem bone, btwo;
@@ -489,7 +487,7 @@ namespace Virus.Core
                         }
                         myCardIndex++;
                     }
-                    break;
+                    return moves;
 
                 case Card.CardFace.OrganThief:
                     myId = me.ID;
@@ -527,57 +525,7 @@ namespace Virus.Core
 
             return moves;
         }
-
-
-        public List<List<string>> GetListMovementsSrepading(Player me)
-        {
-            List<List<string>> wholeMoves = new List<List<string>>();
-            List<string> moves;
-
-            int myCardIndex = 0;
-            Card modifier;
-            foreach (BodyItem item in me.Body.Organs)
-            {
-                modifier = item.GetLastModifier();
-                if (modifier != null)
-                {
-                    if (item.Status.Equals(BodyItem.State.Infected))
-                    {
-                        moves = new List<string>();
-                        int j = 0;
-                        foreach (Player rival in Players)
-                        {
-                            if (rival.ID != me.ID)
-                            {
-                                int k = 0;
-                                foreach (BodyItem ri in rival.Body.Organs)
-                                {
-                                    if (SameColorOrWildcard(modifier.Color, ri.Organ.Color) &&
-                                        ri.Status.Equals(BodyItem.State.Free))
-                                    {
-                                        moves.Add(Scheduler.GetManyMoveItem(new string[] {
-                                                Scheduler.GetMoveItem(me.ID, myCardIndex),
-                                                Scheduler.GetMoveItem(j, k)
-                                            }));
-                                    }
-                                    k++;
-                                }
-                            }
-                            j++;
-                        }
-                        if(moves.Count > 0)
-                        {
-                            wholeMoves.Add(moves);
-                        }
-                    }
-                }
-                myCardIndex++;
-            }
-
-            return wholeMoves;
-        }
-
-
+        
         public void DiscardFromHand(Player player, int index)
         {
             Card card = player.Hand[index];

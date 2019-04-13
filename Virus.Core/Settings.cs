@@ -26,6 +26,7 @@ namespace Virus.Core
         private const string strNumberWildcardViruses = "NumberWildcardViruses";
         private const string strNumberWildcardMedicines = "NumberWildcardMedicines";
         private const string strNumberCardInHand = "NumberCardInHand";
+        private const string strNumberToWin = "NumberOrgansToWin";
         private const char splitter = ' ';
         #endregion
 
@@ -42,6 +43,7 @@ namespace Virus.Core
         private const int nNumberWildcardViruses = 1;
         private const int nNumberWildcardMedicines = 4;
         private const int nNumberCardInHand = 3;
+        private const int nNumberToWin = 4;
         #endregion
 
         #region Properties of the current game
@@ -57,6 +59,7 @@ namespace Virus.Core
         public int NumberWildcardMedicines { get; set; }
         public int NumberWildcardViruses { get; set; }
         public int NumberCardInHand { get; set; }
+        public int NumberToWin { get; set; }
         #endregion
 
         public Settings(Game g)
@@ -84,6 +87,7 @@ namespace Virus.Core
                 NumberWildcardViruses = nNumberViruses;
                 NumberWildcardMedicines = nNumberWildcardMedicines;
                 NumberCardInHand = nNumberCardInHand;
+                NumberToWin = nNumberToWin;
 
                 using (StreamReader sr = new StreamReader(FILE_PREFERENCES))
                 {
@@ -137,7 +141,10 @@ namespace Virus.Core
                                              NumberWildcardMedicines= Convert.ToInt32(args[1]);
                                             break;
                                         case strNumberCardInHand:
-                                             NumberCardInHand = Convert.ToInt32(args[1]);
+                                            NumberCardInHand = Convert.ToInt32(args[1]);
+                                            break;
+                                        case strNumberToWin:
+                                            NumberToWin = Convert.ToInt32(args[1]);
                                             break;
                                     }
                                 }
@@ -236,7 +243,11 @@ namespace Virus.Core
                 defaultSettings += "# Number of cards in hand (default: 3)." + Environment.NewLine;
                 defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberCardInHand, splitter, nNumberCardInHand);
                 defaultSettings += Environment.NewLine;
-                
+
+                defaultSettings += "# Number of organs in the body to win (default: 4)." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberToWin, splitter, nNumberToWin);
+                defaultSettings += Environment.NewLine;
+
                 #endregion
                 using (StreamWriter sw = File.AppendText(FILE_PREFERENCES))
                 {
