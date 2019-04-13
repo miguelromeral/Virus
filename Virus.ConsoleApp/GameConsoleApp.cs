@@ -61,6 +61,50 @@ namespace Virus.ConsoleApp
             Console.WriteLine();
         }
 
+        public void PrintGameState(string message = null, bool user = false, string action = ACTION_PLAYING, List<string> moves = null)
+        {
+            //Console.Clear();
+            Console.WriteLine("------------------------------------------------------------");
+
+            if (user)
+            {
+                if (!action.Equals(ACTION_CHOOSING))
+                    Console.WriteLine(this);
+
+                if (message != null)
+                {
+                    Console.WriteLine(new string('*', 70));
+                    Console.WriteLine("** MOVEMENT NOT ALLOWED: " + new string(' ', 43) + "**");
+                    Console.WriteLine(String.Format("** {0,63} **", message));
+                    Console.WriteLine(new string('*', 70));
+
+                }
+
+                switch (action)
+                {
+                    case ACTION_PLAYING:
+                        Console.WriteLine("- Please, press the number of card to play:");
+                        Players[0].PrintMyOptions(false);
+                        break;
+                    case ACTION_DISCARDING:
+                        Console.WriteLine("- Please, press the number of card to discard:");
+                        Players[0].PrintMyOptions(true);
+                        break;
+                    case ACTION_CHOOSING:
+
+                        break;
+                }
+
+
+            }
+            else
+            {
+
+            }
+        }
+
+
+
 
         public bool ReadUserInput(string message = null, bool moveDone = false)
         {
@@ -173,6 +217,7 @@ namespace Virus.ConsoleApp
             {
                 #region PLAY ORGAN
                 case Card.CardFace.Organ:
+                    logger.Write(player.ShortDescription+" has played a "+myCard);
                     return player.Body.SetOrgan(myCard);
                 #endregion
 
@@ -196,6 +241,7 @@ namespace Virus.ConsoleApp
 
                         return player.Body.SetMedicine(myCard, Scheduler.GetStringInt(choosen, 2));
                     }
+
                     break;
                 #endregion
 
@@ -264,10 +310,7 @@ namespace Virus.ConsoleApp
 
                         if (choosen == null)
                             throw new Exception("The input doesn't belong to any available move.");
-
-                        p = Scheduler.GetStringInt(choosen, 0);
-                        c = Scheduler.GetStringInt(choosen, 2);
-
+                        
                         return PlayOrganThief(player, choosen);
                     }
                     break;

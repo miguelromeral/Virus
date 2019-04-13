@@ -14,7 +14,8 @@ namespace Virus.Core
         private List<Card> deck;
         private List<Card> discards;
         public int turns;
-        public Logger logger;
+        public Logger logger { get; }
+
         public Settings Settings { get; set; }
         #endregion
         
@@ -152,7 +153,7 @@ namespace Virus.Core
                 List<Card> hand = new List<Card>();
                 for (int j = 0; j < Settings.NumberCardInHand; j++)
                 {
-                    hand.Add(DrawNewCard());
+                    hand.Add(DrawNewCard(Players[i]));
                 }
 
                 Players[i].NewHand(hand);
@@ -185,7 +186,7 @@ namespace Virus.Core
 
         #region Methods
 
-        public Card DrawNewCard()
+        public Card DrawNewCard(Player me)
         {
             Card newCard = null;
             try
@@ -193,18 +194,24 @@ namespace Virus.Core
                 Random r = new Random();
                 if(deck.Count == 0)
                 {
+                    logger.Write("Deck is already empty. We have to redraw the discards.");
                     deck = Shuffle(discards);
                     discards = new List<Card>();
                 }
                 newCard = deck[0];
+                logger.Write(me.ShortDescription + " draws a new card: " + newCard);
                 deck.RemoveAt(0);
             }
             catch (Exception)
             {
-                Console.WriteLine("** There's no cards in deck to pop. **");
+                logger.Write("** There's no cards in deck to pop. **", true);
                 return null;
             }
             return newCard;
+        }
+
+        public void Start() {
+            Console.WriteLine("In progress!");
         }
 
         public override string ToString()
@@ -215,7 +222,6 @@ namespace Virus.Core
             printed += "Turn # " + (turns + 1) + "\n"; 
             for(int i=0; i<Players.Count; i++)
             {
-                printed += " ** Player " + (i + 1)+" **\n";
                 printed += Players[i];
             }
 
@@ -230,16 +236,20 @@ namespace Virus.Core
             Console.WriteLine("-------------------------------");*/
         }
 
-
         public void PlayTurn()
         {
             Player p = Players[Turn];
+            logger.Write("It's "+ p.ShortDescription +" turn!");
             if (p.Hand.Count > 0)
             {
-                PrintGameState();
+                //PrintGameState();
                 Console.WriteLine("Press to continue (It's computer turn!)...");
                 Console.ReadLine();
                 p.Computer.PlayTurn();
+            }
+            else
+            {
+                logger.Write("The player has no cards in his hand. Pass the turn.");
             }
             DrawCardsToFill(p);
             turns++;
@@ -249,7 +259,7 @@ namespace Virus.Core
         {
             for(int i=player.Hand.Count; i< Settings.NumberCardInHand; i++)
             {
-                player.Hand.Add(DrawNewCard());
+                player.Hand.Add(DrawNewCard(player));
             }
         }
 
@@ -258,51 +268,7 @@ namespace Virus.Core
         public const string ACTION_CHOOSING = "ChoosingCars";
 
         
-        public void PrintGameState(string message = null, bool user = false, string action = ACTION_PLAYING, List<string>moves = null)
-        {
-            //Console.Clear();
-            Console.WriteLine("------------------------------------------------------------");
-
-            if (user)
-            {
-                if(!action.Equals(ACTION_CHOOSING))
-                    Console.WriteLine(this);
-
-                if (message != null)
-                {
-                    Console.WriteLine(new string('*', 70));
-                    Console.WriteLine("** MOVEMENT NOT ALLOWED: "+new string(' ', 43)+"**");
-                    Console.WriteLine(String.Format("** {0,63} **", message));
-                    Console.WriteLine(new string('*', 70));
-
-                }
-
-
-                switch (action)
-                {
-                    case ACTION_PLAYING:
-                        Console.WriteLine("- Please, press the number of card to play:");
-                        Players[0].PrintMyOptions(false);
-                        break;
-                    case ACTION_DISCARDING:
-                        Console.WriteLine("- Please, press the number of card to discard:");
-                        Players[0].PrintMyOptions(true);
-                        break;
-                    case ACTION_CHOOSING:
-
-                        break;
-                }
-
-
-            }
-            else
-            {
-
-            }
-        }
-
-
-
+        
         
 
         public string DoSpreadingOneItem(string moves)
@@ -324,7 +290,8 @@ namespace Virus.Core
             Card virus = bone.GetLastModifier();
             bone.Modifiers.Remove(virus);
             btwo.NewVirus(virus, this);
-            
+
+            logger.Write(one.ShortDescription+" has spread his "+virus+" from his "+bone+" to "+two.ShortDescription+"'s "+btwo);
 
             return null;
         }
@@ -349,6 +316,8 @@ namespace Virus.Core
 
                 Players[p1].Body.Organs[o1] = btwo;
                 Players[p2].Body.Organs[o2] = bone;
+
+                logger.Write(one.ShortDescription + " has transplantated his " + bone + " by the " + two.ShortDescription + "'s organ "+btwo);
 
                 return null;
             }
@@ -382,6 +351,8 @@ namespace Virus.Core
 
                 me.Body.Organs.Add(stealed);
 
+                logger.Write(me.ShortDescription+" has stealed the "+rival.ShortDescription+"'s organ "+stealed);
+
                 return null;
             }
             catch (Exception)
@@ -400,6 +371,8 @@ namespace Virus.Core
                 Body aux = me.Body;
                 me.Body = toswitch.Body;
                 toswitch.Body = aux;
+
+                logger.Write(me.ShortDescription+" has switched his body by the "+toswitch.ShortDescription+"'s one.");
 
                 return null;
             }
@@ -608,14 +581,15 @@ namespace Virus.Core
         public void DiscardFromHand(Player player, int index)
         {
             Card card = player.Hand[index];
-            discards.Add(card);
-            player.Hand.Remove(card);
+            DiscardFromHand(player, card);
         }
 
         public void DiscardFromHand(Player player, Card card)
         {
             discards.Add(card);
             player.Hand.Remove(card);
+
+            logger.Write(player.ShortDescription + " has discarded a " + card + " from his hand.");
         }
 
         public void DiscardAllHand(Player player)
@@ -629,7 +603,7 @@ namespace Virus.Core
         public void MoveToDiscards(Card card)
         {
             discards.Add(card);
-            logger.Write(card + " has been discarded.");
+            logger.Write(card + " has been moved to discard stack.");
         }
 
         #endregion

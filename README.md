@@ -3,25 +3,37 @@ Virus (by Tranjis Games) *Work in progress*
 
 ## TODO
 
-* :heavy_check_mark:
+:o:
+Documented
+
+:heavy_check_mark:
 Be able to read configuration of the game from a file (like Linux .conf files)
-* :o:
+
+:o:
 Add points to any body item to develop strategies in AI.
-* :o:
+
+:o:
 Refactor code to have the main actions unified (i.e.: not have three different snippets that discard cards. Better have one and its appropiate log call).
-* :o:
+
+:o:
 Create string resources to allow more than one language.
-* :o:
+
+:arrow_forward:
 Finish to fill Logger calls to file.
-* :o:
+
+:o:
 Implement AI in all levels (easy, medium, hard) and its strategies.
-* :o:
+
+:o:
 Create statistics from each move played.
-* :arrow_forward:
+
+:arrow_forward:
 Create an ConsoleApp to allow human interaction.
-* :o:
+
+:o:
 GUI in UWP with XAML.
-* :o:
+
+:o:
 GUI in Unity?
 
 # Contact

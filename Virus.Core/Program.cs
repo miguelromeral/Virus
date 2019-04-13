@@ -12,7 +12,7 @@ namespace Virus.Core
         static void Main(string[] args)
         {
             Game virus = new Game(3);
-            //virus.Play();
+            virus.Start();
         }
     }
 }

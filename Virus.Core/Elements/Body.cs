@@ -93,6 +93,7 @@ namespace Virus.Core
                 if (message != null && message.Equals(BodyItem.RULE_DELETEBODY))
                 {
                     organs.Remove(item);
+                    game.logger.Write("The "+item+" has been removed from the body.");
                     message = null;
                 }
                 return message;

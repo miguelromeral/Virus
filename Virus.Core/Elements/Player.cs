@@ -88,16 +88,14 @@ namespace Virus.Core
         public override string ToString()
         {
             string printed = String.Empty;
-
-            printed += "* IA: " + ai.ToString() + "\n";
-            printed += "* Body: \n";
-            printed += body + "\n";
+            
+            printed += String.Format("[ {0,30} | IA: {1,10}]" + Environment.NewLine, ShortDescription, ai.ToString());
+            printed += body + Environment.NewLine;
             
             return printed;
         }
 
-
-        // Return false if there is no cards.
+        
         public void PrintMyOptions(bool discarding = false)
         {
             int i = 0;

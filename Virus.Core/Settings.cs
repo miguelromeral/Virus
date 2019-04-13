@@ -189,53 +189,53 @@ namespace Virus.Core
 # is a comment, and the game will ignore it.
 
 ";
-                defaultSettings += "# Number of organs by color (default: 5).\n";
-                defaultSettings += String.Format("{0}{1}{2}\n", strNumberOrgans, splitter, nNumberOrgans);
-                defaultSettings += "\n";
+                defaultSettings += "# Number of organs by color (default: 5)." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberOrgans, splitter, nNumberOrgans);
+                defaultSettings += Environment.NewLine;
 
-                defaultSettings += "# Number of medicines by color (default: 5).\n";
-                defaultSettings += String.Format("{0}{1}{2}\n", strNumberMedicines, splitter, nNumberMedicines);
-                defaultSettings += "\n";
+                defaultSettings += "# Number of medicines by color (default: 5)." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberMedicines, splitter, nNumberMedicines);
+                defaultSettings += Environment.NewLine;
 
-                defaultSettings += "# Number of viruses by color (default: 4).\n";
-                defaultSettings += String.Format("{0}{1}{2}\n", strNumberViruses, splitter, nNumberViruses);
-                defaultSettings += "\n";
+                defaultSettings += "# Number of viruses by color (default: 4)." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberViruses, splitter, nNumberViruses);
+                defaultSettings += Environment.NewLine;
 
-                defaultSettings += "# Number of threatment spreading (default: 2).\n";
-                defaultSettings += String.Format("{0}{1}{2}\n", strNumberThreatmentsSpreading, splitter, nNumberThreatmentsSpreading);
-                defaultSettings += "\n";
+                defaultSettings += "# Number of threatment spreading (default: 2)." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberThreatmentsSpreading, splitter, nNumberThreatmentsSpreading);
+                defaultSettings += Environment.NewLine;
 
-                defaultSettings += "# Number of threatment transplant (default: 3).\n";
-                defaultSettings += String.Format("{0}{1}{2}\n", strNumberThreatmentsTransplant, splitter, nNumberThreatmentsTransplant);
-                defaultSettings += "\n";
+                defaultSettings += "# Number of threatment transplant (default: 3)." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberThreatmentsTransplant, splitter, nNumberThreatmentsTransplant);
+                defaultSettings += Environment.NewLine;
 
-                defaultSettings += "# Number of threatment organ thief (default: 3).\n";
-                defaultSettings += String.Format("{0}{1}{2}\n", strNumberThreatmentsOrganThief, splitter, nNumberThreatmentsOrganThief);
-                defaultSettings += "\n";
+                defaultSettings += "# Number of threatment organ thief (default: 3)." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberThreatmentsOrganThief, splitter, nNumberThreatmentsOrganThief);
+                defaultSettings += Environment.NewLine;
 
-                defaultSettings += "# Number of threatment latex glove (default: 1).\n";
-                defaultSettings += String.Format("{0}{1}{2}\n", strNumberThreatmentsLatexGlove, splitter, nNumberThreatmentsLatexGlove);
-                defaultSettings += "\n";
+                defaultSettings += "# Number of threatment latex glove (default: 1)." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberThreatmentsLatexGlove, splitter, nNumberThreatmentsLatexGlove);
+                defaultSettings += Environment.NewLine;
 
-                defaultSettings += "# Number of threatment medical error (default: 1).\n";
-                defaultSettings += String.Format("{0}{1}{2}\n", strNumberThreatmentsMedicalError, splitter, nNumberThreatmentsMedicalError);
-                defaultSettings += "\n";
+                defaultSettings += "# Number of threatment medical error (default: 1)." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberThreatmentsMedicalError, splitter, nNumberThreatmentsMedicalError);
+                defaultSettings += Environment.NewLine;
 
-                defaultSettings += "# Number of wildcard organs (default: 1).\n";
-                defaultSettings += String.Format("{0}{1}{2}\n", strNumberWildcardOrgans, splitter, nNumberWildcardOrgans);
-                defaultSettings += "\n";
+                defaultSettings += "# Number of wildcard organs (default: 1)." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberWildcardOrgans, splitter, nNumberWildcardOrgans);
+                defaultSettings += Environment.NewLine;
 
-                defaultSettings += "# Number of wildcard viruses (default: 1).\n";
-                defaultSettings += String.Format("{0}{1}{2}\n", strNumberWildcardViruses, splitter, nNumberWildcardViruses);
-                defaultSettings += "\n";
+                defaultSettings += "# Number of wildcard viruses (default: 1)." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberWildcardViruses, splitter, nNumberWildcardViruses);
+                defaultSettings += Environment.NewLine;
 
-                defaultSettings += "# Number of wildcard medicines (default: 4).\n";
-                defaultSettings += String.Format("{0}{1}{2}\n", strNumberWildcardMedicines, splitter, nNumberWildcardMedicines);
-                defaultSettings += "\n";
+                defaultSettings += "# Number of wildcard medicines (default: 4)."+Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberWildcardMedicines, splitter, nNumberWildcardMedicines);
+                defaultSettings += Environment.NewLine;
 
-                defaultSettings += "# Number of cards in hand (default: 3).\n";
-                defaultSettings += String.Format("{0}{1}{2}\n", strNumberCardInHand, splitter, nNumberCardInHand);
-                defaultSettings += "\n";
+                defaultSettings += "# Number of cards in hand (default: 3)." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberCardInHand, splitter, nNumberCardInHand);
+                defaultSettings += Environment.NewLine;
                 
                 #endregion
                 using (StreamWriter sw = File.AppendText(FILE_PREFERENCES))
