@@ -12,7 +12,8 @@ namespace Virus.Core
         private string date;
         private const string NAME_FILE_FORMAT = "Virus! (by Tranjis Games)";
         private const string NAME_EXTENSION = ".txt";
-        private const string DATEFORMAT = "yyyyMMdd HHmm";
+        //private const string DATEFORMAT = "yyyyMMdd HHmm";
+        private const string DATEFORMAT = "yyyyMMdd";
 
         public Logger() {
             date = DateTime.Now.ToString(DATEFORMAT);

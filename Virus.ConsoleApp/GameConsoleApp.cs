@@ -14,20 +14,7 @@ namespace Virus.ConsoleApp
         #region Constructor
         public GameConsoleApp(
             int numPlayers,
-            int nOrgans = 0,
-            int nMedicines = 0,
-            int nViruses = 0,
-            int ntSpreading = 0,
-            int ntTransplant = 0,
-            int ntOrganThief = 0,
-            int ntLatexGlove = 0,
-            int ntMedicalError = 0,
-            int nWildOrgans = 0,
-            int nWildViruses = 0,
-            int nWildMedicines = 0,
-            int nHand = 0,
-            bool firstHuman = false) : base(numPlayers, nOrgans, nMedicines, nViruses, ntSpreading, ntTransplant, ntOrganThief, ntLatexGlove,
-                ntMedicalError, nWildOrgans, nWildViruses, nWildMedicines, nHand, firstHuman)
+            bool firstHuman = false) : base(numPlayers, firstHuman)
         {
             reader = new ReaderInput(this);
         }
@@ -84,7 +71,7 @@ namespace Virus.ConsoleApp
                 Card myCard;
                 PrintGameState(message, true);
                 int myCardIndex = Convert.ToInt32(Console.ReadLine());
-                if (myCardIndex < 0 || myCardIndex > NumberCardInHand)
+                if (myCardIndex < 0 || myCardIndex > Settings.NumberCardInHand)
                 {
                     throw new Exception("The number of card is not in range.");
                 }
@@ -105,7 +92,7 @@ namespace Virus.ConsoleApp
                             }
                             else if (todiscard == 0)
                             {
-                                if (me.Hand.Count == NumberCardInHand)
+                                if (me.Hand.Count == Settings.NumberCardInHand)
                                 {
                                     throw new Exception("You have to discard, at least, one card. Discarding cancelled");
                                 }

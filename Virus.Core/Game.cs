@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,23 +15,9 @@ namespace Virus.Core
         private List<Card> discards;
         public int turns;
         public Logger logger;
+        public Settings Settings { get; set; }
         #endregion
-
-        #region Game options
-        public int NumberOrgans { get; set; }
-        public int NumberMedicines { get; set; }
-        public int NumberViruses { get; set; }
-        public int NumberThreatmentsSpreading { get; set; }
-        public int NumberThreatmentsTransplant { get; set; }
-        public int NumberThreatmentsOrganThief { get; set; }
-        public int NumberThreatmentsLatexGlove { get; set; }
-        public int NumberThreatmentsMedicalError { get; set; }
-        public int NumberWildcardOrgans { get; set; }
-        public int NumberWildcardMedicines { get; set; }
-        public int NumberWildcardViruses{ get; set; }
-        public int NumberCardInHand { get; set; }
-        #endregion
-
+        
         #region Properties
         public int Turn
         {
@@ -54,36 +41,14 @@ namespace Virus.Core
         #endregion
 
         #region Initializers
-        public Game(int numPlayers,
-            int nOrgans = 0,
-            int nMedicines = 0,
-            int nViruses = 0,
-            int ntSpreading = 0,
-            int ntTransplant = 0,
-            int ntOrganThief = 0,
-            int ntLatexGlove = 0,
-            int ntMedicalError = 0,
-            int nWildOrgans = 0,
-            int nWildViruses = 0,
-            int nWildMedicines = 0,
-            int nHand = 0,
-            bool firstHuman = false)
+        public Game(int numPlayers, bool firstHuman = false)
         {
-            NumberOrgans = (nOrgans == 0 ? 5 : nOrgans);
-            NumberMedicines = (nMedicines== 0 ? 5 : nMedicines);
-            NumberViruses = (nViruses == 0 ? 4 : nViruses);
-            NumberThreatmentsSpreading = (ntSpreading == 0 ? 2 : ntSpreading);
-            NumberThreatmentsTransplant = (ntTransplant == 0 ? 3 : ntTransplant);
-            NumberThreatmentsOrganThief = (ntOrganThief == 0 ? 3 : ntOrganThief);
-            NumberThreatmentsLatexGlove = (ntLatexGlove == 0 ? 1 : ntLatexGlove);
-            NumberThreatmentsMedicalError = (ntMedicalError == 0 ? 1 : ntMedicalError);
-            NumberWildcardOrgans = (nWildOrgans == 0 ? 1 : nWildOrgans);
-            NumberWildcardViruses = (nWildViruses == 0 ? 1 : nWildViruses);
-            NumberWildcardMedicines = (nWildMedicines == 0 ? 4 : nWildMedicines);
-            NumberCardInHand = (nHand == 0 ? 3 : nHand);
-            
             logger = new Logger();
             logger.Write("We're getting ready Virus!", true);
+
+            Settings = new Settings(this);
+            Settings.LoadGamePreferences();
+            
             deck = Shuffle(InitializeCards());
             logger.Write(deck.Count+" cards shuffled.", true);
             discards = new List<Card>();
@@ -103,66 +68,66 @@ namespace Virus.Core
             {
                 if (color != Card.CardColor.Purple && color != Card.CardColor.Wildcard)
                 {
-                    for (i = 0; i < NumberOrgans; i++)
+                    for (i = 0; i < Settings.NumberOrgans; i++)
                     {
                         deck.Add(new Card(color, Card.CardFace.Organ));
                     }
-                    logger.Write(NumberOrgans+" "+color+" organs created.");
+                    logger.Write(Settings.NumberOrgans +" "+color+" organs created.");
 
-                    for (i = 0; i < NumberMedicines; i++)
+                    for (i = 0; i < Settings.NumberMedicines; i++)
                     {
                         deck.Add(new Card(color, Card.CardFace.Medicine));
                     }
-                    logger.Write(NumberMedicines+ " " + color + " medicines created.");
+                    logger.Write(Settings.NumberMedicines + " " + color + " medicines created.");
 
-                    for (i = 0; i < NumberViruses; i++)
+                    for (i = 0; i < Settings.NumberViruses; i++)
                     {
                         deck.Add(new Card(color, Card.CardFace.Virus));
                     }
-                    logger.Write(NumberViruses+ " " + color + " viruses created.");
+                    logger.Write(Settings.NumberViruses + " " + color + " viruses created.");
 
                 }
             }
             #endregion
 
             #region WILDCARD CARDS
-            for (i = 0; i < NumberWildcardOrgans; i++)
+            for (i = 0; i < Settings.NumberWildcardOrgans; i++)
             {
                 deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
             }
-            logger.Write(NumberWildcardOrgans+ " wildcard organs created.");
+            logger.Write(Settings.NumberWildcardOrgans + " wildcard organs created.");
 
-            for (i = 0; i < NumberWildcardMedicines; i++)
+            for (i = 0; i < Settings.NumberWildcardMedicines; i++)
             {
                 deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Medicine));
             }
-            logger.Write(NumberWildcardMedicines + " wildcard medicines created.");
+            logger.Write(Settings.NumberWildcardMedicines + " wildcard medicines created.");
 
-            for (i = 0; i < NumberWildcardViruses; i++)
+            for (i = 0; i < Settings.NumberWildcardViruses; i++)
             {
                 deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Virus));
             }
-            logger.Write(NumberWildcardViruses+ " wildcard viruses created.");
+            logger.Write(Settings.NumberWildcardViruses + " wildcard viruses created.");
             #endregion
             
             #region THREATMENTS
-            for (i = 0; i < NumberThreatmentsSpreading; i++)
+            for (i = 0; i < Settings.NumberThreatmentsSpreading; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Spreading));
             }
-            for (i = 0; i < NumberThreatmentsOrganThief; i++)
+            for (i = 0; i < Settings.NumberThreatmentsOrganThief; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.OrganThief));
             }
-            for (i = 0; i < NumberThreatmentsTransplant; i++)
+            for (i = 0; i < Settings.NumberThreatmentsTransplant; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Transplant));
             }
-            for (i = 0; i < NumberThreatmentsLatexGlove; i++)
+            for (i = 0; i < Settings.NumberThreatmentsLatexGlove; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.LatexGlove));
             }
-            for (i = 0; i < NumberThreatmentsMedicalError; i++)
+            for (i = 0; i < Settings.NumberThreatmentsMedicalError; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.MedicalError));
             }
@@ -185,7 +150,7 @@ namespace Virus.Core
             for (int i = 0; i < numPlayers; i++)
             {
                 List<Card> hand = new List<Card>();
-                for (int j = 0; j < NumberCardInHand; j++)
+                for (int j = 0; j < Settings.NumberCardInHand; j++)
                 {
                     hand.Add(DrawNewCard());
                 }
@@ -282,7 +247,7 @@ namespace Virus.Core
 
         public void DrawCardsToFill(Player player)
         {
-            for(int i=player.Hand.Count; i< NumberCardInHand; i++)
+            for(int i=player.Hand.Count; i< Settings.NumberCardInHand; i++)
             {
                 player.Hand.Add(DrawNewCard());
             }
@@ -666,7 +631,9 @@ namespace Virus.Core
             discards.Add(card);
             logger.Write(card + " has been discarded.");
         }
-        
+
         #endregion
+
+
     }
 }
