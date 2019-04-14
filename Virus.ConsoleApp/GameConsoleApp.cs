@@ -26,16 +26,18 @@ namespace Virus.ConsoleApp
             Console.WriteLine("Press any key to begin the Virus!");
             Console.ReadLine();
             // DATA TO TEST:
-            Players[0].Body.SetOrgan(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
-            Players[0].Body.SetVirus(new Card(Card.CardColor.Red, Card.CardFace.Virus), 0, this);
-            Players[0].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
-            Players[0].Body.SetVirus(new Card(Card.CardColor.Yellow, Card.CardFace.Virus), 1, this);
-            Players[1].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
-            Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            Players[1].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
-            Players[2].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
-            Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            Players[2].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
+            //Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Medicine);
+
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
+            //Players[0].Body.SetVirus(new Card(Card.CardColor.Red, Card.CardFace.Virus), 0, this);
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
+            //Players[0].Body.SetVirus(new Card(Card.CardColor.Yellow, Card.CardFace.Virus), 1, this);
+            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
+            //Players[2].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
+            //Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[2].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
 
             while (!GameOver)
             {
@@ -217,8 +219,7 @@ namespace Virus.ConsoleApp
             {
                 #region PLAY ORGAN
                 case Card.CardFace.Organ:
-                    logger.Write(player.ShortDescription+" has played a "+myCard);
-                    return player.Body.SetOrgan(myCard);
+                    return PlayGameCardOrgan(player, myCard);
                 #endregion
 
                 #region PLAY MEDICINE
@@ -230,7 +231,7 @@ namespace Virus.ConsoleApp
                     }
                     if (moves.Count == 1)
                     {
-                        return player.Body.SetMedicine(myCard, Scheduler.GetStringInt(moves[0], 2));
+                        return PlayGameCardMedicine(player, myCard, moves[0]);
                     }
                     if (moves.Count > 1)
                     {
@@ -239,7 +240,7 @@ namespace Virus.ConsoleApp
                         if (choosen == null)
                             throw new Exception("The input doesn't belong to any available move.");
 
-                        return player.Body.SetMedicine(myCard, Scheduler.GetStringInt(choosen, 2));
+                        return PlayGameCardMedicine(player, myCard, choosen);
                     }
 
                     break;

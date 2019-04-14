@@ -104,15 +104,32 @@ namespace Virus.Core
                 Console.WriteLine("{0}.- {1}", (i + 1), hand[i]);
                 i++;
             }
-            if (discarding)
+            if (Ai == ArtificialIntelligence.AICategory.Human)
             {
-                Console.WriteLine("0.- End discarding");
-            }
-            else
-            {
-                Console.WriteLine("0.- Discard");
+
+                if (discarding)
+                {
+                    Console.WriteLine("0.- End discarding");
+                }
+                else
+                {
+                    Console.WriteLine("0.- Discard");
+                }
             }
 
+        }
+
+        public int GetIndexOfCardInHand(Card card)
+        {
+            int i = 0;
+            foreach(var c in Hand)
+            {
+                if (c.Equals(card)){
+                    return i;
+                }
+                i++;
+            }
+            return -1;
         }
         
     }

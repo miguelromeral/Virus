@@ -124,6 +124,5 @@ namespace Virus.Core
             }
         }
         
-
     }
 }

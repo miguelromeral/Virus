@@ -35,24 +35,12 @@ namespace Virus.Core
 
         public string PlayTurn()
         {
-            List<List<string>> messages = new List<List<string>>();
-            List<string> currentMessage;
-            Discardables.Clear();
-            Game aux;
+            List<List<string>> movesByCard = new List<List<string>>();
+            Card card;
 
-            foreach(var card in Me.Hand)
+            for(int i=0; i< Me.Hand.Count; i++)
             {
-                aux = Game;
-                currentMessage = new List<string>();
-                currentMessage = aux.GetListMovements(Me, card);
-                if(currentMessage.Count != 0)
-                {
-                    messages.Add(currentMessage);
-                }
-                else
-                {
-                    Discardables.Add(card);
-                }
+                movesByCard.Add(Game.GetListMovements(Me, Me.Hand[i]));
             }
 
             switch (Me.Ai)
@@ -61,16 +49,22 @@ namespace Virus.Core
                 case AICategory.Medium:
                 case AICategory.Hard:
 
-
-                    if(Discardables.Count > (Game.Settings.NumberCardInHand / 2))
+                    for(int i=0; i<Me.Hand.Count; i++)
                     {
-                        Game.DiscardAllHand(Me);
+                        if(movesByCard[i].Count > 0)
+                        {
+                            Game.PlayCardByMove(Me, Me.Hand[i], movesByCard[i].ElementAt(0));
+                            return null;
+                        }
+                        else
+                        {
+                            // Testing Operation
+                            //Game.DiscardFromHand(Me, i);
+                        }
                     }
-                    else{
-
-                    }
-
-                    break;
+                    Game.DiscardAllHand(Me);
+                    return null;
+                    
             }
             
             return null;

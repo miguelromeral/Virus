@@ -26,45 +26,22 @@ namespace Virus.Core
             get { return 1; }
         }
 
-        public bool CanPlayMedicine(Card medicine)
-        {
-            if (!organ.Color.Equals(Card.CardColor.Wildcard) &&
-                !medicine.Color.Equals(organ.Color) &&
-                !medicine.Color.Equals(Card.CardColor.Wildcard))
-            {
-                return false;
-            }
-
-            switch (Status)
-            {
-                case State.Free:
-                case State.Vaccinated:
-                case State.Infected:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
 
         public bool CanPlayVirus(Card virus)
         {
-            if (!virus.Color.Equals(organ.Color) &&
-                !virus.Color.Equals(Card.CardColor.Wildcard) &&
-                !organ.Color.Equals(Card.CardColor.Wildcard))
+            if(Referee.SameColorOrWildcard(organ.Color, virus.Color))
             {
-                return false;
+                switch (Status)
+                {
+                    case State.Free:
+                    case State.Vaccinated:
+                    case State.Infected:
+                        return true;
+                    default:
+                        return false;
+                }
             }
-
-            switch (Status)
-            {
-                case State.Free:
-                case State.Vaccinated:
-                case State.Infected:
-                    return true;
-                default:
-                    return false;
-            }
+            return false;
         }
 
         public State Status
