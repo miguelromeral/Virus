@@ -41,10 +41,9 @@ namespace Virus.Core
             int i = 1;
             foreach(BodyItem item in Organs)
             {
-                printed += i +".     "+ item.ToString() + "\n";
+                printed += i +".     "+ item.ToString() + Environment.NewLine;
                 i++;
             }
-
             return printed;
         }
 

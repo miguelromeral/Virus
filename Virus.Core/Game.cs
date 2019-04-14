@@ -224,28 +224,21 @@ namespace Virus.Core
             }
 
             logger.Write("The game has been finished.", true);
+            logger.Write(ToString(), true);
         }
 
         public override string ToString()
         {
             string printed = String.Empty;
-            printed += "Deck (" + deck.Count + ") | Discarding Stack (" + discards.Count + ")\n\n";
+            printed += "Deck (" + deck.Count + ") | Discarding Stack (" + discards.Count + ")" + Environment.NewLine + Environment.NewLine;
 
-            printed += "Turn # " + (Turn + 1) + "\n"; 
+            printed += "Turn # " + (Turn + 1) + Environment.NewLine; 
             for(int i=0; i<Players.Count; i++)
             {
                 printed += Players[i];
             }
 
             return printed;
-
-          /*  Console.WriteLine("-------------------------------");
-            Console.WriteLine("First Name | Last Name  |   Age");
-            Console.WriteLine("-------------------------------");
-            Console.WriteLine(String.Format("{0,-10} | {1,-10} | {2,5}", "Bill", "Gates", 51));
-            Console.WriteLine(String.Format("{0,-10} | {1,-10} | {2,5}", "Edna", "Parker", 114));
-            Console.WriteLine(String.Format("{0,-10} | {1,-10} | {2,5}", "Johnny", "Depp", 44));
-            Console.WriteLine("-------------------------------");*/
         }
 
         public void PlayTurn()
@@ -256,6 +249,7 @@ namespace Virus.Core
             if (p.Hand.Count > 0)
             {
                 //PrintGameState();
+                Console.WriteLine();
                 logger.Write("Turn #"+Turn+" (" + p.ShortDescription + ").", true);
                 Console.WriteLine("Press any key to continue.");
                 Console.ReadLine();
@@ -375,7 +369,6 @@ namespace Virus.Core
         
         public string PlayCardByMove(Player player, Card myCard, string move)
         {
-            int p, c;
             player.Hand.Remove(myCard);
 
             switch (myCard.Face)
@@ -386,9 +379,16 @@ namespace Virus.Core
                     return PlayGameCardMedicine(player, myCard, move);
                 case Card.CardFace.Virus:
                     return PlayGameCardVirus(Players[Scheduler.GetStringInt(move, 0)], myCard, move);
+                case Card.CardFace.Transplant:
+                case Card.CardFace.OrganThief:
+                case Card.CardFace.Spreading:
+                case Card.CardFace.LatexGlove:
+                    return null;
+                case Card.CardFace.MedicalError:
+                    return PlayMedicalError(player, move);
             }
-            return null;
             
+            return null;
         }
 
 
@@ -406,10 +406,11 @@ namespace Virus.Core
 
         public string PlayGameCardVirus(Player player, Card myCard, string move)
         {
-            //logger.Write(player.ShortDescription + " has used a "+myCard+" to " + Players[Scheduler.GetStringInt(move, 4)]+"'s "+
-            //    Players[Scheduler.GetStringInt(move, 4)].Body.Organs[Scheduler.GetStringInt(move, 6)]);
+            logger.Write(player.ShortDescription + " has used a "+myCard+" to " + Players[Scheduler.GetStringInt(move, 0)].ShortDescription+"'s "+
+                Players[Scheduler.GetStringInt(move, 0)].Body.Organs[Scheduler.GetStringInt(move, 2)]);
             return player.Body.SetVirus(myCard, Scheduler.GetStringInt(move, 2), this);
         }
+        
 
 
         public string PlayGameCard(Player player, Card myCard)
@@ -583,7 +584,6 @@ namespace Virus.Core
                     //        return " UNKNOWN CARD PLAYED IN GAME";
             }
             return null;
-            return "END OF SWITCH";
         }
 
 
@@ -599,7 +599,7 @@ namespace Virus.Core
             discards.Add(card);
             player.Hand.Remove(card);
 
-            logger.Write(player.ShortDescription + " has discarded a " + card + " from his hand.");
+            logger.Write(player.ShortDescription + " has put a " + card + " from his hand to deck.");
         }
 
         public void DiscardAllHand(Player player)

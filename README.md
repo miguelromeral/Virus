@@ -9,10 +9,10 @@ Documented
 :heavy_check_mark:
 Be able to read configuration of the game from a file (like Linux .conf files)
 
-:o:
-Add points to any body item to develop strategies in AI.
+:arrow_forward:
+AI to be able to play any card on the deck.
 
-:o:
+:arrow_forward:
 Refactor code to have the main actions unified (i.e.: not have three different snippets that discard cards. Better have one and its appropiate log call).
 
 :o:
