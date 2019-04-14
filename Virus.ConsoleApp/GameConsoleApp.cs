@@ -41,7 +41,7 @@ namespace Virus.ConsoleApp
 
             while (!GameOver)
             {
-                Player p = Players[Turn];
+                Player p = Players[CurrentTurn];
                 if (p.Ai.Equals(ArtificialIntelligence.AICategory.Human))
                 {
                     if (p.Hand.Count > 0)
@@ -52,7 +52,7 @@ namespace Virus.ConsoleApp
                         pt++;
                     }
                     DrawCardsToFill(p);
-                    turns++;
+                    Turn++;
                 }
                 // IA Turn
                 else
@@ -224,7 +224,7 @@ namespace Virus.ConsoleApp
 
                 #region PLAY MEDICINE
                 case Card.CardFace.Medicine:
-                    moves = GetListMovements(player, myCard);
+                    moves = Referee.GetListMovements(player, myCard);
                     if (moves.Count == 0)
                     {
                         return "You don't have any organ available to play this medicine.";
@@ -248,7 +248,7 @@ namespace Virus.ConsoleApp
 
                 #region PLAY VIRUS
                 case Card.CardFace.Virus:
-                    moves = GetListMovements(player, myCard);
+                    moves = Referee.GetListMovements(player, myCard);
                     if (moves.Count == 0)
                     {
                         return "You don't have any organ available to play this virus.";
@@ -275,7 +275,7 @@ namespace Virus.ConsoleApp
                 #endregion
 
                 case Card.CardFace.Transplant:
-                    moves = GetListMovements(player, myCard);
+                    moves = Referee.GetListMovements(player, myCard);
                     if (moves.Count == 0)
                     {
                         return "You currently can't swith any organ between you and your rivals.";
@@ -293,7 +293,7 @@ namespace Virus.ConsoleApp
 
                 #region PLAY ORGAN THIEF
                 case Card.CardFace.OrganThief:
-                    moves = GetListMovements(player, myCard);
+                    moves = Referee.GetListMovements(player, myCard);
                     if (moves.Count == 0)
                     {
                         return "You currently can't steal any body of your rivals.";
@@ -319,7 +319,7 @@ namespace Virus.ConsoleApp
 
                 #region PLAY SPREADING
                 case Card.CardFace.Spreading:
-                    List<List<string>> wholeMoves = Scheduler.GetListOfListsSpreadingMoves(GetListMovements(player, myCard));
+                    List<List<string>> wholeMoves = Scheduler.GetListOfListsSpreadingMoves(Referee.GetListMovements(player, myCard));
                     if (wholeMoves.Count == 0)
                     {
                         return "You currently can't spread your virus to any free organ of your rival's bodies.";
@@ -362,7 +362,7 @@ namespace Virus.ConsoleApp
 
                 #region PLAY MEDICAL ERROR
                 case Card.CardFace.MedicalError:
-                    moves = GetListMovements(player, myCard);
+                    moves = Referee.GetListMovements(player, myCard);
                     if (moves.Count == 0)
                     {
                         return "You don't have any player to change yours bodies.";

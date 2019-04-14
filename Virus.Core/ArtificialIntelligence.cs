@@ -40,7 +40,7 @@ namespace Virus.Core
 
             for(int i=0; i< Me.Hand.Count; i++)
             {
-                movesByCard.Add(Game.GetListMovements(Me, Me.Hand[i]));
+                movesByCard.Add(Game.Referee.GetListMovements(Me, Me.Hand[i]));
             }
 
             switch (Me.Ai)

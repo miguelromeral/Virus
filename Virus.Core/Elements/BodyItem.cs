@@ -25,24 +25,7 @@ namespace Virus.Core
             // Return points based on a IA function (TO DO)
             get { return 1; }
         }
-
-
-        public bool CanPlayVirus(Card virus)
-        {
-            if(Referee.SameColorOrWildcard(organ.Color, virus.Color))
-            {
-                switch (Status)
-                {
-                    case State.Free:
-                    case State.Vaccinated:
-                    case State.Infected:
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-            return false;
-        }
+        
 
         public State Status
         {
