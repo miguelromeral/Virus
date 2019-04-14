@@ -25,7 +25,7 @@ namespace Virus.Core
         #region Properties
         public int CurrentTurn
         {
-            get { return Turn % Players.Count; }
+            get { return (Turn - 1) % Players.Count; }
         }
 
         public bool GameOver
@@ -53,6 +53,8 @@ namespace Virus.Core
             Settings = new Settings(this);
             Settings.LoadGamePreferences();
             Referee = new Referee(this);
+
+            Turn = 1;
 
             deck = Shuffle(InitializeCards());
             logger.Write(deck.Count+" cards shuffled.", true);
@@ -232,7 +234,7 @@ namespace Virus.Core
             string printed = String.Empty;
             printed += "Deck (" + deck.Count + ") | Discarding Stack (" + discards.Count + ")" + Environment.NewLine + Environment.NewLine;
 
-            printed += "Turn # " + (Turn + 1) + Environment.NewLine; 
+            printed += "Turn # " + Turn + Environment.NewLine; 
             for(int i=0; i<Players.Count; i++)
             {
                 printed += Players[i];
@@ -246,13 +248,15 @@ namespace Virus.Core
             Player p = Players[CurrentTurn];
             Console.WriteLine(this);
             p.PrintMyOptions();
+
+            //PrintGameState();
+            Console.WriteLine();
+            logger.Write("Turn #" + Turn + " (" + p.ShortDescription + ").", true);
+            Console.WriteLine("Press any key to continue.");
+            Console.ReadLine();
+
             if (p.Hand.Count > 0)
             {
-                //PrintGameState();
-                Console.WriteLine();
-                logger.Write("Turn #"+Turn+" (" + p.ShortDescription + ").", true);
-                Console.WriteLine("Press any key to continue.");
-                Console.ReadLine();
                 p.Computer.PlayTurn();
             }
             else
@@ -346,6 +350,19 @@ namespace Virus.Core
             }
         }
         
+        public string PlayLatexGlove(Player me)
+        {
+            foreach (Player rival in Players)
+            {
+                if (rival.ID != me.ID)
+                {
+                    logger.Write(rival.ShortDescription + " is going to lost his hand due to a latex glove played by " + me.ShortDescription);
+                    DiscardAllHand(rival);
+                }
+            }
+            return null;
+        }
+
         public string PlayMedicalError(Player me, string move)
         {
             try
@@ -366,7 +383,6 @@ namespace Virus.Core
             }
         }
 
-        
         public string PlayCardByMove(Player player, Card myCard, string move)
         {
             player.Hand.Remove(myCard);
@@ -382,8 +398,9 @@ namespace Virus.Core
                 case Card.CardFace.Transplant:
                 case Card.CardFace.OrganThief:
                 case Card.CardFace.Spreading:
-                case Card.CardFace.LatexGlove:
                     return null;
+                case Card.CardFace.LatexGlove:
+                    return PlayLatexGlove(player);
                 case Card.CardFace.MedicalError:
                     return PlayMedicalError(player, move);
             }

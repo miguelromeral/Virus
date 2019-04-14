@@ -350,14 +350,7 @@ namespace Virus.ConsoleApp
 
                 #region PLAY LATEX GLOVE
                 case Card.CardFace.LatexGlove:
-                    foreach (Player rival in Players)
-                    {
-                        if (!rival.Equals(player))
-                        {
-                            DiscardAllHand(rival);
-                        }
-                    }
-                    return null;
+                    return PlayLatexGlove(player);
                 #endregion
 
                 #region PLAY MEDICAL ERROR

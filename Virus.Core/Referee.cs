@@ -63,6 +63,10 @@ namespace Virus.Core
                     }
                     break;
 
+                case Card.CardFace.LatexGlove:
+                    moves.Add(Scheduler.GetMoveItem(me.ID, 0));
+                    break;
+
                 //    case Card.CardFace.Transplant:
                 //        Player one, two;
                 //        BodyItem bone, btwo;
@@ -184,27 +188,29 @@ namespace Virus.Core
         
         public bool CanPlayMedicine(BodyItem item, Card medicine)
         {
-            if (!item.Organ.Color.Equals(Card.CardColor.Wildcard) &&
-                !medicine.Color.Equals(item.Organ.Color) &&
-                !medicine.Color.Equals(Card.CardColor.Wildcard))
+            if (Referee.SameColorOrWildcard(item.Organ.Color, medicine.Color) ||
+                (item.Modifiers.Count > 1 && item.GetLastModifier().Face == Card.CardFace.Virus &&
+                    Referee.SameColorOrWildcard(item.GetLastModifier().Color, medicine.Color)))
             {
-                return false;
-            }
 
-            switch (item.Status)
-            {
-                case BodyItem.State.Free:
-                case BodyItem.State.Vaccinated:
-                case BodyItem.State.Infected:
-                    return true;
-                default:
-                    return false;
+                switch (item.Status)
+                {
+                    case BodyItem.State.Free:
+                    case BodyItem.State.Vaccinated:
+                    case BodyItem.State.Infected:
+                        return true;
+                    default:
+                        return false;
+                }
             }
+            return false;
         }
 
         public bool CanPlayVirus(BodyItem item, Card virus)
         {
-            if (Referee.SameColorOrWildcard(item.Organ.Color, virus.Color))
+            if (Referee.SameColorOrWildcard(item.Organ.Color, virus.Color) || 
+                (item.Modifiers.Count > 1 && item.GetLastModifier().Face == Card.CardFace.Medicine && 
+                    Referee.SameColorOrWildcard(item.GetLastModifier().Color, virus.Color)))
             {
                 switch (item.Status)
                 {
