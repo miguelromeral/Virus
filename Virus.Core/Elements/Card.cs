@@ -67,9 +67,16 @@ namespace Virus.Core
             
             if (color != CardColor.Purple)
             {
-                value = String.Format(value,
-                    color.ToString(),
-                    face.ToString());
+                if (color == CardColor.Wildcard)
+                {
+                    value = String.Format(value, ToStringShortColor(), face.ToString());
+                }
+                else
+                {
+                    value = String.Format(value,
+                        color.ToString(),
+                        face.ToString());
+                }
             }
             else
             {
@@ -78,15 +85,15 @@ namespace Virus.Core
 
             return value;
         }
-
-
-
-
+        
         public string ToStringShort()
+        {   
+            return String.Format("({0}{1})", ToStringShortColor(), ToStringShortFace());   
+        }
+        
+        public char? ToStringShortColor()
         {
             char? charColor = null;
-            char charFace = ' ';
-
             switch (Color)
             {
                 case CardColor.Red: charColor = 'R'; break;
@@ -96,19 +103,21 @@ namespace Virus.Core
                 case CardColor.Purple: charColor = null; break;
                 case CardColor.Wildcard: charColor = '^'; break;
             }
+            return charColor;
+        }
 
+        public char ToStringShortFace()
+        {
+            char charFace;
             switch (Face)
             {
                 case CardFace.Organ: charFace = 'O'; break;
-                case CardFace.Medicine:  charFace = '*'; break;
+                case CardFace.Medicine: charFace = '*'; break;
                 case CardFace.Virus: charFace = '@'; break;
-                    default: charFace = '+'; break;
+                default: charFace = '+'; break;
             }
-
-            return String.Format("({0}{1})", charColor, charFace);
-            
+            return charFace;
         }
-
 
     }
 }

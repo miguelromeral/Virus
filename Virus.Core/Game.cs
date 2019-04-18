@@ -42,6 +42,26 @@ namespace Virus.Core
                 return false;
             }
         }
+
+        public int TotalCardsInGame
+        {
+            get
+            {
+                int count = 0;
+                foreach (Player p in Players)
+                {
+                    count += p.Hand.Count;
+                    foreach (BodyItem item in p.Body.Organs)
+                    {
+                        count++;
+                        count += item.Modifiers.Count;
+                    }
+                }
+                count += deck.Count;
+                count += discards.Count;
+                return count;
+            }
+        }
         #endregion
 
         #region Initializers
@@ -231,8 +251,9 @@ namespace Virus.Core
 
         public override string ToString()
         {
+
             string printed = String.Empty;
-            printed += "Deck (" + deck.Count + ") | Discarding Stack (" + discards.Count + ")" + Environment.NewLine + Environment.NewLine;
+            printed += "Deck (" + deck.Count + ") | Discards Stack (" + discards.Count + ") | Total in game: ("+TotalCardsInGame+")"  + Environment.NewLine + Environment.NewLine;
 
             printed += "Turn # " + Turn + Environment.NewLine; 
             for(int i=0; i<Players.Count; i++)
@@ -275,7 +296,6 @@ namespace Virus.Core
             }
         }
         
-
         public string DoSpreadingOneItem(string moves)
         {
             Player one, two;
@@ -301,7 +321,7 @@ namespace Virus.Core
             return null;
         }
         
-        public string PlayTransplant(string move)
+        public string PlayGameCardTransplant(string move)
         {
             try
             {
@@ -385,29 +405,59 @@ namespace Virus.Core
 
         public string PlayCardByMove(Player player, Card myCard, string move)
         {
-            player.Hand.Remove(myCard);
-
+            int p, c;
             switch (myCard.Face)
             {
                 case Card.CardFace.Organ:
+                    RemoveCardFromHand(player, myCard);
                     return PlayGameCardOrgan(player, myCard);
+
                 case Card.CardFace.Medicine:
+                    RemoveCardFromHand(player, myCard);
                     return PlayGameCardMedicine(player, myCard, move);
+
                 case Card.CardFace.Virus:
+                    p = Scheduler.GetStringInt(move, 0);
+                    c = Scheduler.GetStringInt(move, 2);
+                    if(Players[p].Body.Organs[c].Modifiers.Count == 0)
+                    {
+                        RemoveCardFromHand(player, myCard);
+                    }
                     return PlayGameCardVirus(Players[Scheduler.GetStringInt(move, 0)], myCard, move);
+
                 case Card.CardFace.Transplant:
+                    RemoveCardFromHand(player, myCard);
+                    return PlayGameCardTransplant(move);
+
                 case Card.CardFace.OrganThief:
+                    DiscardFromHand(player, myCard);
+                    return PlayOrganThief(player, move);
+
                 case Card.CardFace.Spreading:
-                    return null;
+                    DiscardFromHand(player, myCard);
+                    return PlayGameCardSpreading(move);
+
                 case Card.CardFace.LatexGlove:
+                    DiscardFromHand(player, myCard);
                     return PlayLatexGlove(player);
+
                 case Card.CardFace.MedicalError:
+                    DiscardFromHand(player, myCard);
                     return PlayMedicalError(player, move);
             }
             
             return null;
         }
 
+        public string PlayGameCardSpreading(string move)
+        {
+            string[] choosen = move.Split(Scheduler.MULTI_MOVE_SEPARATOR);
+            for(int i=0; i <= (choosen.Length / 2); i+=2){
+                string m = Scheduler.GetManyMoveItem(new string[] { choosen[i], choosen[i + 1] });
+                DoSpreadingOneItem(m);
+            }
+            return null;
+        }
 
         public string PlayGameCardOrgan(Player player, Card myCard)
         {
@@ -425,7 +475,10 @@ namespace Virus.Core
         {
             logger.Write(player.ShortDescription + " has used a "+myCard+" to " + Players[Scheduler.GetStringInt(move, 0)].ShortDescription+"'s "+
                 Players[Scheduler.GetStringInt(move, 0)].Body.Organs[Scheduler.GetStringInt(move, 2)]);
-            return player.Body.SetVirus(myCard, Scheduler.GetStringInt(move, 2), this);
+
+            string message = player.Body.SetVirus(myCard, Scheduler.GetStringInt(move, 2), this);
+            
+            return null;
         }
         
 
@@ -603,7 +656,10 @@ namespace Virus.Core
             return null;
         }
 
-
+        public void RemoveCardFromHand(Player player, Card card)
+        {
+            player.Hand.Remove(card);
+        }
 
         public void DiscardFromHand(Player player, int index)
         {

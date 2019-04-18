@@ -9,7 +9,7 @@ Documented
 :heavy_check_mark:
 Be able to read configuration of the game from a file (like Linux .conf files)
 
-:arrow_forward:
+:heavy_check_mark:
 AI to be able to play any card on the deck.
 
 :arrow_forward:

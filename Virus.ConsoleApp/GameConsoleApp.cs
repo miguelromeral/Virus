@@ -26,18 +26,18 @@ namespace Virus.ConsoleApp
             Console.WriteLine("Press any key to begin the Virus!");
             Console.ReadLine();
             // DATA TO TEST:
-            //Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Medicine);
+            Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Spreading);
 
-            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
-            //Players[0].Body.SetVirus(new Card(Card.CardColor.Red, Card.CardFace.Virus), 0, this);
-            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
-            //Players[0].Body.SetVirus(new Card(Card.CardColor.Yellow, Card.CardFace.Virus), 1, this);
-            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
-            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
-            //Players[2].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
-            //Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            //Players[2].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
+            Players[0].Body.SetOrgan(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
+            Players[0].Body.SetVirus(new Card(Card.CardColor.Red, Card.CardFace.Virus), 0, this);
+            Players[0].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
+            Players[0].Body.SetVirus(new Card(Card.CardColor.Yellow, Card.CardFace.Virus), 1, this);
+            Players[1].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+            Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            Players[1].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
+            Players[2].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
+            Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            Players[2].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
 
             while (!GameOver)
             {
@@ -104,10 +104,7 @@ namespace Virus.ConsoleApp
 
             }
         }
-
-
-
-
+        
         public bool ReadUserInput(string message = null, bool moveDone = false)
         {
             // IDEA: if the user doesn't input the data right then 10 times, make random turn (via IA)
@@ -274,6 +271,7 @@ namespace Virus.ConsoleApp
                     break;
                 #endregion
 
+                #region PLAY TRANSPLANT
                 case Card.CardFace.Transplant:
                     moves = Referee.GetListMovements(player, myCard);
                     if (moves.Count == 0)
@@ -282,14 +280,15 @@ namespace Virus.ConsoleApp
                     }
                     if (moves.Count == 1)
                     {
-                        return PlayTransplant(moves[0]);
+                        return PlayGameCardTransplant(moves[0]);
                     }
                     if (moves.Count > 1)
                     {
                         int opt = reader.RequestMovementChoosenTransplant(moves, this);
-                        return PlayTransplant(moves[opt]);
+                        return PlayGameCardTransplant(moves[opt]);
                     }
                     break;
+                #endregion
 
                 #region PLAY ORGAN THIEF
                 case Card.CardFace.OrganThief:
@@ -339,11 +338,8 @@ namespace Virus.ConsoleApp
                                 choosen.Add(input);
                             }
                         }
-                        foreach (var move in choosen)
-                        {
-                            DoSpreadingOneItem(move);
-                        }
-                        return null;
+                        return PlayGameCardSpreading(Scheduler.GetMoveByMultiple(choosen));
+                        
                     }
                     break;
                 #endregion

@@ -67,94 +67,93 @@ namespace Virus.Core
                     moves.Add(Scheduler.GetMoveItem(me.ID, 0));
                     break;
 
-                //    case Card.CardFace.Transplant:
-                //        Player one, two;
-                //        BodyItem bone, btwo;
-                //        for (int i = 0; i < Players.Count; i++)
-                //        {
-                //            for (int j = i + 1; j < Players.Count; j++)
-                //            {
-                //                one = Players[i];
-                //                two = Players[j];
+                case Card.CardFace.Transplant:
+                    Player one, two;
+                    BodyItem bone, btwo;
+                    for (int i = 0; i < Game.Players.Count; i++)
+                    {
+                        for (int j = i + 1; j < Game.Players.Count; j++)
+                        {
+                            one = Game.Players[i];
+                            two = Game.Players[j];
 
-                //                for (int x = 0; x < one.Body.Organs.Count; x++)
-                //                {
-                //                    for (int y = 0; y < two.Body.Organs.Count; y++)
-                //                    {
-                //                        bone = one.Body.Organs[x];
-                //                        btwo = two.Body.Organs[y];
-                //                        if (!one.Body.HaveThisOrgan(btwo.Organ.Color) &&
-                //                            !two.Body.HaveThisOrgan(bone.Organ.Color))
-                //                        {
-                //                            moves.Add(Scheduler.GetManyMoveItem(new string[]
-                //                            {
-                //                                Scheduler.GetMoveItem(i, x),
-                //                                Scheduler.GetMoveItem(j, y)
-                //                            }));
+                            for (int x = 0; x < one.Body.Organs.Count; x++)
+                            {
+                                for (int y = 0; y < two.Body.Organs.Count; y++)
+                                {
+                                    bone = one.Body.Organs[x];
+                                    btwo = two.Body.Organs[y];
+                                    if (!one.Body.HaveThisOrgan(btwo.Organ.Color) &&
+                                        !two.Body.HaveThisOrgan(bone.Organ.Color))
+                                    {
+                                        moves.Add(Scheduler.GetManyMoveItem(new string[]
+                                        {
+                                                Scheduler.GetMoveItem(i, x),
+                                                Scheduler.GetMoveItem(j, y)
+                                        }));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
 
-                //                        }
-                //                    }
-                //                }
-                //            }
-                //        }
-                //        break;
+                case Card.CardFace.Spreading:
+                    int myCardIndex = 0;
+                    Card modifier;
+                    foreach (BodyItem item in me.Body.Organs)
+                    {
+                        modifier = item.GetLastModifier();
+                        if (modifier != null)
+                        {
+                            if (item.Status.Equals(BodyItem.State.Infected))
+                            {
+                                int j = 0;
+                                foreach (Player rival in Game.Players)
+                                {
+                                    if (rival.ID != me.ID)
+                                    {
+                                        int k = 0;
+                                        foreach (BodyItem ri in rival.Body.Organs)
+                                        {
+                                            if (SameColorOrWildcard(modifier.Color, ri.Organ.Color) &&
+                                                ri.Status.Equals(BodyItem.State.Free))
+                                            {
+                                                moves.Add(Scheduler.GetManyMoveItem(new string[] {
+                                                    Scheduler.GetMoveItem(me.ID, myCardIndex),
+                                                    Scheduler.GetMoveItem(j, k)
+                                                }));
+                                            }
+                                            k++;
+                                        }
+                                    }
+                                    j++;
+                                }
+                            }
+                        }
+                        myCardIndex++;
+                    }
+                    return moves;
 
-                //    case Card.CardFace.Spreading:
-                //        int myCardIndex = 0;
-                //        Card modifier;
-                //        foreach (BodyItem item in me.Body.Organs)
-                //        {
-                //            modifier = item.GetLastModifier();
-                //            if (modifier != null)
-                //            {
-                //                if (item.Status.Equals(BodyItem.State.Infected))
-                //                {
-                //                    int j = 0;
-                //                    foreach (Player rival in Players)
-                //                    {
-                //                        if (rival.ID != me.ID)
-                //                        {
-                //                            int k = 0;
-                //                            foreach (BodyItem ri in rival.Body.Organs)
-                //                            {
-                //                                if (SameColorOrWildcard(modifier.Color, ri.Organ.Color) &&
-                //                                    ri.Status.Equals(BodyItem.State.Free))
-                //                                {
-                //                                    moves.Add(Scheduler.GetManyMoveItem(new string[] {
-                //                                    Scheduler.GetMoveItem(me.ID, myCardIndex),
-                //                                    Scheduler.GetMoveItem(j, k)
-                //                                }));
-                //                                }
-                //                                k++;
-                //                            }
-                //                        }
-                //                        j++;
-                //                    }
-                //                }
-                //            }
-                //            myCardIndex++;
-                //        }
-                //        return moves;
-
-                //    case Card.CardFace.OrganThief:
-                //        myId = me.ID;
-                //        for (int i = 0; i < Players.Count; i++)
-                //        {
-                //            Player rival = Players[i];
-                //            if (rival.ID != me.ID)
-                //            {
-                //                body = rival.Body;
-                //                for (int j = 0; j < body.Organs.Count; j++)
-                //                {
-                //                    var item = body.Organs[j];
-                //                    if (!me.Body.HaveThisOrgan(item.Organ.Color) && !item.Status.Equals(BodyItem.State.Immunized))
-                //                    {
-                //                        moves.Add(Scheduler.GetMoveItem(rival.ID, j));
-                //                    }
-                //                }
-                //            }
-                //        }
-                //        break;
+                case Card.CardFace.OrganThief:
+                    myId = me.ID;
+                    for (int i = 0; i < Game.Players.Count; i++)
+                    {
+                        Player rival = Game.Players[i];
+                        if (rival.ID != me.ID)
+                        {
+                            body = rival.Body;
+                            for (int j = 0; j < body.Organs.Count; j++)
+                            {
+                                var item = body.Organs[j];
+                                if (!me.Body.HaveThisOrgan(item.Organ.Color) && !item.Status.Equals(BodyItem.State.Immunized))
+                                {
+                                    moves.Add(Scheduler.GetMoveItem(rival.ID, j));
+                                }
+                            }
+                        }
+                    }
+                    break;
 
                 case Card.CardFace.MedicalError:
                     myId = me.ID;

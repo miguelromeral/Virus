@@ -41,6 +41,25 @@ namespace Virus.Core
             }
             return res;
         }
+        
+        public static string GetMoveByMultiple(List<string> moves)
+        {
+            if(moves.Count > 0)
+            {
+                string move = moves[0];
+                for(int i=1; i<moves.Count; i++)
+                {
+                    move += MULTI_MOVE_SEPARATOR + moves[i];
+                }
+                return move;
+            }
+            else
+            {
+               return String.Empty;
+            }
+            
+        }
+        
 
         public static List<List<string>> GetListOfListsSpreadingMoves(List<string> moves)
         {

@@ -131,6 +131,7 @@ namespace Virus.Core
             return list;
         }
 
+
         public const string RULE_DELETEBODY = "--DELETE BODY ITEM--";
 
         public string NewVirus(Card virus, Game game)

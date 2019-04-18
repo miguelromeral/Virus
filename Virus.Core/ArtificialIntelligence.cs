@@ -36,6 +36,7 @@ namespace Virus.Core
         public string PlayTurn()
         {
             List<List<string>> movesByCard = new List<List<string>>();
+            string bestMove;
             Card card;
 
             for(int i=0; i< Me.Hand.Count; i++)
@@ -53,7 +54,9 @@ namespace Virus.Core
                     {
                         if(movesByCard[i].Count > 0)
                         {
-                            Game.PlayCardByMove(Me, Me.Hand[i], movesByCard[i].ElementAt(0));
+                            card = Me.Hand[i];
+                            bestMove = ChooseBestMove(card, movesByCard[i]);
+                            Game.PlayCardByMove(Me, card, bestMove);
                             return null;
                         }
                         else
@@ -68,6 +71,28 @@ namespace Virus.Core
             }
             
             return null;
+        }
+
+        public string ChooseBestMove(Card myCard, List<string> moves)
+        {
+            switch (myCard.Face)
+            {
+                case Card.CardFace.Organ:
+                case Card.CardFace.Medicine:
+                case Card.CardFace.Virus:
+                case Card.CardFace.Transplant:
+                case Card.CardFace.OrganThief:
+                case Card.CardFace.LatexGlove:
+                case Card.CardFace.MedicalError:
+                    return moves[0];
+                case Card.CardFace.Spreading:
+
+
+
+                    return moves[0];
+                default:
+                    return moves[0];
+            }
         }
     }
 }
