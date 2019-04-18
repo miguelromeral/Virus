@@ -28,6 +28,9 @@ namespace Virus.Universal.Pages
         {
             this.InitializeComponent();
             Main = m;
+
+            Virus.Core.Game g;
+
         }
     }
 }

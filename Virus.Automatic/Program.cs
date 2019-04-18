@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Virus.Core;
 
-namespace Virus.Core
+namespace Virus.Automatic
 {
-    public class Program
+    class Program
     {
         static void Main(string[] args)
         {
