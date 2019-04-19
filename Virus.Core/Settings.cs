@@ -160,10 +160,10 @@ namespace Virus.Core
                 Console.WriteLine("Game settings loaded successfully.");
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Console.WriteLine("Game settings failed when loading. Exiting game.");
-                System.Environment.Exit(1);
+                Console.Error.WriteLine("Game settings failed when loading. Exiting game.");
+                //System.Environment.Exit(2);
                 return false;
             }
         }

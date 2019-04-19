@@ -84,7 +84,9 @@ namespace Virus.Core
                                     bone = one.Body.Organs[x];
                                     btwo = two.Body.Organs[y];
                                     if (!one.Body.HaveThisOrgan(btwo.Organ.Color) &&
-                                        !two.Body.HaveThisOrgan(bone.Organ.Color))
+                                        !two.Body.HaveThisOrgan(bone.Organ.Color) &&
+                                        bone.Status != BodyItem.State.Immunized &&
+                                        btwo.Status != BodyItem.State.Infected)
                                     {
                                         moves.Add(Scheduler.GetManyMoveItem(new string[]
                                         {

@@ -258,6 +258,10 @@ namespace Virus.Core
             printed += "Turn # " + Turn + Environment.NewLine; 
             for(int i=0; i<Players.Count; i++)
             {
+                if(CurrentTurn == i)
+                {
+                    printed += "---> ";
+                }
                 printed += Players[i];
             }
 

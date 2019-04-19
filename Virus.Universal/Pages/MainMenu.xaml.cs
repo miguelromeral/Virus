@@ -32,7 +32,7 @@ namespace Virus.Universal.Pages
 
         private void BStart_Click(object sender, RoutedEventArgs e)
         {
-            Main.Content = new Game(Main);
+            Main.Content = new GamePage(Main);
         }
     }
 }
