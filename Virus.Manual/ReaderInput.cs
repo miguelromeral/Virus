@@ -160,7 +160,7 @@ namespace Virus.Core
                 if (!Scheduler.IntInListString(moves, 0, p))
                     throw new Exception("You've not choosen a valid player number to switch your bodies.");
 
-                return Scheduler.GetMoveItem(p, 0);
+                return Scheduler.GenerateMove(p, 0);
             }
             catch (Exception)
             {

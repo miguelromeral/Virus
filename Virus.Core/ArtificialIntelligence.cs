@@ -51,7 +51,7 @@ namespace Virus.Core
 
         public string DoMoveByAI(List<List<string>> movesByCard)
         {
-            switch (Me.Ai)
+            switch (Me.AI)
             {
                 case AICategory.First:
                     return ChooseFirstMove(movesByCard);

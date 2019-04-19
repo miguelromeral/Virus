@@ -171,7 +171,7 @@ namespace Virus.Core
             {
                 var p = new Player(this, (i == 0 && firstHuman)) { ID = i };
                 Players.Add(p);
-                logger.Write("Player with ID " + i + " created. " + ((i == 0 && firstHuman) ? "Human" : "IA: " + p.Ai));
+                logger.Write("Player with ID " + i + " created. " + ((i == 0 && firstHuman) ? "Human" : "IA: " + p.AI));
             }
             logger.Write("Dealing cards.", true);
             for (int i = 0; i < numPlayers; i++)

@@ -162,7 +162,7 @@ namespace Virus.Core
         /// <summary>
         /// Get a single character in function of its color.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Char with the code.</returns>
         public char? ToStringShortColor()
         {
             char? charColor = null;
@@ -181,7 +181,7 @@ namespace Virus.Core
         /// <summary>
         /// Get a single character in function of its face.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Char with the face</returns>
         public char ToStringShortFace()
         {
             char charFace;

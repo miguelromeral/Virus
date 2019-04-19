@@ -27,7 +27,7 @@ namespace Virus.Core
 
                     if (CanPlayOrgan(me, myCard))
                     {
-                        moves.Add(Scheduler.GetMoveItem(me.ID, me.GetIndexOfCardInHand(myCard)));
+                        moves.Add(Scheduler.GenerateMove(me.ID, me.GetIndexOfCardInHand(myCard)));
                     }
                     break;
 
@@ -38,7 +38,7 @@ namespace Virus.Core
                     {
                         if (CanPlayMedicine(body.Organs[i], myCard))
                         {
-                            moves.Add(Scheduler.GetMoveItem(me.ID, i));
+                            moves.Add(Scheduler.GenerateMove(me.ID, i));
                         }
                     }
                     break;
@@ -56,7 +56,7 @@ namespace Virus.Core
                                 var item = body.Organs[j];
                                 if (CanPlayVirus(item, myCard))
                                 {
-                                    moves.Add(Scheduler.GetMoveItem(rival.ID, j));
+                                    moves.Add(Scheduler.GenerateMove(rival.ID, j));
                                 }
                             }
                         }
@@ -64,7 +64,7 @@ namespace Virus.Core
                     break;
 
                 case Card.CardFace.LatexGlove:
-                    moves.Add(Scheduler.GetMoveItem(me.ID, 0));
+                    moves.Add(Scheduler.GenerateMove(me.ID, 0));
                     break;
 
                 case Card.CardFace.Transplant:
@@ -90,8 +90,8 @@ namespace Virus.Core
                                     {
                                         moves.Add(Scheduler.GetManyMoveItem(new string[]
                                         {
-                                                Scheduler.GetMoveItem(i, x),
-                                                Scheduler.GetMoveItem(j, y)
+                                                Scheduler.GenerateMove(i, x),
+                                                Scheduler.GenerateMove(j, y)
                                         }));
                                     }
                                 }
@@ -122,8 +122,8 @@ namespace Virus.Core
                                                 ri.Status.Equals(BodyItem.State.Free))
                                             {
                                                 moves.Add(Scheduler.GetManyMoveItem(new string[] {
-                                                    Scheduler.GetMoveItem(me.ID, myCardIndex),
-                                                    Scheduler.GetMoveItem(j, k)
+                                                    Scheduler.GenerateMove(me.ID, myCardIndex),
+                                                    Scheduler.GenerateMove(j, k)
                                                 }));
                                             }
                                             k++;
@@ -150,7 +150,7 @@ namespace Virus.Core
                                 var item = body.Organs[j];
                                 if (!me.Body.HaveThisOrgan(item.Organ.Color) && !item.Status.Equals(BodyItem.State.Immunized))
                                 {
-                                    moves.Add(Scheduler.GetMoveItem(rival.ID, j));
+                                    moves.Add(Scheduler.GenerateMove(rival.ID, j));
                                 }
                             }
                         }
@@ -164,7 +164,7 @@ namespace Virus.Core
                         Player rival = Game.Players[i];
                         if (rival.ID != me.ID)
                         {
-                            moves.Add(Scheduler.GetMoveItem(rival.ID, 0));
+                            moves.Add(Scheduler.GenerateMove(rival.ID, 0));
                         }
                     }
                     return moves;

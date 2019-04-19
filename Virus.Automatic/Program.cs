@@ -11,7 +11,7 @@ namespace Virus.Automatic
     {
         static void Main(string[] args)
         {
-            Game virus = new Game(3);
+            Game virus = new Game(4);
             virus.Start();
         }
     }

@@ -6,53 +6,59 @@ using System.Threading.Tasks;
 
 namespace Virus.Core
 {
+    /// <summary>
+    /// Player. A user with his corresponding body.
+    /// </summary>
     public class Player
     {
-        private ArtificialIntelligence.AICategory ai;
-        private ArtificialIntelligence computer = null;
-        private List<Card> hand;
-        private Body body;
-        private int id;
+        #region PROPERTIES
+        /// <summary>
+        /// Artificial Intelligence of the player. Hard difficulity.
+        /// </summary>
+        public ArtificialIntelligence.AICategory AI;
 
-        public ArtificialIntelligence.AICategory Ai {
-            get { return ai; }
-        }
-        public ArtificialIntelligence Computer
-        {
-            get { return computer; }
-        }
+        /// <summary>
+        /// Artificial Intelligence entity (or "mind") that indicates how to play.
+        /// </summary>
+        public ArtificialIntelligence Computer;
 
+        /// <summary>
+        /// Nickname of the player.
+        /// </summary>
         public string ShortDescription
         {
-            get { return "Player " + id; }
+            // For the moment, it's only the ID.
+            get { return "Player " + ID; }
         }
 
+        /// <summary>
+        /// ID corresponding to the current player.
+        /// </summary>
+        public int ID;
 
-        public int ID
-        {
-            get { return id; }
-            set { id = value; }
-        }
-        public List<Card> Hand
-        {
-            get { return hand; }
-        }
+        /// <summary>
+        /// List of cards that the user can play in this turn.
+        /// </summary>
+        public List<Card> Hand;
 
-        public Body Body
-        {
-            get { return body; }
-            set { body = value; }
-        }
+        /// <summary>
+        /// Body of the player.
+        /// </summary>
+        public Body Body;
 
+        /// <summary>
+        /// Count of how many healthy organs has this user.
+        /// </summary>
         public int HealthyOrgans
         {
             get
             {
                 int count = 0;
-                foreach (var item in body.Organs)
+                foreach (var item in Body.Organs)
                 {
                     switch (item.Status)
                     {
+                        // Only free, vaccinated and immunized are healthy organs (no virus affected).
                         case BodyItem.State.Free:
                         case BodyItem.State.Vaccinated:
                         case BodyItem.State.Immunized:
@@ -63,50 +69,68 @@ namespace Virus.Core
                 return count;
             }
         }
-        
+        #endregion
 
+        #region CONSTRUCTOR
+        /// <summary>
+        /// Player constructor.
+        /// </summary>
+        /// <param name="game">Game</param>
+        /// <param name="human">Indicates if the player will be a human (true) or PC (false)</param>
         public Player(Game game, bool human = false)
         {
             Console.WriteLine("Creating new player.");
-            body = new Body();
+            Body = new Body();
             if (human)
             {
-                ai = ArtificialIntelligence.AICategory.Human;
+                AI = ArtificialIntelligence.AICategory.Human;
             }
             else
             {
-                computer = new ArtificialIntelligence(game, this);
-                //ai = computer.RandomIA();
-                ai = ArtificialIntelligence.AICategory.Random;
+                Computer = new ArtificialIntelligence(game, this);
+                AI = Computer.RandomIA();
+                //ai = ArtificialIntelligence.AICategory.Random;
                 //ai = ArtificialIntelligence.AICategory.First;
             }
         }
+        #endregion
 
+        /// <summary>
+        /// Replace the current hand with the new one.
+        /// </summary>
+        /// <param name="h">New hand (list of cards)</param>
         public void NewHand(List<Card> h)
         {
-            hand = h;
+            Hand = h;
         }
 
+        /// <summary>
+        /// Gets a review of the player.
+        /// </summary>
+        /// <returns>String with the info of the player.</returns>
         public override string ToString()
         {
             string printed = String.Empty;
             
-            printed += String.Format("[ {0,30} | IA: {1,10}]" + Environment.NewLine, ShortDescription, ai.ToString());
-            printed += body + Environment.NewLine;
+            printed += String.Format("[{0,20} | IA: {1,10}]" + Environment.NewLine, ShortDescription, AI.ToString());
+            printed += Body + Environment.NewLine;
             
             return printed;
         }
 
-        
+        /// <summary>
+        /// Print the current hand of the player.
+        /// </summary>
+        /// <param name="discarding">Indicates if the player is currently discarding</param>
         public void PrintMyOptions(bool discarding = false)
         {
             int i = 0;
-            while (i < hand.Count)
+            while (i < Hand.Count)
             {
-                Console.WriteLine("{0}.- {1}", (i + 1), hand[i]);
+                Console.WriteLine("{0}.- {1}", (i + 1), Hand[i]);
                 i++;
             }
-            if (Ai == ArtificialIntelligence.AICategory.Human)
+            if (AI == ArtificialIntelligence.AICategory.Human)
             {
 
                 if (discarding)
@@ -121,6 +145,11 @@ namespace Virus.Core
 
         }
 
+        /// <summary>
+        /// Returns the index of the card in the hand.
+        /// </summary>
+        /// <param name="card">Card to find its index.</param>
+        /// <returns>Index of the card in the player hand.</returns>
         public int GetIndexOfCardInHand(Card card)
         {
             int i = 0;

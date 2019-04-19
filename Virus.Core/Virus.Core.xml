@@ -4,6 +4,64 @@
         <name>Virus.Core</name>
     </assembly>
     <members>
+        <member name="T:Virus.Core.Body">
+            <summary>
+            Body. It stores all body items for each organ and modifiers played by a single player.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Body.Points">
+            <summary>
+            Points corresponding to the whole body (sum of any body items).
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Body.Organs">
+            <summary>
+            List of body items played by the user.
+            </summary>
+        </member>
+        <member name="M:Virus.Core.Body.#ctor">
+            <summary>
+            Body constructor.
+            </summary>
+        </member>
+        <member name="M:Virus.Core.Body.ToString">
+            <summary>
+            Gets a review of their body items.
+            </summary>
+            <returns>String with the body items</returns>
+        </member>
+        <member name="M:Virus.Core.Body.HaveThisOrgan(Virus.Core.Card.CardColor)">
+            <summary>
+            Check if the body has a body item corresponding to this color.
+            </summary>
+            <param name="color">Color that want to check</param>
+            <returns>True if the body has a body item of this color.</returns>
+        </member>
+        <member name="M:Virus.Core.Body.SetOrgan(Virus.Core.Card)">
+            <summary>
+            Creates a new body item if the body doesn't contain a body item of the appropiate color.
+            </summary>
+            <param name="organ">Card of the organ.</param>
+            <returns>String with the error message if it couldn't be added. Null in other case.</returns>
+        </member>
+        <member name="M:Virus.Core.Body.SetVirus(Virus.Core.Card,System.Int32,Virus.Core.Game)">
+            <summary>
+            Set a new virus to one of the body items.
+            </summary>
+            <param name="virus">Card with the virus.</param>
+            <param name="index">Index of the body item to use this body iitem.</param>
+            <param name="game">Game.</param>
+            <returns>Error message if it couldn't have been played.</returns>
+        </member>
+        <member name="M:Virus.Core.Body.SetMedicine(Virus.Core.Game,Virus.Core.Card,System.Int32)">
+            <summary>
+            Set a new medicine to a body item of the body by index.
+            </summary>
+            <param name="game">Game</param>
+            <param name="medicine">Medicine card</param>
+            <param name="index">Index of the body item</param>
+            <returns>Error message if the medicine couldn't been played.</returns>
+        </member>
         <member name="T:Virus.Core.BodyItem">
             <summary>
             A body item, composed by, at least, on Organ and can store the medicines and virus played in that Organ.
@@ -228,13 +286,409 @@
             <summary>
             Get a single character in function of its color.
             </summary>
-            <returns></returns>
+            <returns>Char with the code.</returns>
         </member>
         <member name="M:Virus.Core.Card.ToStringShortFace">
             <summary>
             Get a single character in function of its face.
             </summary>
-            <returns></returns>
+            <returns>Char with the face</returns>
+        </member>
+        <member name="T:Virus.Core.Player">
+            <summary>
+            Player. A user with his corresponding body.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Player.AI">
+            <summary>
+            Artificial Intelligence of the player. Hard difficulity.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Player.Computer">
+            <summary>
+            Artificial Intelligence entity (or "mind") that indicates how to play.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Player.ShortDescription">
+            <summary>
+            Nickname of the player.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Player.ID">
+            <summary>
+            ID corresponding to the current player.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Player.Hand">
+            <summary>
+            List of cards that the user can play in this turn.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Player.Body">
+            <summary>
+            Body of the player.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Player.HealthyOrgans">
+            <summary>
+            Count of how many healthy organs has this user.
+            </summary>
+        </member>
+        <member name="M:Virus.Core.Player.#ctor(Virus.Core.Game,System.Boolean)">
+            <summary>
+            Player constructor.
+            </summary>
+            <param name="game">Game</param>
+            <param name="human">Indicates if the player will be a human (true) or PC (false)</param>
+        </member>
+        <member name="M:Virus.Core.Player.NewHand(System.Collections.Generic.List{Virus.Core.Card})">
+            <summary>
+            Replace the current hand with the new one.
+            </summary>
+            <param name="h">New hand (list of cards)</param>
+        </member>
+        <member name="M:Virus.Core.Player.ToString">
+            <summary>
+            Gets a review of the player.
+            </summary>
+            <returns>String with the info of the player.</returns>
+        </member>
+        <member name="M:Virus.Core.Player.PrintMyOptions(System.Boolean)">
+            <summary>
+            Print the current hand of the player.
+            </summary>
+            <param name="discarding">Indicates if the player is currently discarding</param>
+        </member>
+        <member name="M:Virus.Core.Player.GetIndexOfCardInHand(Virus.Core.Card)">
+            <summary>
+            Returns the index of the card in the hand.
+            </summary>
+            <param name="card">Card to find its index.</param>
+            <returns>Index of the card in the player hand.</returns>
+        </member>
+        <member name="T:Virus.Core.Logger">
+            <summary>
+            Logger to register the actions that have been taken in the game.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Logger.filename">
+            <summary>
+            Full filename of the logger.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Logger.date">
+            <summary>
+            Current date (in string)
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Logger.NAME_FILE_FORMAT">
+            <summary>
+            Beggining of the file name.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Logger.NAME_EXTENSION">
+            <summary>
+            File extension.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Logger.DATEFORMAT">
+            <summary>
+            Format of the date in the file.
+            </summary>
+        </member>
+        <member name="M:Virus.Core.Logger.#ctor">
+            <summary>
+            Logger constructor. It generates the file and writes for first time.
+            </summary>
+        </member>
+        <member name="M:Virus.Core.Logger.Write(System.String,System.Boolean)">
+            <summary>
+            Write some text in the logger file.
+            </summary>
+            <param name="message">Text to be printed in the logger</param>
+            <param name="print">True if want to also redirect this text to console output</param>
+            <returns>True if it could be written to the logger.</returns>
+        </member>
+        <member name="M:Virus.Core.Logger.FirstLogMessage">
+            <summary>
+            Writes the first message of the game to the logger.
+            </summary>
+            <returns>True if it could be completed</returns>
+        </member>
+        <member name="T:Virus.Core.Scheduler">
+            <summary>
+            Scheduler. A class to make order in the calls, messages and parameters that takes in part of the whole game.
+            
+            The moves are written like: PLAYERID-ORGAN_OR_CARD_INDEX.
+            Many moves are written like: MOVE,MOVE,MOVE...
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Scheduler.MOVE_SEPARATOR">
+            <summary>
+            Separator in a move.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Scheduler.MULTI_MOVE_SEPARATOR">
+            <summary>
+            Separator of many moves in a same move. (f.e.: transplant requires two moves to anyone: the two body items to switch).
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Scheduler.CHARS_MEDICINE">
+            <summary>
+            String to print medicines.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Scheduler.CHARS_VIRUS">
+            <summary>
+            String to print viruses.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Scheduler.ACTION_PLAYING">
+            <summary>
+            Message that indicates if the user is playing.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Scheduler.ACTION_DISCARDING">
+            <summary>
+            Message that indicates if the user is discarding.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Scheduler.ACTION_CHOOSING">
+            <summary>
+            Message that indicates if the user is choosing cards.
+            </summary>
+        </member>
+        <member name="M:Virus.Core.Scheduler.GenerateMove(System.Int32,System.Int32)">
+            <summary>
+            Generate a move string given the Player ID and the card (or organ) number
+            </summary>
+            <param name="playerid">Player ID</param>
+            <param name="cardnum">Index of card in hand or organ in body.</param>
+            <returns>String with the move.</returns>
+        </member>
+        <member name="M:Virus.Core.Scheduler.GetManyMoveItem(System.String[])">
+            <summary>
+            Get many moves provided in the same string.
+            </summary>
+            <param name="moves">array with all the moves </param>
+            <returns>Single string with many moves provided</returns>
+        </member>
+        <member name="M:Virus.Core.Scheduler.GetMoveByMultiple(System.Collections.Generic.List{System.String})">
+            <summary>
+            Get many moves provided in the same string.
+            </summary>
+            <param name="moves">List of moves to be added.</param>
+            <returns>One move with all moves indeed.</returns>
+        </member>
+        <member name="M:Virus.Core.Scheduler.GetListOfListsSpreadingMoves(System.Collections.Generic.List{System.String})">
+            <summary>
+            Gets a list of list of moves to a whole list of moves.
+            
+            This is usefull to separate the moves when spreading.
+            <example>
+            A spreading card can spread two viruses from my body, then the list of lists will have 2 list (one to each virus to spread).
+            The list indeed of moves will have a list of possibles cards to this virus could be spread in.
+            </example>
+            The method gets all possibles moves and this have to separate between appropiates virus.
+            The main reason to do that is because every move in the game is formatted as string, but the spreading move requires more
+            complexity that the others.
+            </summary>
+            <param name="moves">Whole list of moves in spreading to be ordered appropiately</param>
+            <returns>List ordered with all the moves provided</returns>
+        </member>
+        <member name="M:Virus.Core.Scheduler.IntInListString(System.Collections.Generic.List{System.String},System.Int32,System.Int32)">
+            <summary>
+            Indicates if a List of moves as string contains a specific int in a specific position.
+            </summary>
+            <param name="list">List of moves</param>
+            <param name="index">Index of the character to compare</param>
+            <param name="i">Int to search in the list.</param>
+            <returns>True if the int is the list at this specified index.</returns>
+        </member>
+        <member name="M:Virus.Core.Scheduler.IntInString(System.String,System.Int32,System.Int32)">
+            <summary>
+            Incidates if a move has a specific int at a specific index.
+            </summary>
+            <param name="text">Move to search in</param>
+            <param name="index">Position of character to compare</param>
+            <param name="i">Int to compare</param>
+            <returns>True if the int is in the index.</returns>
+        </member>
+        <member name="M:Virus.Core.Scheduler.GetStringInt(System.String,System.Int32)">
+            <summary>
+            Get in the move the int which is at specified index.
+            </summary>
+            <param name="text">Move to search in</param>
+            <param name="index">Index of the int to retrieve.</param>
+            <returns>Int at the specified position</returns>
+        </member>
+        <member name="T:Virus.Core.Settings">
+            <summary>
+            Settings parameters of the game.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Settings.Game">
+            <summary>
+            Game instance.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Settings.FILE_PREFERENCES">
+            <summary>
+            Filename from load / to save parameters.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Settings.nNumberOrgans">
+            <summary>
+            Default number of organs in a game.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Settings.nNumberMedicines">
+            <summary>
+            Default number of medicines in a game.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Settings.nNumberViruses">
+            <summary>
+            Default number of viruses in a game.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Settings.nNumberThreatmentsSpreading">
+            <summary>
+            Default number of spreading cards in a game.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Settings.nNumberThreatmentsTransplant">
+            <summary>
+            Default number of transplant cards in a game.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Settings.nNumberThreatmentsOrganThief">
+            <summary>
+            Default number of organ thiefs card in a game.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Settings.nNumberThreatmentsLatexGlove">
+            <summary>
+            Default number of latex glove cards in a game.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Settings.nNumberThreatmentsMedicalError">
+            <summary>
+            Default number of medical error in a game.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Settings.nNumberWildcardOrgans">
+            <summary>
+            Default number of wildcard organs in a game.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Settings.nNumberWildcardViruses">
+            <summary>
+            Default number of wildcard viruses in a game.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Settings.nNumberWildcardMedicines">
+            <summary>
+            Default number of wildcard medicines in a game.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Settings.nNumberCardInHand">
+            <summary>
+            Default number of cards in a hand of a player.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Settings.nNumberToWin">
+            <summary>
+            Default number of healthy organs to win.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Settings.NumberOrgans">
+            <summary>
+            Number of organs of each color in the game.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Settings.NumberMedicines">
+            <summary>
+            Number of medicines of each color in the game.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Settings.NumberViruses">
+            <summary>
+            Number of viruses of each color in the game.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Settings.NumberThreatmentsSpreading">
+            <summary>
+            Number of spreading cards available in the game.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Settings.NumberThreatmentsTransplant">
+            <summary>
+            Number of transplant cards availables in the game.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Settings.NumberThreatmentsOrganThief">
+            <summary>
+            Number of organ thief cards availables in the game.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Settings.NumberThreatmentsLatexGlove">
+            <summary>
+            Number of latex glove cards availables in the game.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Settings.NumberThreatmentsMedicalError">
+            <summary>
+            Number of medical error cards availables inn the game.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Settings.NumberWildcardOrgans">
+            <summary>
+            Number of wildcard organs in the game.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Settings.NumberWildcardMedicines">
+            <summary>
+            Number of wildcard medicines in the game.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Settings.NumberWildcardViruses">
+            <summary>
+            Number of wildcard viruses in the game.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Settings.NumberCardInHand">
+            <summary>
+            Number of cards in a hand of a player in the game.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Settings.NumberToWin">
+            <summary>
+            Number of healthy organs required to win the game.
+            </summary>
+        </member>
+        <member name="M:Virus.Core.Settings.#ctor(Virus.Core.Game)">
+            <summary>
+            Constructor of the settings.
+            </summary>
+            <param name="g"></param>
+        </member>
+        <member name="M:Virus.Core.Settings.SetDefaultParameters">
+            <summary>
+            Set default parameters of the game.
+            </summary>
+        </member>
+        <member name="M:Virus.Core.Settings.LoadGamePreferences">
+            <summary>
+            Load the game preferences from the settings file.
+            </summary>
+            <returns>True if it could have been loaded successfully</returns>
+        </member>
+        <member name="M:Virus.Core.Settings.CreateFilePreferencesDefault">
+            <summary>
+            Generate the file preferences with default values
+            </summary>
+            <returns>True if the file could generate.</returns>
         </member>
     </members>
 </doc>

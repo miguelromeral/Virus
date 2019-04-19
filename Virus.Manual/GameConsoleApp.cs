@@ -42,7 +42,7 @@ namespace Virus.ConsoleApp
             while (!GameOver)
             {
                 Player p = Players[CurrentTurn];
-                if (p.Ai.Equals(ArtificialIntelligence.AICategory.Human))
+                if (p.AI.Equals(ArtificialIntelligence.AICategory.Human))
                 {
                     if (p.Hand.Count > 0)
                     {
