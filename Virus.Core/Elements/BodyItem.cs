@@ -6,40 +6,76 @@ using System.Threading.Tasks;
 
 namespace Virus.Core
 {
+    /// <summary>
+    /// A body item, composed by, at least, on Organ and can store the medicines and virus played in that Organ.
+    /// </summary>
     public class BodyItem
     {
-        #region PROPERTIES
-        private Card organ;
-        private List<Card> modifiers;
+        #region ENUMS
+        /// <summary>
+        /// Possibles states for the body item based on the cards played.
+        /// </summary>
+        public enum State
+        {
+            /// <summary>
+            /// Free. Any card played on that organ.
+            /// </summary>
+            Free,
+            /// <summary>
+            /// Infected. More virus played than medicines.
+            /// </summary>
+            Infected,
+            /// <summary>
+            /// Vaccinated. More medicines played that viruses.
+            /// </summary>
+            Vaccinated,
+            /// <summary>
+            /// Immunized. Two medicines played on the organ.
+            /// </summary>
+            Immunized,
+            /// <summary>
+            /// Not in game state.
+            /// </summary>
+            NOTINGAME
+        }
+        #endregion
 
-        public Card Organ
-        {
-            get { return organ; }
-        }
-        public List<Card> Modifiers
-        {
-            get { return modifiers; }
-        }
+        #region PROPERTIES
+        /// <summary>
+        /// Main card of the item: the Organ.
+        /// </summary>
+        public Card Organ;
+        /// <summary>
+        /// List of cards that have been played to its Organ.
+        /// </summary>
+        public List<Card> Modifiers;
+
+        /// <summary>
+        /// Valuable criteria to clasify this body item. Usefull for AI.
+        /// </summary>
         public int Points
         {
-            // Return points based on a IA function (TO DO)
+            // TODO
             get { return 1; }
         }
         
-
+        /// <summary>
+        /// Current status of the body item in function of the cards played on its Organ.
+        /// </summary>
         public State Status
         {
             get
             {
-                switch (modifiers.Count)
+                switch (Modifiers.Count)
                 {
                     case 0:
                         // Free Organ
+                        // No medicines or virus played.
                         return State.Free;
                     case 1:
-                        switch (modifiers[0].Face)
+                        switch (Modifiers[0].Face)
                         {
-                            // Vaccinated organ
+                            // Vaccinated Organ
                             case Card.CardFace.Medicine:
                                 return State.Vaccinated;
                             // Infected Organ
@@ -49,7 +85,7 @@ namespace Virus.Core
                                 return State.NOTINGAME;
                         }
                     case 2:
-                        if (modifiers[0].Face == Card.CardFace.Medicine)
+                        if (Modifiers[0].Face == Card.CardFace.Medicine)
                         {
                             return State.Immunized;
                         }
@@ -62,53 +98,59 @@ namespace Virus.Core
                 }
             }
         }
-
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// Constructor of the body item.
+        /// </summary>
+        /// <param name="o">Card corresponding to the Organn.</param>
         public BodyItem(Card o)
         {
-            organ = o;
-            modifiers = new List<Card>();
+            Organ = o;
+            Modifiers = new List<Card>();
         }
         #endregion
 
-        #region ENUMS
-        public enum State
-        {
-            Free,
-            Infected,
-            Vaccinated,
-            Immunized,
-            NOTINGAME
-        }
-        #endregion
-        
-
-        public string NewMedicine(Card medicine)
+        /// <summary>
+        /// Set a new medicine to the organ.
+        /// </summary>
+        /// <param name="game">Whole game. It's needed to remove cards when virus are played before.</param>
+        /// <param name="medicine">Medicine card.</param>
+        /// <returns>String with a error message if it cannot be added. Null if all right.</returns>
+        public string NewMedicine(Game game, Card medicine)
         {
             switch (Status)
             {
                 case State.Free:
                 case State.Vaccinated:
-                    modifiers.Add(medicine);
+                    Modifiers.Add(medicine);
                     return null;
                 case State.Infected:
-                    modifiers.RemoveAt(0);
+                    // If the item has a virus, one medicine avoids its effect, and both
+                    // cards are moved to discards stack.
+                    game.MoveToDiscards(Modifiers.ElementAt(0));
+                    Modifiers.RemoveAt(0);
+                    game.MoveToDiscards(medicine);
                     return null;
                 case State.Immunized:
-                    return String.Format("Your {0} is already immunized.", organ);
+                    // Player can't play more medicines into a immunized organ.
+                    return String.Format("Your {0} is already immunized.", Organ);
                 default:
                     return "UNKNOWN STATE PUTTING THE MEDICINE.";
             }
             
         }
 
+        /// <summary>
+        /// Returns the last modifier card played on this item.
+        /// </summary>
+        /// <returns>Last card played on item. Null if anyone.</returns>
         public Card GetLastModifier()
         {
-            if(modifiers.Count > 0)
+            if(Modifiers.Count > 0)
             {
-                return modifiers.ElementAt(modifiers.Count - 1);
+                return Modifiers.ElementAt(Modifiers.Count - 1);
             }
             else
             {
@@ -116,14 +158,18 @@ namespace Virus.Core
             }
         }
 
+        /// <summary>
+        /// Return all cards that makes this body item.
+        /// </summary>
+        /// <returns>List of cards with every card on this item.</returns>
         public List<Card> GetAllCardsInBody()
         {
             List<Card> list = new List<Card>();
 
-            if (organ != null)
-                list.Add(organ);
+            if (Organ != null)
+                list.Add(Organ);
 
-            foreach(var c in modifiers)
+            foreach(var c in Modifiers)
             {
                 list.Add(c);
             }
@@ -131,49 +177,61 @@ namespace Virus.Core
             return list;
         }
 
-
+        /// <summary>
+        /// Static string that indicates computer to remove all the body item.
+        /// </summary>
         public const string RULE_DELETEBODY = "--DELETE BODY ITEM--";
 
+        /// <summary>
+        /// Adds a new virus into this body item.
+        /// </summary>
+        /// <param name="virus">Virus card.</param>
+        /// <param name="game">Full game.</param>
+        /// <returns>Error message if it can't be added. Null in other case.</returns>
         public string NewVirus(Card virus, Game game)
         {
             switch (Status)
             {
                 case State.Free:
-                    modifiers.Add(virus);
+                    Modifiers.Add(virus);
                     return null;
                 case State.Vaccinated:
                     game.MoveToDiscards(virus);
-                    Card medicine = modifiers.ElementAt(0);
+                    Card medicine = Modifiers.ElementAt(0);
                     game.MoveToDiscards(medicine);
-                    modifiers.Remove(medicine);
+                    Modifiers.Remove(medicine);
                     return null;
                 case State.Infected:
+                    // If the item is already infected, another virus will make
+                    // needed to discard every card on this body item.
                     game.MoveToDiscards(virus);
                     foreach (var c in GetAllCardsInBody())
                     {
                         game.MoveToDiscards(c);
                     }
+                    // Return to the game that its necessary to remove the whole body item (now it hasn't any cards)
                     return RULE_DELETEBODY;
                 case State.Immunized:
-                    return String.Format("The {0} immunized. You cannot put the virus.", organ);
+                    return String.Format("The {0} is immunized. You cannot put the virus.", Organ);
                 default:
                     return "UNKNOWN STATE PUTTING THE VIRUS.";
             }
         }
 
-
-
-
+        /// <summary>
+        /// Returns a body item description.
+        /// </summary>
+        /// <returns>String with the body item info.</returns>
         public override string ToString()
         {
-            //string printed = String.Format(" M:"+modifiers.Count+"    {0}: ", organ.ToString());
-            string printed = String.Format("{0}: ", organ.ToString());
+            string printed = String.Empty;
 
-            foreach(var mod in modifiers)
+            foreach(var mod in Modifiers)
             {
                 printed += mod.ToStringShort();
             }
-            return printed;
+
+            return String.Format("({0,14}:{1,9})", Organ.ToString(), printed);
         }
 
     }

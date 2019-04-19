@@ -106,7 +106,7 @@ namespace Virus.Core
             }
         }
 
-        public string SetMedicine(Card medicine, int index = 0)
+        public string SetMedicine(Game game, Card medicine, int index = 0)
         {
             BodyItem item = organs[index];
 
@@ -114,7 +114,7 @@ namespace Virus.Core
                 medicine.Color == Card.CardColor.Wildcard ||
                 item.Organ.Color == Card.CardColor.Wildcard)
             {
-                return organs[index].NewMedicine(medicine);
+                return organs[index].NewMedicine(game, medicine);
             }
             else
             {

@@ -240,6 +240,10 @@ namespace Virus.Core
             Console.WriteLine("Press any key to begin the Virus!");
             Console.ReadLine();
 
+            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[1].Body.SetMedicine(this, new Card(Card.CardColor.Red, Card.CardFace.Medicine));
+            //Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Virus);
+
             while (!GameOver)
             {
                 PlayTurn();
@@ -427,10 +431,10 @@ namespace Virus.Core
                     {
                         RemoveCardFromHand(player, myCard);
                     }
-                    return PlayGameCardVirus(Players[Scheduler.GetStringInt(move, 0)], myCard, move);
+                    return PlayGameCardVirus(player, myCard, move);
 
                 case Card.CardFace.Transplant:
-                    RemoveCardFromHand(player, myCard);
+                    DiscardFromHand(player, myCard);
                     return PlayGameCardTransplant(move);
 
                 case Card.CardFace.OrganThief:
@@ -472,7 +476,7 @@ namespace Virus.Core
         public string PlayGameCardMedicine(Player player, Card myCard, string move)
         {
             logger.Write(player.ShortDescription + " has used a "+myCard+" in his " + player.Body.Organs[Scheduler.GetStringInt(move, 2)]);
-            return player.Body.SetMedicine(myCard, Scheduler.GetStringInt(move, 2));
+            return player.Body.SetMedicine(this, myCard, Scheduler.GetStringInt(move, 2));
         }
 
         public string PlayGameCardVirus(Player player, Card myCard, string move)
@@ -480,186 +484,12 @@ namespace Virus.Core
             logger.Write(player.ShortDescription + " has used a "+myCard+" to " + Players[Scheduler.GetStringInt(move, 0)].ShortDescription+"'s "+
                 Players[Scheduler.GetStringInt(move, 0)].Body.Organs[Scheduler.GetStringInt(move, 2)]);
 
-            string message = player.Body.SetVirus(myCard, Scheduler.GetStringInt(move, 2), this);
+            string message = Players[Scheduler.GetStringInt(move, 0)].Body.SetVirus(myCard, Scheduler.GetStringInt(move, 2), this);
             
             return null;
         }
         
-
-
-        public string PlayGameCard(Player player, Card myCard)
-        {
-            List<string> moves = new List<string>();
-            int p, c;
-            switch (myCard.Face)
-            {
-                    //    #region PLAY MEDICINE
-                    //    case Card.CardFace.Medicine:
-                    //        moves = GetListMovements(player, myCard);
-                    //        if (moves.Count == 0)
-                    //        {
-                    //            return "You don't have any organ available to play this medicine.";
-                    //        }
-                    //        if (moves.Count == 1)
-                    //        {
-                    //            return player.Body.SetMedicine(myCard, Scheduler.GetStringInt(moves[0], 2));
-                    //        }
-                    //        if (moves.Count > 1)
-                    //        {
-                    //            string choosen = reader.RequestMovementChoosen(player, moves);
-
-                    //            if (choosen == null)
-                    //                throw new Exception("The input doesn't belong to any available move.");
-
-                    //            return player.Body.SetMedicine(myCard, Scheduler.GetStringInt(choosen, 2));
-                    //        }
-
-                    //        break;
-                    //    #endregion
-
-                    //    #region PLAY VIRUS
-                    //    case Card.CardFace.Virus:
-                    //        moves = GetListMovements(player, myCard);
-                    //        if (moves.Count == 0)
-                    //        {
-                    //            return "You don't have any organ available to play this virus.";
-                    //        }
-                    //        if (moves.Count == 1)
-                    //        {
-                    //            p = Scheduler.GetStringInt(moves[0], 0);
-                    //            c = Scheduler.GetStringInt(moves[0], 2);
-                    //            return Players[p].Body.SetVirus(myCard, c, this);
-                    //        }
-                    //        if (moves.Count > 1)
-                    //        {
-                    //            string choosen = reader.RequestMovementChoosen(player, moves);
-
-                    //            if (choosen == null)
-                    //                throw new Exception("The input doesn't belong to any available move.");
-
-                    //            p = Scheduler.GetStringInt(choosen, 0);
-                    //            c = Scheduler.GetStringInt(choosen, 2);
-
-                    //            return Players[p].Body.SetVirus(myCard, c, this);
-                    //        }
-                    //        break;
-                    //    #endregion
-
-                    //    case Card.CardFace.Transplant:
-                    //        moves = GetListMovements(player, myCard);
-                    //        if (moves.Count == 0)
-                    //        {
-                    //            return "You currently can't swith any organ between you and your rivals.";
-                    //        }
-                    //        if (moves.Count == 1)
-                    //        {
-                    //            return PlayTransplant(moves[0]);
-                    //        }
-                    //        if (moves.Count > 1)
-                    //        {
-                    //            int opt = reader.RequestMovementChoosenTransplant(moves, this);
-                    //            return PlayTransplant(moves[opt]);
-                    //        }
-                    //        break;
-
-                    //    #region PLAY ORGAN THIEF
-                    //    case Card.CardFace.OrganThief:
-                    //        moves = GetListMovements(player, myCard);
-                    //        if (moves.Count == 0)
-                    //        {
-                    //            return "You currently can't steal any body of your rivals.";
-                    //        }
-                    //        if (moves.Count == 1)
-                    //        {
-                    //            p = Scheduler.GetStringInt(moves[0], 0);
-                    //            c = Scheduler.GetStringInt(moves[0], 2);
-
-                    //            return PlayOrganThief(player, moves[0]);
-                    //        }
-                    //        if (moves.Count > 1)
-                    //        {
-                    //            string choosen = reader.RequestMovementChoosen(player, moves);
-
-                    //            if (choosen == null)
-                    //                throw new Exception("The input doesn't belong to any available move.");
-
-                    //            return PlayOrganThief(player, choosen);
-                    //        }
-                    //        break;
-                    //    #endregion
-
-                    //    #region PLAY SPREADING
-                    //    case Card.CardFace.Spreading:
-                    //        List<List<string>> wholeMoves = Scheduler.GetListOfListsSpreadingMoves(GetListMovements(player, myCard));
-                    //        if (wholeMoves.Count == 0)
-                    //        {
-                    //            return "You currently can't spread your virus to any free organ of your rival's bodies.";
-                    //        }
-                    //        if (wholeMoves.Count > 0)
-                    //        {
-                    //            List<string> choosen = new List<string>();
-                    //            foreach (var move in wholeMoves)
-                    //            {
-                    //                string input = ProcessSpreadingItem(move);
-                    //                if (input == null)
-                    //                {
-                    //                    return "One or more input in spreading options is not valid.";
-                    //                }
-                    //                else
-                    //                {
-                    //                    choosen.Add(input);
-                    //                }
-                    //            }
-                    //            foreach (var move in choosen)
-                    //            {
-                    //                DoSpreadingOneItem(move);
-                    //            }
-                    //            return null;
-                    //        }
-                    //        break;
-                    //    #endregion
-
-                    //    #region PLAY LATEX GLOVE
-                    //    case Card.CardFace.LatexGlove:
-                    //        foreach (Player rival in Players)
-                    //        {
-                    //            if (!rival.Equals(player))
-                    //            {
-                    //                DiscardAllHand(rival);
-                    //            }
-                    //        }
-                    //        return null;
-                    //    #endregion
-
-                    //    #region PLAY MEDICAL ERROR
-                    //    case Card.CardFace.MedicalError:
-                    //        moves = GetListMovements(player, myCard);
-                    //        if (moves.Count == 0)
-                    //        {
-                    //            return "You don't have any player to change yours bodies.";
-                    //        }
-                    //        if (moves.Count == 1)
-                    //        {
-                    //            return PlayMedicalError(player, moves[0]);
-                    //        }
-                    //        if (moves.Count > 1)
-                    //        {
-                    //            string choosen = reader.RequestMovementChoosenMedicalError(player, moves);
-
-                    //            if (choosen == null)
-                    //                throw new Exception("The input doesn't belong to any available move.");
-
-                    //            return PlayMedicalError(player, moves[0]);
-                    //        }
-                    //        break;
-                    //    #endregion
-
-                    //    default:
-                    //        return " UNKNOWN CARD PLAYED IN GAME";
-            }
-            return null;
-        }
-
+        
         public void RemoveCardFromHand(Player player, Card card)
         {
             player.Hand.Remove(card);

@@ -3,7 +3,7 @@ Virus (by Tranjis Games) *Work in progress*
 
 ## TODO
 
-:o:
+:arrow_forward:
 Documented
 
 :heavy_check_mark:
@@ -32,6 +32,9 @@ Create an ConsoleApp to allow human interaction.
 
 :o:
 GUI in UWP with XAML.
+
+:o:
+MVC Application with HTML and Javascript.
 
 :o:
 GUI in Unity?

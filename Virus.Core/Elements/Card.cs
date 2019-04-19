@@ -6,45 +6,97 @@ using System.Threading.Tasks;
 
 namespace Virus.Core
 {
+    /// <summary>
+    /// Card of the game.
+    /// </summary>
     public class Card
     {
-
+        #region ENUMARATIONS
+        /// <summary>
+        /// All color that a card can have.
+        /// </summary>
         public enum CardColor
         {
+            /// <summary>
+            /// Red
+            /// </summary>
             Red,
+            /// <summary>
+            /// Yellow
+            /// </summary>
             Yellow,
+            /// <summary>
+            /// Green
+            /// </summary>
             Green,
+            /// <summary>
+            /// Blue
+            /// </summary>
             Blue,
+            /// <summary>
+            /// Purple. All threatments have a purple color.
+            /// </summary>
             Purple,
+            /// <summary>
+            /// Wildcard color. It can be used like a red, yellow, green or blue.
+            /// </summary>
             Wildcard
         }
 
+        /// <summary>
+        /// Face of the card. In function of the face, the card could be used of different ways.
+        /// </summary>
         public enum CardFace
         {
+            /// <summary>
+            /// Organ. It makes a body item.
+            /// </summary>
+            /// <see cref="Virus.Core.BodyItem"/>
             Organ,
+            /// <summary>
+            /// Virus. It can infect free organs, infected or vaccunated.
+            /// </summary>
             Virus,
+            /// <summary>
+            /// Medicine. It can remove a virus from an organ or can inmunize a body item.
+            /// </summary>
             Medicine,
+            /// <summary>
+            /// Transplant is a threatment that is used to switch between two body items of the game (no matter if any of they are yours).
+            /// </summary>
             Transplant,
+            /// <summary>
+            /// Organ thief allows a player to steal a rival organ and put it on their own body.
+            /// </summary>
             OrganThief,
+            /// <summary>
+            /// Spreading is used to move from our own virus' organ to some other rival free organ.
+            /// </summary>
             Spreading,
+            /// <summary>
+            /// Latex glove force rivals to discard all their hand.
+            /// </summary>
             LatexGlove,
+            /// <summary>
+            /// Medical error is used to switch your whole body to ahy other of your rivals.
+            /// </summary>
             MedicalError
         }
+        #endregion
 
-        public const int NUM_COLORS = 6;
+        #region PROPIERTIES
+        /// <summary>
+        /// Color of the card.
+        /// </summary>
+        public CardColor Color;
+        /// <summary>
+        /// Face of the card.
+        /// </summary>
+        public CardFace Face;
 
-        private CardColor color;
-        private CardFace face;
-
-        public CardColor Color
-        {
-            get { return color; }
-        }
-        public CardFace Face
-        {
-            get { return face; }
-        }
-
+        /// <summary>
+        /// Value. A qualified value to allow AI choose between the best move possible.
+        /// </summary>
         public int Value
         {
             get {
@@ -52,45 +104,65 @@ namespace Virus.Core
                 return 0;
             }
         }
+        #endregion
 
-        // Constructor
+        #region CONSTRUCTOR
+        /// <summary>
+        /// Card constructor.
+        /// </summary>
+        /// <param name="c">Color of the card.</param>
+        /// <param name="f">Face of the card.</param>
         public Card(CardColor c, CardFace f)
         {
-            color = c;
-            face = f;
+            Color = c;
+            Face = f;
         }
+        #endregion
 
-
+        #region PRINTABLE METHODS
+        /// <summary>
+        /// Description of the card.
+        /// </summary>
+        /// <returns>String with the card inf</returns>
         public override string ToString()
         {
             string value = "{0} {1}";
-            
-            if (color != CardColor.Purple)
+
+            switch (Color)
             {
-                if (color == CardColor.Wildcard)
-                {
-                    value = String.Format(value, ToStringShortColor(), face.ToString());
-                }
-                else
-                {
+                case CardColor.Purple:
+                    value = String.Format(value, ToStringShort(), Face);
+                    break;
+                case CardColor.Wildcard:
+                    value = String.Format(value, ToStringShortColor(), Face.ToString());
+                    break;
+                case CardColor.Red:
+                case CardColor.Yellow:
+                case CardColor.Blue:
+                case CardColor.Green:
+                    // Normal format.
                     value = String.Format(value,
-                        color.ToString(),
-                        face.ToString());
-                }
-            }
-            else
-            {
-                value = String.Format(value, ToStringShort(), face);
+                        Color.ToString(),
+                        Face.ToString());
+                    break;
             }
 
             return value;
         }
         
+        /// <summary>
+        /// 2 characters info for this card.
+        /// </summary>
+        /// <returns>2 characters info for this card.</returns>
         public string ToStringShort()
         {   
             return String.Format("({0}{1})", ToStringShortColor(), ToStringShortFace());   
         }
         
+        /// <summary>
+        /// Get a single character in function of its color.
+        /// </summary>
+        /// <returns></returns>
         public char? ToStringShortColor()
         {
             char? charColor = null;
@@ -106,6 +178,10 @@ namespace Virus.Core
             return charColor;
         }
 
+        /// <summary>
+        /// Get a single character in function of its face.
+        /// </summary>
+        /// <returns></returns>
         public char ToStringShortFace()
         {
             char charFace;
@@ -118,6 +194,6 @@ namespace Virus.Core
             }
             return charFace;
         }
-
+        #endregion
     }
 }

@@ -4,5 +4,237 @@
         <name>Virus.Core</name>
     </assembly>
     <members>
+        <member name="T:Virus.Core.BodyItem">
+            <summary>
+            A body item, composed by, at least, on Organ and can store the medicines and virus played in that Organ.
+            </summary>
+        </member>
+        <member name="T:Virus.Core.BodyItem.State">
+            <summary>
+            Possibles states for the body item based on the cards played.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.BodyItem.State.Free">
+            <summary>
+            Free. Any card played on that organ.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.BodyItem.State.Infected">
+            <summary>
+            Infected. More virus played than medicines.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.BodyItem.State.Vaccinated">
+            <summary>
+            Vaccinated. More medicines played that viruses.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.BodyItem.State.Immunized">
+            <summary>
+            Immunized. Two medicines played on the organ.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.BodyItem.State.NOTINGAME">
+            <summary>
+            Not in game state.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.BodyItem.Organ">
+            <summary>
+            Main card of the item: the Organ.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.BodyItem.Modifiers">
+            <summary>
+            List of cards that have been played to its Organ.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.BodyItem.Points">
+            <summary>
+            Valuable criteria to clasify this body item. Usefull for AI.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.BodyItem.Status">
+            <summary>
+            Current status of the body item in function of the cards played on its Organ.
+            </summary>
+        </member>
+        <member name="M:Virus.Core.BodyItem.#ctor(Virus.Core.Card)">
+            <summary>
+            Constructor of the body item.
+            </summary>
+            <param name="o">Card corresponding to the Organn.</param>
+        </member>
+        <member name="M:Virus.Core.BodyItem.NewMedicine(Virus.Core.Game,Virus.Core.Card)">
+            <summary>
+            Set a new medicine to the organ.
+            </summary>
+            <param name="game">Whole game. It's needed to remove cards when virus are played before.</param>
+            <param name="medicine">Medicine card.</param>
+            <returns>String with a error message if it cannot be added. Null if all right.</returns>
+        </member>
+        <member name="M:Virus.Core.BodyItem.GetLastModifier">
+            <summary>
+            Returns the last modifier card played on this item.
+            </summary>
+            <returns>Last card played on item. Null if anyone.</returns>
+        </member>
+        <member name="M:Virus.Core.BodyItem.GetAllCardsInBody">
+            <summary>
+            Return all cards that makes this body item.
+            </summary>
+            <returns>List of cards with every card on this item.</returns>
+        </member>
+        <member name="F:Virus.Core.BodyItem.RULE_DELETEBODY">
+            <summary>
+            Static string that indicates computer to remove all the body item.
+            </summary>
+        </member>
+        <member name="M:Virus.Core.BodyItem.NewVirus(Virus.Core.Card,Virus.Core.Game)">
+            <summary>
+            Adds a new virus into this body item.
+            </summary>
+            <param name="virus">Virus card.</param>
+            <param name="game">Full game.</param>
+            <returns>Error message if it can't be added. Null in other case.</returns>
+        </member>
+        <member name="M:Virus.Core.BodyItem.ToString">
+            <summary>
+            Returns a body item description.
+            </summary>
+            <returns>String with the body item info.</returns>
+        </member>
+        <member name="T:Virus.Core.Card">
+            <summary>
+            Card of the game.
+            </summary>
+        </member>
+        <member name="T:Virus.Core.Card.CardColor">
+            <summary>
+            All color that a card can have.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Card.CardColor.Red">
+            <summary>
+            Red
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Card.CardColor.Yellow">
+            <summary>
+            Yellow
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Card.CardColor.Green">
+            <summary>
+            Green
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Card.CardColor.Blue">
+            <summary>
+            Blue
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Card.CardColor.Purple">
+            <summary>
+            Purple. All threatments have a purple color.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Card.CardColor.Wildcard">
+            <summary>
+            Wildcard color. It can be used like a red, yellow, green or blue.
+            </summary>
+        </member>
+        <member name="T:Virus.Core.Card.CardFace">
+            <summary>
+            Face of the card. In function of the face, the card could be used of different ways.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Card.CardFace.Organ">
+            <summary>
+            Organ. It makes a body item.
+            </summary>
+            <see cref="T:Virus.Core.BodyItem"/>
+        </member>
+        <member name="F:Virus.Core.Card.CardFace.Virus">
+            <summary>
+            Virus. It can infect free organs, infected or vaccunated.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Card.CardFace.Medicine">
+            <summary>
+            Medicine. It can remove a virus from an organ or can inmunize a body item.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Card.CardFace.Transplant">
+            <summary>
+            Transplant is a threatment that is used to switch between two body items of the game (no matter if any of they are yours).
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Card.CardFace.OrganThief">
+            <summary>
+            Organ thief allows a player to steal a rival organ and put it on their own body.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Card.CardFace.Spreading">
+            <summary>
+            Spreading is used to move from our own virus' organ to some other rival free organ.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Card.CardFace.LatexGlove">
+            <summary>
+            Latex glove force rivals to discard all their hand.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Card.CardFace.MedicalError">
+            <summary>
+            Medical error is used to switch your whole body to ahy other of your rivals.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Card.Color">
+            <summary>
+            Color of the card.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Card.Face">
+            <summary>
+            Face of the card.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.Card.Value">
+            <summary>
+            Value. A qualified value to allow AI choose between the best move possible.
+            </summary>
+        </member>
+        <member name="M:Virus.Core.Card.#ctor(Virus.Core.Card.CardColor,Virus.Core.Card.CardFace)">
+            <summary>
+            Card constructor.
+            </summary>
+            <param name="c">Color of the card.</param>
+            <param name="f">Face of the card.</param>
+        </member>
+        <member name="M:Virus.Core.Card.ToString">
+            <summary>
+            Description of the card.
+            </summary>
+            <returns>String with the card inf</returns>
+        </member>
+        <member name="M:Virus.Core.Card.ToStringShort">
+            <summary>
+            2 characters info for this card.
+            </summary>
+            <returns>2 characters info for this card.</returns>
+        </member>
+        <member name="M:Virus.Core.Card.ToStringShortColor">
+            <summary>
+            Get a single character in function of its color.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Virus.Core.Card.ToStringShortFace">
+            <summary>
+            Get a single character in function of its face.
+            </summary>
+            <returns></returns>
+        </member>
     </members>
 </doc>

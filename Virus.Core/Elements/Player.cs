@@ -78,6 +78,7 @@ namespace Virus.Core
                 computer = new ArtificialIntelligence(game, this);
                 //ai = computer.RandomIA();
                 ai = ArtificialIntelligence.AICategory.Random;
+                //ai = ArtificialIntelligence.AICategory.First;
             }
         }
 
