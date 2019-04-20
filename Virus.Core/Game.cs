@@ -7,27 +7,50 @@ using System.Threading.Tasks;
 
 namespace Virus.Core
 {
+    /// <summary>
+    /// Game. It has the players, bodies, cards and all functionality.
+    /// </summary>
     public class Game
     {
-        #region Variables
+        #region PROPERTIES
+        /// <summary>
+        /// List of players in this game.
+        /// </summary>
         public List<Player> Players;
-        private List<Card> deck;
-        private List<Card> discards;
-        
+        /// <summary>
+        /// Stack of cards without been played yet.
+        /// </summary>
+        private List<Card> Deck;
+        /// <summary>
+        /// Stack of cards that have been already played.
+        /// </summary>
+        private List<Card> Discards;
+        /// <summary>
+        /// Number of turns in the current game.
+        /// </summary>
         public int Turn { get; set; }
-
-        public Logger logger { get; }
+        /// <summary>
+        /// Logger class to register every action in the game.
+        /// </summary>
+        public Logger Logger { get; }
+        /// <summary>
+        /// Referee that indicates all availables moves.
+        /// </summary>
         public Referee Referee { get; }
-
+        /// <summary>
+        /// Settings parameters of the game.
+        /// </summary>
         public Settings Settings { get; set; }
-        #endregion
-        
-        #region Properties
+        /// <summary>
+        /// Index of current turn.
+        /// </summary>
         public int CurrentTurn
         {
             get { return (Turn - 1) % Players.Count; }
         }
-
+        /// <summary>
+        /// Check if the game is over (any user have the healthy organs required).
+        /// </summary>
         public bool GameOver
         {
             get
@@ -42,7 +65,9 @@ namespace Virus.Core
                 return false;
             }
         }
-
+        /// <summary>
+        /// Total cards in the game.
+        /// </summary>
         public int TotalCardsInGame
         {
             get
@@ -57,34 +82,42 @@ namespace Virus.Core
                         count += item.Modifiers.Count;
                     }
                 }
-                count += deck.Count;
-                count += discards.Count;
+                count += Deck.Count;
+                count += Discards.Count;
                 return count;
             }
         }
-        #endregion
+#endregion
 
-        #region Initializers
+        #region INITIALIZERS
+        /// <summary>
+        /// Game constructor. It inits the current game and its parameters and config.
+        /// </summary>
+        /// <param name="numPlayers">Number of players in the game</param>
+        /// <param name="firstHuman">First player is a human</param>
         public Game(int numPlayers, bool firstHuman = false)
         {
-            logger = new Logger();
-            logger.Write("We're getting ready Virus!", true);
+            Logger = new Logger();
+            Logger.Write("We're getting ready Virus!", true);
 
             Settings = new Settings(this);
             Settings.LoadGamePreferences();
+
             Referee = new Referee(this);
 
             Turn = 1;
 
-            deck = Shuffle(InitializeCards());
-            logger.Write(deck.Count+" cards shuffled.", true);
-            discards = new List<Card>();
-            logger.Write("Discard stack created.");
+            Deck = Shuffle(InitializeCards());
+            Logger.Write(Deck.Count+" cards shuffled.", true);
+            Discards = new List<Card>();
+            Logger.Write("Discard stack created.");
             InitializePlayers(numPlayers, firstHuman);
         }
-
-        #region Methods called by constructor
-
+        
+        /// <summary>
+        /// Initializes the cards with the appropiate number of cards of each type.
+        /// </summary>
+        /// <returns>List of cards created</returns>
         private List<Card> InitializeCards()
         {
             List<Card> deck = new List<Card>();
@@ -99,19 +132,19 @@ namespace Virus.Core
                     {
                         deck.Add(new Card(color, Card.CardFace.Organ));
                     }
-                    logger.Write(Settings.NumberOrgans +" "+color+" organs created.");
+                    Logger.Write(Settings.NumberOrgans +" "+color+" organs created.");
 
                     for (i = 0; i < Settings.NumberMedicines; i++)
                     {
                         deck.Add(new Card(color, Card.CardFace.Medicine));
                     }
-                    logger.Write(Settings.NumberMedicines + " " + color + " medicines created.");
+                    Logger.Write(Settings.NumberMedicines + " " + color + " medicines created.");
 
                     for (i = 0; i < Settings.NumberViruses; i++)
                     {
                         deck.Add(new Card(color, Card.CardFace.Virus));
                     }
-                    logger.Write(Settings.NumberViruses + " " + color + " viruses created.");
+                    Logger.Write(Settings.NumberViruses + " " + color + " viruses created.");
 
                 }
             }
@@ -122,19 +155,19 @@ namespace Virus.Core
             {
                 deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
             }
-            logger.Write(Settings.NumberWildcardOrgans + " wildcard organs created.");
+            Logger.Write(Settings.NumberWildcardOrgans + " wildcard organs created.");
 
             for (i = 0; i < Settings.NumberWildcardMedicines; i++)
             {
                 deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Medicine));
             }
-            logger.Write(Settings.NumberWildcardMedicines + " wildcard medicines created.");
+            Logger.Write(Settings.NumberWildcardMedicines + " wildcard medicines created.");
 
             for (i = 0; i < Settings.NumberWildcardViruses; i++)
             {
                 deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Virus));
             }
-            logger.Write(Settings.NumberWildcardViruses + " wildcard viruses created.");
+            Logger.Write(Settings.NumberWildcardViruses + " wildcard viruses created.");
             #endregion
             
             #region THREATMENTS
@@ -163,17 +196,23 @@ namespace Virus.Core
             return deck;
         }
   
+        /// <summary>
+        /// Inits all the players and set the main values.
+        /// </summary>
+        /// <param name="numPlayers">Number of players in the game.</param>
+        /// <param name="firstHuman">First player is human</param>
+        /// <returns></returns>
         private bool InitializePlayers(int numPlayers, bool firstHuman = false)
         {
-            logger.Write("Creating players.", true);
+            Logger.Write("Creating players.", true);
             Players = new List<Player>();
             for (int i = 0; i < numPlayers; i++)
             {
                 var p = new Player(this, (i == 0 && firstHuman)) { ID = i };
                 Players.Add(p);
-                logger.Write("Player with ID " + i + " created. " + ((i == 0 && firstHuman) ? "Human" : "IA: " + p.AI));
+                Logger.Write("Player with ID " + i + " created. " + ((i == 0 && firstHuman) ? "Human" : "IA: " + p.AI));
             }
-            logger.Write("Dealing cards.", true);
+            Logger.Write("Dealing cards.", true);
             for (int i = 0; i < numPlayers; i++)
             {
                 List<Card> hand = new List<Card>();
@@ -188,10 +227,13 @@ namespace Virus.Core
             return true;
         }
 
-        #endregion
-
-
-        // Source: http://www.vcskicks.com/randomize_array.php
+        /// <summary>
+        /// Shuffle the whole deck stack.
+        /// </summary>
+        /// <see cref="http://www.vcskicks.com/randomize_array.php"/>
+        /// <typeparam name="Card">Card</typeparam>
+        /// <param name="inputList">List of cards to randomize</param>
+        /// <returns>List of cards shuffled</returns>
         public List<Card> Shuffle<Card>(List<Card> inputList)
         {
             List<Card> randomList = new List<Card>();
@@ -207,36 +249,43 @@ namespace Virus.Core
 
             return randomList; //return the new random list
         }
-
         #endregion
-
-        #region Methods
-
+        
+        /// <summary>
+        /// Gets a new card from the deck stack and removes it.
+        /// </summary>
+        /// <param name="me">Player who is drawing a new card</param>
+        /// <returns>Card recovered from the deck</returns>
         public Card DrawNewCard(Player me)
         {
             Card newCard = null;
             try
             {
                 Random r = new Random();
-                if(deck.Count == 0)
+                // If there are no more cards in deck, shuffle the discard stacks and uses it
+                if(Deck.Count == 0)
                 {
-                    logger.Write("Deck is already empty. We have to redraw the discards.");
-                    deck = Shuffle(discards);
-                    discards = new List<Card>();
+                    Logger.Write("Deck is already empty. We have to redraw the discards.");
+                    Deck = Shuffle(Discards);
+                    Discards = new List<Card>();
                 }
-                newCard = deck[0];
-                logger.Write(me.ShortDescription + " draws a new card: " + newCard);
-                deck.RemoveAt(0);
+                newCard = Deck[0];
+                Logger.Write(me.ShortDescription + " draws a new card: " + newCard);
+                Deck.RemoveAt(0);
             }
             catch (Exception)
             {
-                logger.Write("** There's no cards in deck to pop. **", true);
+                Logger.Write("** There's no cards in deck to pop. **", true);
                 return null;
             }
             return newCard;
         }
 
-        public void Start() {
+        /// <summary>
+        /// Start the current game.
+        /// </summary>
+        /// <param name="milis">Number of miliseconds to wait for the next move automatically. If its 0, you'll have to press a key</param>
+        public void Start(int milis = 0) {
             Console.WriteLine("Press any key to begin the Virus!");
             Console.ReadLine();
 
@@ -246,18 +295,25 @@ namespace Virus.Core
 
             while (!GameOver)
             {
-                PlayTurn();
+                PlayTurn(milis == 0, true);
+                if(milis != 0)
+                {
+                    System.Threading.Thread.Sleep(milis);
+                }
             }
 
-            logger.Write("The game has been finished.", true);
-            logger.Write(ToString(), true);
+            Logger.Write("The game has been finished.", true);
+            Logger.Write(ToString(), true);
         }
 
+        /// <summary>
+        /// Gets a string overview of the game.
+        /// </summary>
+        /// <returns>String overview of the game.</returns>
         public override string ToString()
         {
-
             string printed = String.Empty;
-            printed += "Deck (" + deck.Count + ") | Discards Stack (" + discards.Count + ") | Total in game: ("+TotalCardsInGame+")"  + Environment.NewLine + Environment.NewLine;
+            printed += "Deck (" + Deck.Count + ") | Discards Stack (" + Discards.Count + ") | Total in game: ("+TotalCardsInGame+")"  + Environment.NewLine + Environment.NewLine;
 
             printed += "Turn # " + Turn + Environment.NewLine; 
             for(int i=0; i<Players.Count; i++)
@@ -272,17 +328,27 @@ namespace Virus.Core
             return printed;
         }
 
-        public void PlayTurn()
+        /// <summary>
+        /// Play turn by the computer
+        /// </summary>
+        /// <param name="wait">True if the user will have to press a key to continue with the move.</param>
+        /// <param name="printHand">True if print the player hand.</param>
+        public void PlayTurn(bool wait = false, bool printHand = false)
         {
             Player p = Players[CurrentTurn];
             Console.WriteLine(this);
-            p.PrintMyOptions();
+            if (printHand)
+            {
+                p.PrintMyOptions();
+            }
 
-            //PrintGameState();
             Console.WriteLine();
-            logger.Write("Turn #" + Turn + " (" + p.ShortDescription + ").", true);
-            Console.WriteLine("Press any key to continue.");
-            Console.ReadLine();
+            Logger.Write("Turn #" + Turn + " (" + p.ShortDescription + ").", true);
+            if (wait)
+            {
+                Console.WriteLine("Press any key to continue.");
+                Console.ReadLine();
+            }
 
             if (p.Hand.Count > 0)
             {
@@ -290,12 +356,17 @@ namespace Virus.Core
             }
             else
             {
-                logger.Write("The player has no cards in his hand. Pass the turn.");
+                Logger.Write("The player has no cards in his hand. Pass the turn.");
             }
+            // Once the player has used (or discarded) cards, fill the hand to the number.
             DrawCardsToFill(p);
             Turn++;
         }
 
+        /// <summary>
+        /// Draws as many cards needed until fill the player hand.
+        /// </summary>
+        /// <param name="player"></param>
         public void DrawCardsToFill(Player player)
         {
             for(int i=player.Hand.Count; i< Settings.NumberCardInHand; i++)
@@ -304,6 +375,11 @@ namespace Virus.Core
             }
         }
         
+        /// <summary>
+        /// Spread one virus from one free organ by only one move.
+        /// </summary>
+        /// <param name="moves">Move that indicates the spreading order</param>
+        /// <returns>Error message if it couldn't be spreaded</returns>
         public string DoSpreadingOneItem(string moves)
         {
             Player one, two;
@@ -324,11 +400,16 @@ namespace Virus.Core
             bone.Modifiers.Remove(virus);
             btwo.NewVirus(virus, this);
 
-            logger.Write(one.ShortDescription+" has spread his "+virus+" from his "+bone+" to "+two.ShortDescription+"'s "+btwo);
+            Logger.Write(one.ShortDescription+" has spread his "+virus+" from his "+bone+" to "+two.ShortDescription+"'s "+btwo);
 
             return null;
         }
         
+        /// <summary>
+        /// Do a transplant in the game. Switch two body items.
+        /// </summary>
+        /// <param name="move">Move to spread</param>
+        /// <returns>Error message if couldn't be switched</returns>
         public string PlayGameCardTransplant(string move)
         {
             try
@@ -348,7 +429,7 @@ namespace Virus.Core
                 Players[p1].Body.Organs[o1] = btwo;
                 Players[p2].Body.Organs[o2] = bone;
 
-                logger.Write(one.ShortDescription + " has transplantated his " + bone + " by the " + two.ShortDescription + "'s organ "+btwo);
+                Logger.Write(one.ShortDescription + " has transplantated his " + bone + " by the " + two.ShortDescription + "'s organ "+btwo);
 
                 return null;
             }
@@ -358,6 +439,12 @@ namespace Virus.Core
             }
         }
         
+        /// <summary>
+        /// Steal one body item to one player.
+        /// </summary>
+        /// <param name="me">Player to receive the new body item</param>
+        /// <param name="move">Move that indicates who and what to steal</param>
+        /// <returns>Error message if there is</returns>
         public string PlayOrganThief(Player me, string move)
         {
             try
@@ -368,7 +455,7 @@ namespace Virus.Core
 
                 me.Body.Organs.Add(stealed);
 
-                logger.Write(me.ShortDescription+" has stealed the "+rival.ShortDescription+"'s organ "+stealed);
+                Logger.Write(me.ShortDescription+" has stealed the "+rival.ShortDescription+"'s organ "+stealed);
 
                 return null;
             }
@@ -378,19 +465,30 @@ namespace Virus.Core
             }
         }
         
+        /// <summary>
+        /// Remove any hand of the players but me.
+        /// </summary>
+        /// <param name="me">Player who has used the card.</param>
+        /// <returns>Error message if it is</returns>
         public string PlayLatexGlove(Player me)
         {
             foreach (Player rival in Players)
             {
                 if (rival.ID != me.ID)
                 {
-                    logger.Write(rival.ShortDescription + " is going to lost his hand due to a latex glove played by " + me.ShortDescription);
+                    Logger.Write(rival.ShortDescription + " is going to lost his hand due to a latex glove played by " + me.ShortDescription);
                     DiscardAllHand(rival);
                 }
             }
             return null;
         }
 
+        /// <summary>
+        /// Switch two bodies.
+        /// </summary>
+        /// <param name="me">Player who has used the card.</param>
+        /// <param name="move">Move that indicates who switch the whole body</param>
+        /// <returns></returns>
         public string PlayMedicalError(Player me, string move)
         {
             try
@@ -401,7 +499,7 @@ namespace Virus.Core
                 me.Body = toswitch.Body;
                 toswitch.Body = aux;
 
-                logger.Write(me.ShortDescription+" has switched his body by the "+toswitch.ShortDescription+"'s one.");
+                Logger.Write(me.ShortDescription+" has switched his body by the "+toswitch.ShortDescription+"'s one.");
 
                 return null;
             }
@@ -411,6 +509,13 @@ namespace Virus.Core
             }
         }
 
+        /// <summary>
+        /// Play a card in the game given the move choosen.
+        /// </summary>
+        /// <param name="player">Player who plays the card</param>
+        /// <param name="myCard">Card used</param>
+        /// <param name="move">Move with the option selected</param>
+        /// <returns></returns>
         public string PlayCardByMove(Player player, Card myCard, string move)
         {
             int p, c;
@@ -457,8 +562,14 @@ namespace Virus.Core
             return null;
         }
 
+        /// <summary>
+        /// Play a spreading card given the move selected.
+        /// </summary>
+        /// <param name="move">All moves to spreading in only one string</param>
+        /// <returns>Error message if its</returns>
         public string PlayGameCardSpreading(string move)
         {
+            // All move is in the same string. Here we split and process each one.
             string[] choosen = move.Split(Scheduler.MULTI_MOVE_SEPARATOR);
             for(int i=0; i <= (choosen.Length / 2); i+=2){
                 string m = Scheduler.GetManyMoveItem(new string[] { choosen[i], choosen[i + 1] });
@@ -467,48 +578,84 @@ namespace Virus.Core
             return null;
         }
 
+        /// <summary>
+        /// Plays an organ card to the player.
+        /// </summary>
+        /// <param name="player">Player who uses it</param>
+        /// <param name="myCard">Organ card</param>
+        /// <returns>Error message if its</returns>
         public string PlayGameCardOrgan(Player player, Card myCard)
         {
-            logger.Write(player.ShortDescription + " has played a " + myCard);
+            Logger.Write(player.ShortDescription + " has played a " + myCard);
             return player.Body.SetOrgan(myCard);
         }
 
+        /// <summary>
+        /// Play medicine card to one player.
+        /// </summary>
+        /// <param name="player">Player to use the card</param>
+        /// <param name="myCard">Medicine card</param>
+        /// <param name="move">Move to indicates in which organ uses it</param>
+        /// <returns></returns>
         public string PlayGameCardMedicine(Player player, Card myCard, string move)
         {
-            logger.Write(player.ShortDescription + " has used a "+myCard+" in his " + player.Body.Organs[Scheduler.GetStringInt(move, 2)]);
+            Logger.Write(player.ShortDescription + " has used a "+myCard+" in his " + player.Body.Organs[Scheduler.GetStringInt(move, 2)]);
             return player.Body.SetMedicine(this, myCard, Scheduler.GetStringInt(move, 2));
         }
 
+        /// <summary>
+        /// Play virus from one player.
+        /// </summary>
+        /// <param name="player">Player who uses this card.</param>
+        /// <param name="myCard">Virus card</param>
+        /// <param name="move">Move to put this virus</param>
+        /// <returns>Error message if its</returns>
         public string PlayGameCardVirus(Player player, Card myCard, string move)
         {
-            logger.Write(player.ShortDescription + " has used a "+myCard+" to " + Players[Scheduler.GetStringInt(move, 0)].ShortDescription+"'s "+
+            Logger.Write(player.ShortDescription + " has used a "+myCard+" to " + Players[Scheduler.GetStringInt(move, 0)].ShortDescription+"'s "+
                 Players[Scheduler.GetStringInt(move, 0)].Body.Organs[Scheduler.GetStringInt(move, 2)]);
-
-            string message = Players[Scheduler.GetStringInt(move, 0)].Body.SetVirus(myCard, Scheduler.GetStringInt(move, 2), this);
             
-            return null;
+            return Players[Scheduler.GetStringInt(move, 0)].Body.SetVirus(myCard, Scheduler.GetStringInt(move, 2), this);
         }
         
-        
+        /// <summary>
+        /// Remove a card from the hand of a player. IT'S NOT GOING to the deck stack but will be in a body.
+        /// </summary>
+        /// <param name="player">Player who has the hand.</param>
+        /// <param name="card">Card to remove</param>
         public void RemoveCardFromHand(Player player, Card card)
         {
             player.Hand.Remove(card);
         }
 
+        /// <summary>
+        /// Move one card (given its index) from the hand to the deck stack.
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="index"></param>
         public void DiscardFromHand(Player player, int index)
         {
             Card card = player.Hand[index];
             DiscardFromHand(player, card);
         }
 
+        /// <summary>
+        /// Move one card from the hand fo the deck stack
+        /// </summary>
+        /// <param name="player">Player who has the hand</param>
+        /// <param name="card">Card to discard</param>
         public void DiscardFromHand(Player player, Card card)
         {
-            discards.Add(card);
+            Discards.Add(card);
             player.Hand.Remove(card);
 
-            logger.Write(player.ShortDescription + " has put a " + card + " from his hand to deck.");
+            Logger.Write(player.ShortDescription + " has put a " + card + " from his hand to deck.");
         }
 
+        /// <summary>
+        /// Move all hand to discards stack.
+        /// </summary>
+        /// <param name="player">Player who remove its hand</param>
         public void DiscardAllHand(Player player)
         {
             for(int i=player.Hand.Count - 1; i>=0; i--)
@@ -517,14 +664,15 @@ namespace Virus.Core
             }
         }
         
+        /// <summary>
+        /// Move to discards one card.
+        /// </summary>
+        /// <param name="card">Card to move.</param>
         public void MoveToDiscards(Card card)
         {
-            discards.Add(card);
-            logger.Write(card + " has been moved to discard stack.");
+            Discards.Add(card);
+            Logger.Write(card + " has been moved to discard stack.");
         }
-
-        #endregion
-
-
+        
     }
 }

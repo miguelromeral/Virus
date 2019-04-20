@@ -6,14 +6,31 @@ using System.Threading.Tasks;
 
 namespace Virus.Core
 {
+    /// <summary>
+    /// Referee of the game. It allows players to do some actions based on the game state.
+    /// </summary>
     public class Referee
     {
+        /// <summary>
+        /// Current game.
+        /// </summary>
         public Game Game { get; set; }
 
+        /// <summary>
+        /// Referee constructor.
+        /// </summary>
+        /// <param name="g">Current game</param>
         public Referee(Game g)
         {
             Game = g;
         }
+
+        /// <summary>
+        /// Get a whole list of movements allowed if the player uses this card.
+        /// </summary>
+        /// <param name="me">Player who is gonna play</param>
+        /// <param name="myCard">Card to play</param>
+        /// <returns>List of possible moves with that card</returns>
         public List<string> GetListMovements(Player me, Card myCard)
         {
             List<string> moves = new List<string>();
@@ -22,16 +39,17 @@ namespace Virus.Core
 
             switch (myCard.Face)
             {
+                #region PLAY ORGAN
                 case Card.CardFace.Organ:
-
-
+                    // Check I haven't already a organ of this color
                     if (CanPlayOrgan(me, myCard))
                     {
                         moves.Add(Scheduler.GenerateMove(me.ID, me.GetIndexOfCardInHand(myCard)));
                     }
                     break;
+                #endregion
 
-
+                #region PLAY MEDICINE
                 case Card.CardFace.Medicine:
                     body = me.Body;
                     for (int i = 0; i < body.Organs.Count; i++)
@@ -42,12 +60,15 @@ namespace Virus.Core
                         }
                     }
                     break;
+                #endregion
 
+                #region PLAY VIRUS
                 case Card.CardFace.Virus:
                     myId = me.ID;
                     for (int i = 0; i < Game.Players.Count; i++)
                     {
                         Player rival = Game.Players[i];
+                        // Can't play virus against myself.
                         if (rival.ID != me.ID)
                         {
                             body = rival.Body;
@@ -62,27 +83,35 @@ namespace Virus.Core
                         }
                     }
                     break;
+                #endregion
 
+                #region PLAY LATEX GLOVE
                 case Card.CardFace.LatexGlove:
                     moves.Add(Scheduler.GenerateMove(me.ID, 0));
                     break;
+                #endregion
 
+                #region PLAY TRANSPLANT
                 case Card.CardFace.Transplant:
                     Player one, two;
                     BodyItem bone, btwo;
-                    for (int i = 0; i < Game.Players.Count; i++)
+                    // Recover any possible player combination
+                    for (int p1 = 0; p1 < Game.Players.Count; p1++)
                     {
-                        for (int j = i + 1; j < Game.Players.Count; j++)
+                        for (int p2 = p1 + 1; p2 < Game.Players.Count; p2++)
                         {
-                            one = Game.Players[i];
-                            two = Game.Players[j];
+                            one = Game.Players[p1];
+                            two = Game.Players[p2];
 
-                            for (int x = 0; x < one.Body.Organs.Count; x++)
+                            // Recover any body items combinations between selected players.
+                            for (int bi1 = 0; bi1 < one.Body.Organs.Count; bi1++)
                             {
-                                for (int y = 0; y < two.Body.Organs.Count; y++)
+                                for (int bi2 = 0; bi2 < two.Body.Organs.Count; bi2++)
                                 {
-                                    bone = one.Body.Organs[x];
-                                    btwo = two.Body.Organs[y];
+                                    bone = one.Body.Organs[bi1];
+                                    btwo = two.Body.Organs[bi2];
+
+                                    // Check if we can do the switch.
                                     if (!one.Body.HaveThisOrgan(btwo.Organ.Color) &&
                                         !two.Body.HaveThisOrgan(bone.Organ.Color) &&
                                         bone.Status != BodyItem.State.Immunized &&
@@ -90,8 +119,8 @@ namespace Virus.Core
                                     {
                                         moves.Add(Scheduler.GetManyMoveItem(new string[]
                                         {
-                                                Scheduler.GenerateMove(i, x),
-                                                Scheduler.GenerateMove(j, y)
+                                                Scheduler.GenerateMove(p1, bi1),
+                                                Scheduler.GenerateMove(p2, bi2)
                                         }));
                                     }
                                 }
@@ -99,55 +128,65 @@ namespace Virus.Core
                         }
                     }
                     break;
+                #endregion
 
+                #region PLAY SPREADING
                 case Card.CardFace.Spreading:
                     int myCardIndex = 0;
                     Card modifier;
+                    // Check every body item of our body.
                     foreach (BodyItem item in me.Body.Organs)
                     {
+                        // Check if we have a virus in our body item.
                         modifier = item.GetLastModifier();
                         if (modifier != null)
                         {
                             if (item.Status.Equals(BodyItem.State.Infected))
                             {
-                                int j = 0;
+                                // Recover every player in the game.
+                                int rivalid = 0;
                                 foreach (Player rival in Game.Players)
                                 {
                                     if (rival.ID != me.ID)
                                     {
-                                        int k = 0;
+                                        // Check every body item for this rival.
+                                        int rivalBodyItemIndex = 0;
                                         foreach (BodyItem ri in rival.Body.Organs)
                                         {
+                                            // Can spread only if it has the same color (or wild) and it's free.
                                             if (SameColorOrWildcard(modifier.Color, ri.Organ.Color) &&
                                                 ri.Status.Equals(BodyItem.State.Free))
                                             {
                                                 moves.Add(Scheduler.GetManyMoveItem(new string[] {
                                                     Scheduler.GenerateMove(me.ID, myCardIndex),
-                                                    Scheduler.GenerateMove(j, k)
+                                                    Scheduler.GenerateMove(rivalid, rivalBodyItemIndex)
                                                 }));
                                             }
-                                            k++;
+                                            rivalBodyItemIndex++;
                                         }
                                     }
-                                    j++;
+                                    rivalid++;
                                 }
                             }
                         }
                         myCardIndex++;
                     }
                     return moves;
+                #endregion
 
+                #region PLAY ORGAN THIEF
                 case Card.CardFace.OrganThief:
                     myId = me.ID;
-                    for (int i = 0; i < Game.Players.Count; i++)
+                    for (int p = 0; p < Game.Players.Count; p++)
                     {
-                        Player rival = Game.Players[i];
+                        Player rival = Game.Players[p];
                         if (rival.ID != me.ID)
                         {
                             body = rival.Body;
                             for (int j = 0; j < body.Organs.Count; j++)
                             {
                                 var item = body.Organs[j];
+                                // If I haven't this organ yet and the rival's isn't immunized.
                                 if (!me.Body.HaveThisOrgan(item.Organ.Color) && !item.Status.Equals(BodyItem.State.Immunized))
                                 {
                                     moves.Add(Scheduler.GenerateMove(rival.ID, j));
@@ -156,7 +195,9 @@ namespace Virus.Core
                         }
                     }
                     break;
+                #endregion
 
+                #region PLAY MEDICAL ERROR
                 case Card.CardFace.MedicalError:
                     myId = me.ID;
                     for (int i = 0; i < Game.Players.Count; i++)
@@ -168,12 +209,17 @@ namespace Virus.Core
                         }
                     }
                     return moves;
+                    #endregion
             }
-
-
             return moves;
         }
         
+        /// <summary>
+        /// Check if the player already hasn't an organ of this color.
+        /// </summary>
+        /// <param name="player">Player who is going to play this organ.</param>
+        /// <param name="organ">Card organ to play.</param>
+        /// <returns>True if the player hasn't the organ yet in his body.</returns>
         public bool CanPlayOrgan(Player player, Card organ)
         {
             Body body = player.Body;
@@ -187,8 +233,15 @@ namespace Virus.Core
             return true;
         }
         
+        /// <summary>
+        /// Check if a medicine could be used in a body item.
+        /// </summary>
+        /// <param name="item">Body item to play this medicine.</param>
+        /// <param name="medicine">Medicine to use.</param>
+        /// <returns>True if the body item acepts this medicine</returns>
         public bool CanPlayMedicine(BodyItem item, Card medicine)
         {
+            // Check if they are of the same color or wildcard virus.
             if (Referee.SameColorOrWildcard(item.Organ.Color, medicine.Color) ||
                 (item.Modifiers.Count > 1 && item.GetLastModifier().Face == Card.CardFace.Virus &&
                     Referee.SameColorOrWildcard(item.GetLastModifier().Color, medicine.Color)))
@@ -207,8 +260,15 @@ namespace Virus.Core
             return false;
         }
 
+        /// <summary>
+        /// Check if a body item can suffer a virus card.
+        /// </summary>
+        /// <param name="item">Body item to use the virus.</param>
+        /// <param name="virus">Virs card to play.</param>
+        /// <returns>True if the virus could be used in this body item</returns>
         public bool CanPlayVirus(BodyItem item, Card virus)
         {
+            // Same color of organn (or wildcard) and medicine of the same color of the mediccine (or wildcard)
             if (Referee.SameColorOrWildcard(item.Organ.Color, virus.Color) || 
                 (item.Modifiers.Count > 1 && item.GetLastModifier().Face == Card.CardFace.Medicine && 
                     Referee.SameColorOrWildcard(item.GetLastModifier().Color, virus.Color)))
@@ -226,6 +286,12 @@ namespace Virus.Core
             return false;
         }
 
+        /// <summary>
+        /// Check if two color are the same or wildcard color.
+        /// </summary>
+        /// <param name="color1">Color 1</param>
+        /// <param name="color2">Color 2</param>
+        /// <returns>True if they are equal or some of them is wildcard</returns>
         public static bool SameColorOrWildcard(Card.CardColor color1, Card.CardColor color2)
         {
             if (color1 == color2 ||
