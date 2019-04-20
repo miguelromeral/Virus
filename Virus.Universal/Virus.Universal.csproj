@@ -119,6 +119,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Classes\UserHandler.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -177,6 +178,27 @@
     <Content Include="Assets\Wide310x150Logo.scale-125.png" />
     <Content Include="Assets\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
+    <Content Include="Images\Botiqun_500.jpg" />
+    <Content Include="Images\cerebro_500.jpg" />
+    <Content Include="Images\contagio_500.jpg" />
+    <Content Include="Images\corazn_500.jpg" />
+    <Content Include="Images\cuerpo_500.jpg" />
+    <Content Include="Images\error_500.jpg" />
+    <Content Include="Images\estomago_500.jpg" />
+    <Content Include="Images\guante_500.jpg" />
+    <Content Include="Images\hueso_500.jpg" />
+    <Content Include="Images\jarabe_500.jpg" />
+    <Content Include="Images\jeringuilla_500.jpg" />
+    <Content Include="Images\ladrn_500.jpg" />
+    <Content Include="Images\logo.png" />
+    <Content Include="Images\pastillas_500.jpg" />
+    <Content Include="Images\tirita_500.jpg" />
+    <Content Include="Images\Trasplante_500.jpg" />
+    <Content Include="Images\Virus-amarillo_500.jpg" />
+    <Content Include="Images\Virus-azul_500.jpg" />
+    <Content Include="Images\Virus-rojo_500.jpg" />
+    <Content Include="Images\Virus-verde_500.jpg" />
+    <Content Include="Images\Virus_500.jpg" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

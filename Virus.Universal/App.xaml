@@ -5,6 +5,13 @@
              xmlns:local="using:Virus.Universal">
 
     <Application.Resources>
+        <Style TargetType='Button' x:Key='CardButton'>
+            <Setter Property="Width"
+                    Value="50" />
+            <Setter Property="Height"
+                    Value="100" />
+        </Style>
+        
         <Style TargetType="Button"
                x:Key="Button">
             <Setter Property="Width"

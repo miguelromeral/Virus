@@ -9,6 +9,10 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-
+        <StackPanel x:Name='GameContent'
+                    HorizontalAlignment='Center'
+                    Orientation='Vertical'
+                    x:FieldModifier="public">
+        </StackPanel>
     </Grid>
 </Page>
