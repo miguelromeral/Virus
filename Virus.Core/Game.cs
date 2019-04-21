@@ -317,7 +317,8 @@ namespace Virus.Core
         public override string ToString()
         {
             string printed = String.Empty;
-            printed += "Deck (" + Deck.Count + ") | Discards Stack (" + Discards.Count + ") | Total in game: ("+TotalCardsInGame+")"  + Environment.NewLine + Environment.NewLine;
+            printed += "Deck (" + Deck.Count + ") | Discards Stack (" + Discards.Count + ") | Total in game: (" + TotalCardsInGame + ")" + Environment.NewLine + Environment.NewLine;
+            printed += "Top player: "+WinningPlayer().ShortDescription + Environment.NewLine + Environment.NewLine;
 
             printed += "Turn # " + Turn + Environment.NewLine; 
             for(int i=0; i<Players.Count; i++)
@@ -534,8 +535,8 @@ namespace Virus.Core
                     return PlayGameCardMedicine(player, myCard, move);
 
                 case Card.CardFace.Virus:
-                    p = Scheduler.GetStringInt(move, 0);
-                    c = Scheduler.GetStringInt(move, 2);
+                    //p = Scheduler.GetStringInt(move, 0);
+                    //c = Scheduler.GetStringInt(move, 2);
                     //if(Players[p].Body.Items[c].Modifiers.Count == 0)
                     //{
                         RemoveCardFromHand(player, myCard);
@@ -710,6 +711,79 @@ namespace Virus.Core
             if (Logger == null)
                 return false;
             return Logger.Write(message, print);
+        }
+
+        public Player WinningPlayer()
+        {
+            List<Player> leaders = new List<Player>();
+            int value = 0, aux;
+            foreach(var p in Players)
+            {
+                aux = p.HealthyOrgans;
+                if(aux >= value)
+                {
+                    if (aux > value)
+                    {
+                        leaders.Clear();
+                    }
+                    value = p.HealthyOrgans;
+                    leaders.Add(p);
+                }
+            }
+            if(leaders.Count == 1)
+            {
+                return leaders[0];
+            }
+            else
+            {
+                // 2 or more players with the same number of healthy organs.
+                List<Player> newLeaders = new List<Player>();
+                value = Settings.NumberToWin;
+                foreach(var p in leaders)
+                {
+                    aux = p.Body.OrgansLeftToWin(this);
+                    if(aux <= value)
+                    {
+                        if (aux < value)
+                        {
+                            newLeaders.Clear();
+                        }
+                        value = p.Body.OrgansLeftToWin(this);
+                        newLeaders.Add(p);
+                    }
+                }
+                if(newLeaders.Count == 1)
+                {
+                    return newLeaders[0];
+                }
+                else
+                {
+                    // Same number of healthy organs and same number of cards to be winner, so compare the values in points of theirs bodies.
+                    leaders.Clear();
+                    value = 0;
+                    foreach(var p in newLeaders)
+                    {
+                        aux = p.Body.Points;
+                        if(aux >= value)
+                        {
+                            if (aux > value)
+                            {
+                                leaders.Clear();
+                            }
+                            value = p.Body.Points;
+                            leaders.Add(p);
+                        }
+                    }
+                    if(leaders.Count == 1)
+                    {
+                        return leaders[0];
+                    }
+                    else
+                    {
+                        return leaders[Scheduler.RandomIndex(leaders.Count)];
+                    }
+                }
+            }
         }
     }
 }

@@ -223,7 +223,12 @@ namespace Virus.Core
                 return -1;
             }
         }
-        
+
+
+        public static int RandomIndex(int end, int begin = 0)
+        {
+            return new Random().Next(begin, end);
+        }
 
     }
 }

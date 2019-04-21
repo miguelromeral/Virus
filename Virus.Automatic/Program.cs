@@ -14,7 +14,7 @@ namespace Virus.Automatic
             Game virus = new Game(4);
             //virus.Start(2000);
             virus.Start(0);
-            Console.WriteLine("Press, finally, any key to exit");
+            Console.WriteLine("Press any key to exit");
             Console.ReadLine();
         }
     }
