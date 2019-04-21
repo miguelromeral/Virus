@@ -6,13 +6,26 @@ using System.Threading.Tasks;
 
 namespace Virus.Core
 {
+    [Serializable]
     public class ArtificialIntelligence
     {
         public enum AICategory
         {
+            /// <summary>
+            /// Human interaction
+            /// </summary>
             Human,
+            /// <summary>
+            /// Choose every time the first card in his hand and the first available move (the Player 0 will suffer almost every time!)
+            /// </summary>
             First,
+            /// <summary>
+            /// Choose randomly one card to play and one random move to this card.
+            /// </summary>
             Random,
+            /// <summary>
+            /// Looks for the move with more points to him.
+            /// </summary>
             Easy,
             Medium,
             Hard
@@ -58,6 +71,7 @@ namespace Virus.Core
                 case AICategory.Random:
                     return ChooseRandom(movesByCard);
                 case AICategory.Easy:
+                    return ChooseEasy(movesByCard);
                 case AICategory.Medium:
                 case AICategory.Hard:
                 default:
@@ -115,8 +129,25 @@ namespace Virus.Core
             return "END RANDOM";
         }
 
-        public string ChooseEasy(Card myCard)
+        public string ChooseEasy(List<List<string>> movesbyCard)
         {
+            // Hand -> Game (by move)
+            List<List<Game>> scenarios = AllScenariosByLists(movesbyCard);
+            Dictionary<string,Card> best = GetMoveMorePoints(scenarios, movesbyCard);
+            if(best == null)
+            {
+                Game.DiscardAllHand(Me);
+                return null;
+            }
+            else
+            {
+                foreach(var i in best)
+                {
+                    return Game.PlayCardByMove(Me, i.Value, i.Key);
+                }
+            }
+
+
             /*
             switch (myCard.Face)
             {
@@ -129,10 +160,86 @@ namespace Virus.Core
                 case Card.CardFace.MedicalError:
                 case Card.CardFace.Spreading:
                 default:
-                    return moves[0];
+                    //return moves[0];
+                    return null;
             }
             */
             return null;
+        }
+        
+        public List<List<Game>> AllScenariosByLists(List<List<string>> movesbycard)
+        {
+            List<List<Game>> scenarios = new List<List<Game>>();
+            for (int i = 0; i < Me.Hand.Count; i++)
+            {
+                Card card = Me.Hand[i];
+                List<Game> scenByCard = new List<Game>();
+                for (int j = 0; j < movesbycard[i].Count; j++)
+                {
+
+                    // La carta que se juega se elimina del original.
+
+                    Game aux = Game.DeepClone<Game>(Game);
+                    aux.Logger = null;
+
+                    var list = movesbycard[i];
+                    aux.PlayCardByMove(aux.GetPlayerByID(Me.ID), card, list[j]);
+                    scenByCard.Add(aux);
+                }
+                scenarios.Add(scenByCard);
+            }
+            return scenarios;
+        }
+
+        public Dictionary<string, Card> GetMoveMorePoints(List<List<Game>> scenarios, List<List<string>> movesbycard)
+        {
+            int maxPoints = 0, current;
+            string best = null;
+            Card card = null;
+            Game aux;
+
+            for (int i = 0; i < movesbycard.Count; i++)
+            {
+                for (int j = 0; j < movesbycard[i].Count; j++)
+                {
+                    var games = scenarios[i];
+                    var moves = movesbycard[i];
+
+                    aux = games[j];
+                    current = aux.GetPlayerByID(Me.ID).Body.Points;
+                    if (current > maxPoints)
+                    {
+                        maxPoints = current;
+                        best = moves[j];
+                        card = Me.Hand[i];
+                    }
+                }
+            }
+
+            // CHECK IF NULL!
+            if (best == null)
+                return null;
+
+            return new Dictionary<string, Card>
+            {
+                { best, card }
+            };
+        }
+
+        public bool CanPlayOrganFromHand(List<List<string>> wholeMoves)
+        {
+            for(int i=0; i<Me.Hand.Count; i++)
+            {
+                Card c = Me.Hand[i];
+                if(c.Face == Card.CardFace.Organ)
+                {
+                    if(wholeMoves[i].Count > 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 }

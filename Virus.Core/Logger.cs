@@ -9,6 +9,7 @@ namespace Virus.Core
     /// <summary>
     /// Logger to register the actions that have been taken in the game.
     /// </summary>
+    [Serializable]
     public class Logger
     {
         #region PROPERTIES

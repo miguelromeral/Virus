@@ -10,6 +10,7 @@ namespace Virus.Core
     /// <summary>
     /// Settings parameters of the game.
     /// </summary>
+    [Serializable]
     public class Settings
     {
         /// <summary>

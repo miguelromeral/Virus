@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Runtime.Serialization.Formatters.Binary;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace Virus.Core
     /// <summary>
     /// Game. It has the players, bodies, cards and all functionality.
     /// </summary>
+    [Serializable]
     public class Game
     {
         #region PROPERTIES
@@ -32,7 +34,7 @@ namespace Virus.Core
         /// <summary>
         /// Logger class to register every action in the game.
         /// </summary>
-        public Logger Logger { get; }
+        public Logger Logger { get; set; }
         /// <summary>
         /// Referee that indicates all availables moves.
         /// </summary>
@@ -76,7 +78,7 @@ namespace Virus.Core
                 foreach (Player p in Players)
                 {
                     count += p.Hand.Count;
-                    foreach (BodyItem item in p.Body.Organs)
+                    foreach (BodyItem item in p.Body.Items)
                     {
                         count++;
                         count += item.Modifiers.Count;
@@ -98,7 +100,7 @@ namespace Virus.Core
         public Game(int numPlayers, bool firstHuman = false)
         {
             Logger = new Logger();
-            Logger.Write("We're getting ready Virus!", true);
+            WriteToLog("We're getting ready Virus!", true);
 
             Settings = new Settings(this);
             Settings.LoadGamePreferences();
@@ -108,9 +110,9 @@ namespace Virus.Core
             Turn = 1;
 
             Deck = Shuffle(InitializeCards());
-            Logger.Write(Deck.Count+" cards shuffled.", true);
+            WriteToLog(Deck.Count+" cards shuffled.", true);
             Discards = new List<Card>();
-            Logger.Write("Discard stack created.");
+            WriteToLog("Discard stack created.");
             InitializePlayers(numPlayers, firstHuman);
         }
         
@@ -132,19 +134,19 @@ namespace Virus.Core
                     {
                         deck.Add(new Card(color, Card.CardFace.Organ));
                     }
-                    Logger.Write(Settings.NumberOrgans +" "+color+" organs created.");
+                    WriteToLog(Settings.NumberOrgans +" "+color+" organs created.");
 
                     for (i = 0; i < Settings.NumberMedicines; i++)
                     {
                         deck.Add(new Card(color, Card.CardFace.Medicine));
                     }
-                    Logger.Write(Settings.NumberMedicines + " " + color + " medicines created.");
+                    WriteToLog(Settings.NumberMedicines + " " + color + " medicines created.");
 
                     for (i = 0; i < Settings.NumberViruses; i++)
                     {
                         deck.Add(new Card(color, Card.CardFace.Virus));
                     }
-                    Logger.Write(Settings.NumberViruses + " " + color + " viruses created.");
+                    WriteToLog(Settings.NumberViruses + " " + color + " viruses created.");
 
                 }
             }
@@ -155,19 +157,19 @@ namespace Virus.Core
             {
                 deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
             }
-            Logger.Write(Settings.NumberWildcardOrgans + " wildcard organs created.");
+            WriteToLog(Settings.NumberWildcardOrgans + " wildcard organs created.");
 
             for (i = 0; i < Settings.NumberWildcardMedicines; i++)
             {
                 deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Medicine));
             }
-            Logger.Write(Settings.NumberWildcardMedicines + " wildcard medicines created.");
+            WriteToLog(Settings.NumberWildcardMedicines + " wildcard medicines created.");
 
             for (i = 0; i < Settings.NumberWildcardViruses; i++)
             {
                 deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Virus));
             }
-            Logger.Write(Settings.NumberWildcardViruses + " wildcard viruses created.");
+            WriteToLog(Settings.NumberWildcardViruses + " wildcard viruses created.");
             #endregion
             
             #region THREATMENTS
@@ -204,15 +206,15 @@ namespace Virus.Core
         /// <returns></returns>
         private bool InitializePlayers(int numPlayers, bool firstHuman = false)
         {
-            Logger.Write("Creating players.", true);
+            WriteToLog("Creating players.", true);
             Players = new List<Player>();
             for (int i = 0; i < numPlayers; i++)
             {
                 var p = new Player(this, (i == 0 && firstHuman)) { ID = i };
                 Players.Add(p);
-                Logger.Write("Player with ID " + i + " created. " + ((i == 0 && firstHuman) ? "Human" : "IA: " + p.AI));
+                WriteToLog("Player with ID " + i + " created. " + ((i == 0 && firstHuman) ? "Human" : "IA: " + p.AI));
             }
-            Logger.Write("Dealing cards.", true);
+            WriteToLog("Dealing cards.", true);
             for (int i = 0; i < numPlayers; i++)
             {
                 List<Card> hand = new List<Card>();
@@ -265,17 +267,17 @@ namespace Virus.Core
                 // If there are no more cards in deck, shuffle the discard stacks and uses it
                 if(Deck.Count == 0)
                 {
-                    Logger.Write("Deck is already empty. We have to redraw the discards.");
+                    WriteToLog("Deck is already empty. We have to redraw the discards.");
                     Deck = Shuffle(Discards);
                     Discards = new List<Card>();
                 }
                 newCard = Deck[0];
-                Logger.Write(me.ShortDescription + " draws a new card: " + newCard);
+                WriteToLog(me.ShortDescription + " draws a new card: " + newCard);
                 Deck.RemoveAt(0);
             }
             catch (Exception)
             {
-                Logger.Write("** There's no cards in deck to pop. **", true);
+                WriteToLog("** There's no cards in deck to pop. **", true);
                 return null;
             }
             return newCard;
@@ -295,6 +297,7 @@ namespace Virus.Core
 
             while (!GameOver)
             {
+                //Console.Clear();
                 PlayTurn(milis == 0, true);
                 if(milis != 0)
                 {
@@ -302,9 +305,10 @@ namespace Virus.Core
                 }
             }
 
-            Logger.Write("The game has been finished.", true);
-            Logger.Write(ToString(), true);
+            WriteToLog("The game has been finished.", true);
+            WriteToLog(ToString(), true);
         }
+
 
         /// <summary>
         /// Gets a string overview of the game.
@@ -343,7 +347,7 @@ namespace Virus.Core
             }
 
             Console.WriteLine();
-            Logger.Write("Turn #" + Turn + " (" + p.ShortDescription + ").", true);
+            WriteToLog("Turn #" + Turn + " (" + p.ShortDescription + ").", true);
             if (wait)
             {
                 Console.WriteLine("Press any key to continue.");
@@ -356,7 +360,7 @@ namespace Virus.Core
             }
             else
             {
-                Logger.Write("The player has no cards in his hand. Pass the turn.");
+                WriteToLog("The player has no cards in his hand. Pass the turn.");
             }
             // Once the player has used (or discarded) cards, fill the hand to the number.
             DrawCardsToFill(p);
@@ -389,18 +393,18 @@ namespace Virus.Core
             p1 = Scheduler.GetStringInt(moves, 0);
             o1 = Scheduler.GetStringInt(moves, 2);
             one = Players[p1];
-            bone = one.Body.Organs[o1];
+            bone = one.Body.Items[o1];
 
             p2 = Scheduler.GetStringInt(moves, 4);
             o2 = Scheduler.GetStringInt(moves, 6);
             two = Players[p2];
-            btwo = two.Body.Organs[o2];
+            btwo = two.Body.Items[o2];
 
             Card virus = bone.GetLastModifier();
             bone.Modifiers.Remove(virus);
             btwo.NewVirus(virus, this);
 
-            Logger.Write(one.ShortDescription+" has spread his "+virus+" from his "+bone+" to "+two.ShortDescription+"'s "+btwo);
+            WriteToLog(one.ShortDescription+" has spread his "+virus+" from his "+bone+" to "+two.ShortDescription+"'s "+btwo);
 
             return null;
         }
@@ -423,13 +427,13 @@ namespace Virus.Core
                 o2 = Scheduler.GetStringInt(move, 6);
                 one = Players[p1];
                 two = Players[p2];
-                bone = one.Body.Organs[o1];
-                btwo = two.Body.Organs[o2];
+                bone = one.Body.Items[o1];
+                btwo = two.Body.Items[o2];
 
-                Players[p1].Body.Organs[o1] = btwo;
-                Players[p2].Body.Organs[o2] = bone;
+                Players[p1].Body.Items[o1] = btwo;
+                Players[p2].Body.Items[o2] = bone;
 
-                Logger.Write(one.ShortDescription + " has transplantated his " + bone + " by the " + two.ShortDescription + "'s organ "+btwo);
+                WriteToLog(one.ShortDescription + " has transplantated his " + bone + " by the " + two.ShortDescription + "'s organ "+btwo);
 
                 return null;
             }
@@ -450,12 +454,12 @@ namespace Virus.Core
             try
             {
                 Player rival = Players[Scheduler.GetStringInt(move, 0)];
-                BodyItem stealed = rival.Body.Organs[Scheduler.GetStringInt(move, 2)];
-                rival.Body.Organs.Remove(stealed);
+                BodyItem stealed = rival.Body.Items[Scheduler.GetStringInt(move, 2)];
+                rival.Body.Items.Remove(stealed);
 
-                me.Body.Organs.Add(stealed);
+                me.Body.Items.Add(stealed);
 
-                Logger.Write(me.ShortDescription+" has stealed the "+rival.ShortDescription+"'s organ "+stealed);
+                WriteToLog(me.ShortDescription+" has stealed the "+rival.ShortDescription+"'s organ "+stealed);
 
                 return null;
             }
@@ -476,7 +480,7 @@ namespace Virus.Core
             {
                 if (rival.ID != me.ID)
                 {
-                    Logger.Write(rival.ShortDescription + " is going to lost his hand due to a latex glove played by " + me.ShortDescription);
+                    WriteToLog(rival.ShortDescription + " is going to lost his hand due to a latex glove played by " + me.ShortDescription);
                     DiscardAllHand(rival);
                 }
             }
@@ -499,7 +503,7 @@ namespace Virus.Core
                 me.Body = toswitch.Body;
                 toswitch.Body = aux;
 
-                Logger.Write(me.ShortDescription+" has switched his body by the "+toswitch.ShortDescription+"'s one.");
+                WriteToLog(me.ShortDescription+" has switched his body by the "+toswitch.ShortDescription+"'s one.");
 
                 return null;
             }
@@ -532,7 +536,7 @@ namespace Virus.Core
                 case Card.CardFace.Virus:
                     p = Scheduler.GetStringInt(move, 0);
                     c = Scheduler.GetStringInt(move, 2);
-                    if(Players[p].Body.Organs[c].Modifiers.Count == 0)
+                    if(Players[p].Body.Items[c].Modifiers.Count == 0)
                     {
                         RemoveCardFromHand(player, myCard);
                     }
@@ -586,7 +590,7 @@ namespace Virus.Core
         /// <returns>Error message if its</returns>
         public string PlayGameCardOrgan(Player player, Card myCard)
         {
-            Logger.Write(player.ShortDescription + " has played a " + myCard);
+            WriteToLog(player.ShortDescription + " has played a " + myCard);
             return player.Body.SetOrgan(myCard);
         }
 
@@ -599,7 +603,7 @@ namespace Virus.Core
         /// <returns></returns>
         public string PlayGameCardMedicine(Player player, Card myCard, string move)
         {
-            Logger.Write(player.ShortDescription + " has used a "+myCard+" in his " + player.Body.Organs[Scheduler.GetStringInt(move, 2)]);
+            WriteToLog(player.ShortDescription + " has used a "+myCard+" in his " + player.Body.Items[Scheduler.GetStringInt(move, 2)]);
             return player.Body.SetMedicine(this, myCard, Scheduler.GetStringInt(move, 2));
         }
 
@@ -612,8 +616,8 @@ namespace Virus.Core
         /// <returns>Error message if its</returns>
         public string PlayGameCardVirus(Player player, Card myCard, string move)
         {
-            Logger.Write(player.ShortDescription + " has used a "+myCard+" to " + Players[Scheduler.GetStringInt(move, 0)].ShortDescription+"'s "+
-                Players[Scheduler.GetStringInt(move, 0)].Body.Organs[Scheduler.GetStringInt(move, 2)]);
+            WriteToLog(player.ShortDescription + " has used a "+myCard+" to " + Players[Scheduler.GetStringInt(move, 0)].ShortDescription+"'s "+
+                Players[Scheduler.GetStringInt(move, 0)].Body.Items[Scheduler.GetStringInt(move, 2)]);
             
             return Players[Scheduler.GetStringInt(move, 0)].Body.SetVirus(myCard, Scheduler.GetStringInt(move, 2), this);
         }
@@ -649,7 +653,7 @@ namespace Virus.Core
             Discards.Add(card);
             player.Hand.Remove(card);
 
-            Logger.Write(player.ShortDescription + " has put a " + card + " from his hand to deck.");
+            WriteToLog(player.ShortDescription + " has put a " + card + " from his hand to deck.");
         }
 
         /// <summary>
@@ -671,8 +675,41 @@ namespace Virus.Core
         public void MoveToDiscards(Card card)
         {
             Discards.Add(card);
-            Logger.Write(card + " has been moved to discard stack.");
+            WriteToLog(card + " has been moved to discard stack.");
         }
         
+
+        public Player GetPlayerByID(int id)
+        {
+            foreach(Player p in Players)
+            {
+                if(p.ID == id)
+                {
+                    return p;
+                }
+            }
+            return null;
+        }
+
+
+        public static Game DeepClone<Game>(Game obj)
+        {
+            using (var ms = new MemoryStream())
+            {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(ms, obj);
+                ms.Position = 0;
+                Game g = (Game)formatter.Deserialize(ms);
+                return g;
+            }
+        }
+
+
+        public bool WriteToLog(string message, bool print = false)
+        {
+            if (Logger == null)
+                return false;
+            return Logger.Write(message, print);
+        }
     }
 }

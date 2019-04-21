@@ -9,6 +9,7 @@ namespace Virus.Core
     /// <summary>
     /// Player. A user with his corresponding body.
     /// </summary>
+    [Serializable]
     public class Player
     {
         #region PROPERTIES
@@ -54,16 +55,11 @@ namespace Virus.Core
             get
             {
                 int count = 0;
-                foreach (var item in Body.Organs)
+                foreach (var item in Body.Items)
                 {
-                    switch (item.Status)
+                    if (item.IsHealthy)
                     {
-                        // Only free, vaccinated and immunized are healthy organs (no virus affected).
-                        case BodyItem.State.Free:
-                        case BodyItem.State.Vaccinated:
-                        case BodyItem.State.Immunized:
-                            count++;
-                            break;
+                        count++;
                     }
                 }
                 return count;
@@ -90,7 +86,7 @@ namespace Virus.Core
                 Computer = new ArtificialIntelligence(game, this);
                 AI = Computer.RandomIA();
                 //ai = ArtificialIntelligence.AICategory.Random;
-                //ai = ArtificialIntelligence.AICategory.First;
+                AI = ArtificialIntelligence.AICategory.Easy;
             }
         }
         #endregion

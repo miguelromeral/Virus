@@ -45,7 +45,11 @@ namespace Virus.Core
         /// Message that indicates if the user is choosing cards.
         /// </summary>
         public const string ACTION_CHOOSING = "ChoosingCars";
-#endregion
+
+        public const int POINTS_ORGAN = 1000;
+        public const int POINTS_MEDICINE = 300;
+        public const int POINTS_VIRUS = 200;
+        #endregion
 
         /// <summary>
         /// Generate a move string given the Player ID and the card (or organ) number

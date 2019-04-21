@@ -27,7 +27,7 @@ namespace Virus.Core
                 foreach (string move in moves)
                 {
                     o1 = Scheduler.GetStringInt(move, 2);
-                    item = player.Body.Organs[o1];
+                    item = player.Body.Items[o1];
                     Console.WriteLine("{0}.- {1,20}", (c+1), item);
                     c++;
                 }
@@ -49,7 +49,7 @@ namespace Virus.Core
                     p1 = Scheduler.GetStringInt(move, 0);
                     o1 = Scheduler.GetStringInt(move, 2);
                     player = game.Players[p1];
-                    item = player.Body.Organs[o1];
+                    item = player.Body.Items[o1];
                     Console.WriteLine("{0}.     {1,20} : {2,20}", (c+1), player.ShortDescription, item);
                     c++;
                 }
@@ -80,8 +80,8 @@ namespace Virus.Core
                     o2 = Scheduler.GetStringInt(move, 6);
                     one = game.Players[p1];
                     two = game.Players[p2];
-                    bone = one.Body.Organs[o1];
-                    btwo = two.Body.Organs[o2];
+                    bone = one.Body.Items[o1];
+                    btwo = two.Body.Items[o2];
                     Console.WriteLine("{0}.     {1,20}       {2,20}", (c+1), one.ShortDescription, two.ShortDescription);
                     Console.WriteLine("        [{0,20}] <---> [{1,20}]\n", bone, btwo);
                     c++;
@@ -114,7 +114,7 @@ namespace Virus.Core
                 p1 = Scheduler.GetStringInt(moves[0], 0);
                 o1 = Scheduler.GetStringInt(moves[0], 2);
                 one = game.Players[p1];
-                bone = one.Body.Organs[o1];
+                bone = one.Body.Items[o1];
 
                 Console.WriteLine("- Please, type the number of the combination to spread your {0} virus.", bone.GetLastModifier());
                 foreach (string move in moves)
@@ -122,7 +122,7 @@ namespace Virus.Core
                     p2 = Scheduler.GetStringInt(move, 4);
                     o2 = Scheduler.GetStringInt(move, 6);
                     two = game.Players[p2];
-                    btwo = two.Body.Organs[o2];
+                    btwo = two.Body.Items[o2];
                     Console.WriteLine("{0}.     {1,20}: [{2,30}]", c, two.ShortDescription, btwo);
                     c++;
                 }

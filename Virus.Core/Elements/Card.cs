@@ -9,6 +9,7 @@ namespace Virus.Core
     /// <summary>
     /// Card of the game.
     /// </summary>
+    [Serializable]
     public class Card
     {
         #region ENUMARATIONS

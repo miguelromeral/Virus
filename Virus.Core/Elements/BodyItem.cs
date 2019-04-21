@@ -9,6 +9,7 @@ namespace Virus.Core
     /// <summary>
     /// A body item, composed by, at least, on Organ and can store the medicines and virus played in that Organ.
     /// </summary>
+    [Serializable]
     public class BodyItem
     {
         #region ENUMS
@@ -53,11 +54,7 @@ namespace Virus.Core
         /// <summary>
         /// Valuable criteria to clasify this body item. Usefull for AI.
         /// </summary>
-        public int Points
-        {
-            // TODO
-            get { return 1; }
-        }
+        public int Points = Scheduler.POINTS_ORGAN;
         
         /// <summary>
         /// Current status of the body item in function of the cards played on its Organ.
@@ -98,6 +95,23 @@ namespace Virus.Core
                 }
             }
         }
+
+        public bool IsHealthy
+        {
+            get
+            {
+                switch (Status)
+                {
+                    // Only free, vaccinated and immunized are healthy organs (no virus affected).
+                    case BodyItem.State.Free:
+                    case BodyItem.State.Vaccinated:
+                    case BodyItem.State.Immunized:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        }
         #endregion
 
         #region CONSTRUCTOR
@@ -120,6 +134,15 @@ namespace Virus.Core
         /// <returns>String with a error message if it cannot be added. Null if all right.</returns>
         public string NewMedicine(Game game, Card medicine)
         {
+            if (medicine.Color == Card.CardColor.Wildcard)
+            {
+                Points += (Scheduler.POINTS_MEDICINE / 2);
+            }
+            else
+            {
+                Points += Scheduler.POINTS_MEDICINE;
+            }
+
             switch (Status)
             {
                 case State.Free:
@@ -190,6 +213,19 @@ namespace Virus.Core
         /// <returns>Error message if it can't be added. Null in other case.</returns>
         public string NewVirus(Card virus, Game game)
         {
+            if (Status != State.Immunized)
+            {
+                // It's easier to remove a wildcard virus!
+                if (virus.Color == Card.CardColor.Wildcard)
+                {
+                    Points -= (Scheduler.POINTS_VIRUS / 2);
+                }
+                else
+                {
+                    Points -= Scheduler.POINTS_VIRUS;
+                }
+            }
+
             switch (Status)
             {
                 case State.Free:
@@ -231,7 +267,7 @@ namespace Virus.Core
                 printed += mod.ToStringShort();
             }
 
-            return String.Format("({0,14}:{1,9})", Organ.ToString(), printed);
+            return String.Format("({0,14}:{1,9}) [Pts: {2,4}]", Organ.ToString(), printed, Points);
         }
 
     }
