@@ -536,10 +536,10 @@ namespace Virus.Core
                 case Card.CardFace.Virus:
                     p = Scheduler.GetStringInt(move, 0);
                     c = Scheduler.GetStringInt(move, 2);
-                    if(Players[p].Body.Items[c].Modifiers.Count == 0)
-                    {
+                    //if(Players[p].Body.Items[c].Modifiers.Count == 0)
+                    //{
                         RemoveCardFromHand(player, myCard);
-                    }
+                    //}
                     return PlayGameCardVirus(player, myCard, move);
 
                 case Card.CardFace.Transplant:

@@ -28,16 +28,16 @@ namespace Virus.ConsoleApp
             // DATA TO TEST:
             Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Spreading);
 
-            Players[0].Body.SetOrgan(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
-            Players[0].Body.SetVirus(new Card(Card.CardColor.Red, Card.CardFace.Virus), 0, this);
-            Players[0].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
-            Players[0].Body.SetVirus(new Card(Card.CardColor.Yellow, Card.CardFace.Virus), 1, this);
-            Players[1].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
-            Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            Players[1].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
-            Players[2].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
-            Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            Players[2].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
+            //Players[0].Body.SetVirus(new Card(Card.CardColor.Red, Card.CardFace.Virus), 0, this);
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
+            //Players[0].Body.SetVirus(new Card(Card.CardColor.Yellow, Card.CardFace.Virus), 1, this);
+            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
+            //Players[2].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
+            //Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[2].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
 
             while (!GameOver)
             {
