@@ -71,11 +71,10 @@ namespace Virus.Core
                 case AICategory.Random:
                     return ChooseRandom(movesByCard);
                 case AICategory.Easy:
-                //    return ChooseEasy(movesByCard);
                 case AICategory.Medium:
                 case AICategory.Hard:
                 default:
-                    return ChooseFirstMove(movesByCard);
+                    return ChooseEasy(movesByCard);
             }
         }
 

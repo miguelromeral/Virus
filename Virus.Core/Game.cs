@@ -297,7 +297,7 @@ namespace Virus.Core
 
             while (!GameOver)
             {
-                //Console.Clear();
+                Console.Clear();
                 PlayTurn(milis == 0, true);
                 if(milis != 0)
                 {

@@ -7,6 +7,7 @@ using Virus.Core;
 
 namespace Virus.Core
 {
+    [Serializable]
     public class ReaderInput
     {
         private Game game;
