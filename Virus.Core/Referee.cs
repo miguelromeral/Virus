@@ -116,7 +116,7 @@ namespace Virus.Core
                                     if (!one.Body.HaveThisOrgan(btwo.Organ.Color) &&
                                         !two.Body.HaveThisOrgan(bone.Organ.Color) &&
                                         bone.Status != BodyItem.State.Immunized &&
-                                        btwo.Status != BodyItem.State.Infected)
+                                        btwo.Status != BodyItem.State.Immunized)
                                     {
                                         moves.Add(Scheduler.GetManyMoveItem(new string[]
                                         {

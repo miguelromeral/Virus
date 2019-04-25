@@ -83,7 +83,7 @@ namespace Virus.Core
                     two = game.Players[p2];
                     bone = one.Body.Items[o1];
                     btwo = two.Body.Items[o2];
-                    Console.WriteLine("{0}.     {1,20}       {2,20}", (c+1), one.ShortDescription, two.ShortDescription);
+                    Console.WriteLine("{0}.     {1,20}       {2,20}", c, one.ShortDescription, two.ShortDescription);
                     Console.WriteLine("        [{0,20}] <---> [{1,20}]\n", bone, btwo);
                     c++;
                 }

@@ -45,7 +45,7 @@ namespace Virus.ConsoleApp
                 // IA Turn
                 else
                 {
-                    PlayTurn();
+                    PlayTurn(milis == 0, true);
                     if (milis != 0)
                     {
                         System.Threading.Thread.Sleep(milis);
@@ -101,7 +101,7 @@ namespace Virus.ConsoleApp
             }
             else
             {
-
+                Players[CurrentTurn].PrintMyOptions(true);
             }
         }
         
@@ -160,10 +160,6 @@ namespace Virus.ConsoleApp
                     myCard = me.Hand[(myCardIndex - 1)];
                     message = PlayGameCardByUser(Players[0], myCard);
                     ThrowExceptionIfMessage(message);
-                    if (message == null)
-                    {
-                        DiscardFromHand(me, myCard);
-                    }
                 }
                 return true;
             }
@@ -211,12 +207,12 @@ namespace Virus.ConsoleApp
         public string PlayGameCardByUser(Player player, Card myCard)
         {
             List<string> moves = new List<string>();
-            int p, c;
             switch (myCard.Face)
             {
                 #region PLAY ORGAN
                 case Card.CardFace.Organ:
-                    return PlayGameCardOrgan(player, myCard);
+
+                    return PlayCardByMove(player, myCard, null);
                 #endregion
 
                 #region PLAY MEDICINE
@@ -228,7 +224,7 @@ namespace Virus.ConsoleApp
                     }
                     if (moves.Count == 1)
                     {
-                        return PlayGameCardMedicine(player, myCard, moves[0]);
+                        return PlayCardByMove(player, myCard, moves[0]);
                     }
                     if (moves.Count > 1)
                     {
@@ -237,7 +233,7 @@ namespace Virus.ConsoleApp
                         if (choosen == null)
                             throw new Exception("The input doesn't belong to any available move.");
 
-                        return PlayGameCardMedicine(player, myCard, choosen);
+                        return PlayCardByMove(player, myCard, choosen);
                     }
 
                     break;
@@ -252,9 +248,7 @@ namespace Virus.ConsoleApp
                     }
                     if (moves.Count == 1)
                     {
-                        p = Scheduler.GetStringInt(moves[0], 0);
-                        c = Scheduler.GetStringInt(moves[0], 2);
-                        return Players[p].Body.SetVirus(myCard, c, this);
+                        return PlayCardByMove(player, myCard, moves[0]);
                     }
                     if (moves.Count > 1)
                     {
@@ -262,11 +256,8 @@ namespace Virus.ConsoleApp
 
                         if (choosen == null)
                             throw new Exception("The input doesn't belong to any available move.");
-
-                        p = Scheduler.GetStringInt(choosen, 0);
-                        c = Scheduler.GetStringInt(choosen, 2);
-
-                        return Players[p].Body.SetVirus(myCard, c, this);
+                        
+                        return PlayCardByMove(player, myCard, choosen);
                     }
                     break;
                 #endregion
@@ -280,12 +271,12 @@ namespace Virus.ConsoleApp
                     }
                     if (moves.Count == 1)
                     {
-                        return PlayGameCardTransplant(moves[0]);
+                        return PlayCardByMove(player, myCard, moves[0]);
                     }
                     if (moves.Count > 1)
                     {
                         int opt = reader.RequestMovementChoosenTransplant(moves, this);
-                        return PlayGameCardTransplant(moves[opt]);
+                        return PlayCardByMove(player, myCard, moves[opt]);
                     }
                     break;
                 #endregion
@@ -299,10 +290,7 @@ namespace Virus.ConsoleApp
                     }
                     if (moves.Count == 1)
                     {
-                        p = Scheduler.GetStringInt(moves[0], 0);
-                        c = Scheduler.GetStringInt(moves[0], 2);
-
-                        return PlayOrganThief(player, moves[0]);
+                        return PlayCardByMove(player, myCard, moves[0]);
                     }
                     if (moves.Count > 1)
                     {
@@ -310,8 +298,8 @@ namespace Virus.ConsoleApp
 
                         if (choosen == null)
                             throw new Exception("The input doesn't belong to any available move.");
-                        
-                        return PlayOrganThief(player, choosen);
+
+                        return PlayCardByMove(player, myCard, choosen);
                     }
                     break;
                 #endregion
@@ -324,7 +312,7 @@ namespace Virus.ConsoleApp
                         return "You currently can't spread your virus to any free organ of your rival's bodies.";
                     }
                     if (wholeMoves.Count > 0)
-                    {
+                    { 
                         List<string> choosen = new List<string>();
                         foreach (var move in wholeMoves)
                         {
@@ -346,7 +334,7 @@ namespace Virus.ConsoleApp
 
                 #region PLAY LATEX GLOVE
                 case Card.CardFace.LatexGlove:
-                    return PlayLatexGlove(player);
+                    return PlayCardByMove(player, myCard, null);
                 #endregion
 
                 #region PLAY MEDICAL ERROR
@@ -358,7 +346,7 @@ namespace Virus.ConsoleApp
                     }
                     if (moves.Count == 1)
                     {
-                        return PlayMedicalError(player, moves[0]);
+                        return PlayCardByMove(player, myCard, moves[0]);
                     }
                     if (moves.Count > 1)
                     {
@@ -367,7 +355,7 @@ namespace Virus.ConsoleApp
                         if (choosen == null)
                             throw new Exception("The input doesn't belong to any available move.");
 
-                        return PlayMedicalError(player, moves[0]);
+                        return PlayCardByMove(player, myCard, choosen);
                     }
                     break;
                 #endregion

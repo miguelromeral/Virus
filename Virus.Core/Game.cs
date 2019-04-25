@@ -523,7 +523,6 @@ namespace Virus.Core
         /// <returns></returns>
         public string PlayCardByMove(Player player, Card myCard, string move)
         {
-            int p, c;
             switch (myCard.Face)
             {
                 case Card.CardFace.Organ:
