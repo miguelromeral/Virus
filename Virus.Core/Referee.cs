@@ -113,8 +113,9 @@ namespace Virus.Core
                                     btwo = two.Body.Items[bi2];
 
                                     // Check if we can do the switch.
-                                    if (!one.Body.HaveThisOrgan(btwo.Organ.Color) &&
-                                        !two.Body.HaveThisOrgan(bone.Organ.Color) &&
+                                    if ((bone.Organ.Color == btwo.Organ.Color || 
+                                        (!one.Body.HaveThisOrgan(btwo.Organ.Color) &&
+                                        !two.Body.HaveThisOrgan(bone.Organ.Color))) &&
                                         bone.Status != BodyItem.State.Immunized &&
                                         btwo.Status != BodyItem.State.Immunized)
                                     {
@@ -242,17 +243,10 @@ namespace Virus.Core
         /// <returns>True if the body item acepts this medicine</returns>
         public bool CanPlayMedicine(BodyItem item, Card medicine)
         {
-            Card.CardColor visible = item.Organ.Color;
-
-            if (item.Modifiers.Count > 0)
-            {
-                visible = item.Modifiers[0].Color;
-            }
-
-            // Check if they are of the same color or wildcard virus.
-            if (Referee.SameColorOrWildcard(visible, medicine.Color))
-            {
-
+            if (Referee.SameColorOrWildcard(item.Organ.Color, medicine.Color) ||
+                (item.Status == BodyItem.State.Infected &&
+                Referee.SameColorOrWildcard(item.Modifiers[0].Color, medicine.Color)))
+            { 
                 switch (item.Status)
                 {
                     case BodyItem.State.Free:
@@ -274,15 +268,10 @@ namespace Virus.Core
         /// <returns>True if the virus could be used in this body item</returns>
         public bool CanPlayVirus(BodyItem item, Card virus)
         {
-            Card.CardColor visible = item.Organ.Color;
-
-            if(item.Modifiers.Count > 0)
-            {
-                visible = item.Modifiers[0].Color;
-            }
-
             // Same color of organn (or wildcard) and medicine of the same color of the mediccine (or wildcard)
-            if (Referee.SameColorOrWildcard(visible, virus.Color))
+            if (Referee.SameColorOrWildcard(item.Organ.Color, virus.Color) ||
+                (item.Status == BodyItem.State.Vaccinated &&
+                Referee.SameColorOrWildcard(item.Modifiers[0].Color, virus.Color)))
             {
                 switch (item.Status)
                 {

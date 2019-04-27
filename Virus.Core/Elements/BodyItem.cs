@@ -263,6 +263,21 @@ namespace Virus.Core
             return String.Format("({0,14}:{1,9}) [Pts: {2,4}]", Organ.ToString(), ModifiersToString(), Points);
         }
 
+        public void PrintBodyItem()
+        {
+            PrintOrgan();
+            Console.Write(": ");
+            PrintModifiers();
+        }
+
+        public void PrintOrgan()
+        {
+            Scheduler.ChangeConsoleOutput(Organ.Color);
+            Console.Write(String.Format("{0,14}", Organ.ToString()));
+            //PrintModifiers();
+            Scheduler.ChangeConsoleOutput();
+        }
+
         public void PrintModifiers()
         {
             foreach (Card mod in Modifiers)

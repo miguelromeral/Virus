@@ -28,10 +28,10 @@ namespace Virus.ConsoleApp
             Console.ReadLine();
 
 
-            Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            Players[1].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
-            Players[1].Body.SetMedicine(this, new Card(Card.CardColor.Wildcard, Card.CardFace.Medicine), 1);
-            Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Virus);
+            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
+            //Players[1].Body.SetMedicine(this, new Card(Card.CardColor.Wildcard, Card.CardFace.Medicine), 1);
+            //Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Virus);
 
             while (!GameOver)
             {

@@ -22,53 +22,30 @@ namespace Virus.Core
             Console.WriteLine("- Please, enter the number of your organ you want to play this card.");
             BodyItem item;
             int c, o1;
-            if (OnlyMyMoves(player, moves))
+            int p1;
+            c = 0;
+            foreach (string move in moves)
             {
-                c = 0;
-                foreach (string move in moves)
-                {
-                    o1 = Scheduler.GetStringInt(move, 2);
-                    item = player.Body.Items[o1];
-                    Console.WriteLine("{0}.- ", (c+1), item);
-                    Scheduler.ChangeConsoleOutput(item.Organ.Color);
-                    Console.WriteLine("{0,20}", item);
-                    Scheduler.ChangeConsoleOutput();
-                    c++;
-                }
-
-                int p = Convert.ToInt32(Console.ReadLine()) - 1;
-
-                if (p < 0 || p >= moves.Count)
-                    throw new Exception("You've not choosen a valid option.");
-
-                return moves[p];
-
+                p1 = Scheduler.GetStringInt(move, 0);
+                o1 = Scheduler.GetStringInt(move, 2);
+                player = game.Players[p1];
+                item = player.Body.Items[o1];
+                Console.Write("{0}. {1,20} : ", (c+1), player.ShortDescription);
+                Scheduler.ChangeConsoleOutput(item.Organ.Color);
+                item.Organ.PrintCard();
+                item.PrintModifiers();
+                Console.WriteLine("");
+                Scheduler.ChangeConsoleOutput();
+                c++;
             }
-            else
-            {
-                int p1;
-                c = 0;
-                foreach (string move in moves)
-                {
-                    p1 = Scheduler.GetStringInt(move, 0);
-                    o1 = Scheduler.GetStringInt(move, 2);
-                    player = game.Players[p1];
-                    item = player.Body.Items[o1];
-                    Console.Write("{0}.     {1,20} : ", (c+1), player.ShortDescription);
-                    Scheduler.ChangeConsoleOutput(item.Organ.Color);
-                    item.Organ.PrintCard();
-                    Console.WriteLine("");
-                    Scheduler.ChangeConsoleOutput();
-                    c++;
-                }
 
-                int p = Convert.ToInt32(Console.ReadLine()) - 1;
+            int p = Convert.ToInt32(Console.ReadLine()) - 1;
 
-                if (p < 0 || p >= moves.Count)
-                    throw new Exception("You've not choosen a valid option.");
+            if (p < 0 || p >= moves.Count)
+                throw new Exception("You've not choosen a valid option.");
 
-                return moves[p];
-            }
+            return moves[p];
+            
         }
 
         public int RequestMovementChoosenTransplant(List<string> moves, Game game)
@@ -90,8 +67,15 @@ namespace Virus.Core
                     two = game.Players[p2];
                     bone = one.Body.Items[o1];
                     btwo = two.Body.Items[o2];
-                    Console.WriteLine("{0}.     {1,20}       {2,20}", c, one.ShortDescription, two.ShortDescription);
-                    Console.WriteLine("        [{0,20}] <---> [{1,20}]\n", bone, btwo);
+                    Console.WriteLine("{0}.", c);
+
+                    Console.Write("   - {0,20}: ", one.ShortDescription);
+                    bone.PrintBodyItem();
+                    Console.WriteLine("");
+                    Console.Write("   - {0,20}: ", two.ShortDescription);
+                    btwo.PrintBodyItem();
+                    Console.WriteLine("");
+                    
                     c++;
                 }
 
