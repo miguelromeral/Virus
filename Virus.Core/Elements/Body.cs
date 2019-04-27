@@ -114,25 +114,17 @@ namespace Virus.Core
         public string SetVirus(Card virus, int index, Game game)
         {
             BodyItem item = Items[index];
-
-            // Check if the color is the same.
-            if (Referee.SameColorOrWildcard(virus.Color, item.Organ.Color))
+            
+            string message = item.NewVirus(virus, game);
+            // if when we added the virus, the body item has more than one virus, we have to
+            // remove them from the whole body.
+            if (message != null && message.Equals(BodyItem.RULE_DELETEBODY))
             {
-                string message = item.NewVirus(virus, game);
-                // if when we added the virus, the body item has more than one virus, we have to
-                // remove them from the whole body.
-                if (message != null && message.Equals(BodyItem.RULE_DELETEBODY))
-                {
-                    Items.Remove(item);
-                    game.WriteToLog("The "+item+" has been removed from the body.");
-                    message = null;
-                }
-                return message;
+                Items.Remove(item);
+                game.WriteToLog("The "+item+" has been removed from the body.");
+                message = null;
             }
-            else
-            {
-                return "The virus and organ color don't match.";
-            }
+            return message;
         }
 
         /// <summary>
@@ -144,17 +136,7 @@ namespace Virus.Core
         /// <returns>Error message if the medicine couldn't been played.</returns>
         public string SetMedicine(Game game, Card medicine, int index = 0)
         {
-            BodyItem item = Items[index];
-
-            // If the two color match, proceed to add the body item.
-            if(Referee.SameColorOrWildcard(medicine.Color, item.Organ.Color))
-            {
-                return Items[index].NewMedicine(game, medicine);
-            }
-            else
-            {
-                return "The medicine and organ color don't match.";
-            }
+            return Items[index].NewMedicine(game, medicine);
         }
         
         public int OrgansLeftToWin(Game game)

@@ -150,6 +150,32 @@ namespace Virus.Core
 
             return value;
         }
+
+        public void PrintCard()
+        {
+            string value = "{0,8} {1,8}";
+
+            switch (Color)
+            {
+                case CardColor.Purple:
+                    value = String.Format(value, ToStringShort(), Face);
+                    break;
+                case CardColor.Wildcard:
+                    value = String.Format(value, ToStringShortColor(), Face.ToString());
+                    break;
+                case CardColor.Red:
+                case CardColor.Yellow:
+                case CardColor.Blue:
+                case CardColor.Green:
+                    // Normal format.
+                    value = String.Format(value,
+                        Color.ToString(),
+                        Face.ToString());
+                    break;
+            }
+
+            Console.Write(value);
+        }
         
         /// <summary>
         /// 2 characters info for this card.

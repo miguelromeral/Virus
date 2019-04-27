@@ -319,19 +319,19 @@ namespace Virus.Core
         /// <returns>String overview of the game.</returns>
         public override string ToString()
         {
-            return "Here it'll come the current state!";
+            return "***********************************************************Here it'll come the current state!";
         }
 
         public void PrintCurrentGameState()
         {
 
-            int j = 1;
+            /*int j = 1;
             foreach (var p in TopPlayers())
             {
                 Console.Write("[" + j + "][" + String.Format("{0,20}", p.ShortDescription) + "]" + Environment.NewLine);
                 j++;
             }
-            Console.Write(Environment.NewLine);
+            Console.Write(Environment.NewLine);*/
 
             Console.Write("+------------+------------+----------------+-------------------------------+" + Environment.NewLine);
 
@@ -343,9 +343,13 @@ namespace Virus.Core
             for (int x = 0; x < Players.Count; x++)
             {
                 Player p = Players[x];
+                
+                ConsoleColor f = (CurrentTurn == x ? ConsoleColor.Yellow : ConsoleColor.White);
+
+                Scheduler.ChangeConsoleOutput(foreground: f);
 
                 Console.Write(String.Format("| {0,10} | {1,20} | AI: {2,11} | Body Pts: <{3,6}> |",
-                    (CurrentTurn == x ? "--------->" : ""),
+                    (CurrentTurn == x ? "<My Turn>"  : ""),
                     p.ShortDescription,
                     p.AI.ToString(),
                     p.Body.Points) + Environment.NewLine);
@@ -356,74 +360,33 @@ namespace Virus.Core
                     //printed += "+------------+------------+----------------+-------------------------------+" + Environment.NewLine;
                     Console.Write(String.Format("| {0,1}.   ", (y + 1)));
 
-                    ChangeConsoleOutput(item.Organ.Color);
+                    Scheduler.ChangeConsoleOutput(item.Organ.Color);
                     Console.Write(String.Format("{0,14}: ", item.Organ.ToString()));
+                    
 
+                    item.PrintModifiers();
+                    Scheduler.ChangeConsoleOutput(foreground: f);
 
-                    ChangeConsoleOutput(item.Organ.Color);
+                    int padd = (4 * item.Modifiers.Count);
 
-                    int padd = 0;
-                    foreach(Card mod in item.Modifiers)
-                    {
-                        ChangeConsoleOutput(mod.Color);
-                        Console.Write("{0}", mod.ToStringShort());
-                        padd+=4;
-                    }
-
-                    ChangeConsoleOutput(null);
-                    while (padd < 38)
+                    Scheduler.ChangeConsoleOutput(foreground:f);
+                    while (padd < 41)
                     {
                         Console.Write(" ");
                         padd++;
                     }
 
-                    Console.Write(String.Format("     +={0,6} |", item.Points) + Environment.NewLine);
+                    Console.Write(String.Format("  +={0,6} |", item.Points) + Environment.NewLine);
 
                 }
 
 
-                Console.Write("+------------+------------+----------------+-------------------------------+" + Environment.NewLine);
+                Console.Write("+------------+-------------------------------------------------------------+" + Environment.NewLine);
+
+                Scheduler.ChangeConsoleOutput();
             }
         }
-
-        public void ChangeConsoleOutput(Card.CardColor? color)
-        {
-            if(color == null)
-            {
-                Console.BackgroundColor = ConsoleColor.Black;
-                Console.ForegroundColor = ConsoleColor.White;
-                return;
-            }
-
-            switch (color)
-            {
-                case Card.CardColor.Blue:
-                    Console.BackgroundColor = ConsoleColor.Blue;
-                    Console.ForegroundColor = ConsoleColor.White;
-                    break;
-                case Card.CardColor.Green:
-                    Console.BackgroundColor = ConsoleColor.Green;
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    break;
-                case Card.CardColor.Red:
-                    Console.BackgroundColor = ConsoleColor.Red;
-                    Console.ForegroundColor = ConsoleColor.White;
-                    break;
-                case Card.CardColor.Yellow:
-                    Console.BackgroundColor = ConsoleColor.Yellow;
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    break;
-                case Card.CardColor.Wildcard:
-                    Console.BackgroundColor = ConsoleColor.White;
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    break;
-                case Card.CardColor.Purple:
-                    Console.BackgroundColor = ConsoleColor.Blue;
-                    Console.ForegroundColor = ConsoleColor.White;
-                    break;
-            }
-        }
-
+        
         /// <summary>
         /// Play turn by the computer
         /// </summary>

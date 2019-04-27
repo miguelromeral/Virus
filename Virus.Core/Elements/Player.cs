@@ -125,8 +125,12 @@ namespace Virus.Core
             int i = 0;
             while (i < Hand.Count)
             {
-                Console.WriteLine("{0}.- {1}", (i + 1), Hand[i]);
+                Console.Write("{0}.- ", (i + 1));
+                Scheduler.ChangeConsoleOutput(Hand[i].Color);
+                Hand[i].PrintCard();
+                Console.WriteLine("");
                 i++;
+                Scheduler.ChangeConsoleOutput();
             }
             if (AI == ArtificialIntelligence.AICategory.Human)
             {

@@ -23,7 +23,7 @@ namespace Virus.Core
         /// Separator of many moves in a same move. (f.e.: transplant requires two moves to anyone: the two body items to switch).
         /// </summary>
         public const char MULTI_MOVE_SEPARATOR = ',';
-        
+
         /// <summary>
         /// String to print medicines.
         /// </summary>
@@ -32,7 +32,7 @@ namespace Virus.Core
         /// String to print viruses.
         /// </summary>
         public const string CHARS_VIRUS = "({0}@)";
-        
+
         /// <summary>
         /// Message that indicates if the user is playing.
         /// </summary>
@@ -68,7 +68,7 @@ namespace Virus.Core
                 return null;
             }
         }
-        
+
         /// <summary>
         /// Get many moves provided in the same string.
         /// </summary>
@@ -77,13 +77,13 @@ namespace Virus.Core
         public static string GetManyMoveItem(string[] moves)
         {
             string res = moves[0];
-            for(int i=1; i<moves.Length; i++)
+            for (int i = 1; i < moves.Length; i++)
             {
                 res += MULTI_MOVE_SEPARATOR + moves[i];
             }
             return res;
         }
-        
+
         /// <summary>
         /// Get many moves provided in the same string.
         /// </summary>
@@ -91,10 +91,10 @@ namespace Virus.Core
         /// <returns>One move with all moves indeed.</returns>
         public static string GetMoveByMultiple(List<string> moves)
         {
-            if(moves.Count > 0)
+            if (moves.Count > 0)
             {
                 string move = moves[0];
-                for(int i=1; i<moves.Count; i++)
+                for (int i = 1; i < moves.Count; i++)
                 {
                     move += MULTI_MOVE_SEPARATOR + moves[i];
                 }
@@ -102,11 +102,11 @@ namespace Virus.Core
             }
             else
             {
-               return String.Empty;
+                return String.Empty;
             }
-            
+
         }
-        
+
         /// <summary>
         /// Gets a list of list of moves to a whole list of moves.
         /// 
@@ -182,7 +182,7 @@ namespace Virus.Core
                 return false;
             }
         }
-        
+
         /// <summary>
         /// Incidates if a move has a specific int at a specific index.
         /// </summary>
@@ -230,5 +230,46 @@ namespace Virus.Core
             return new Random().Next(begin, end);
         }
 
+
+
+
+        public static void ChangeConsoleOutput(Card.CardColor? color = null, ConsoleColor background = ConsoleColor.Black, ConsoleColor foreground = ConsoleColor.White)
+        {
+            if (color == null)
+            {
+                Console.BackgroundColor = background;
+                Console.ForegroundColor = foreground;
+                return;
+            }
+
+            switch (color)
+            {
+                case Card.CardColor.Blue:
+                    Console.BackgroundColor = ConsoleColor.Blue;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+                case Card.CardColor.Green:
+                    Console.BackgroundColor = ConsoleColor.Green;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    break;
+                case Card.CardColor.Red:
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+                case Card.CardColor.Yellow:
+                    Console.BackgroundColor = ConsoleColor.Yellow;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    break;
+                case Card.CardColor.Wildcard:
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    break;
+                case Card.CardColor.Purple:
+                    Console.BackgroundColor = ConsoleColor.DarkMagenta;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+            }
+
+        }
     }
 }

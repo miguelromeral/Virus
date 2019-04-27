@@ -242,10 +242,15 @@ namespace Virus.Core
         /// <returns>True if the body item acepts this medicine</returns>
         public bool CanPlayMedicine(BodyItem item, Card medicine)
         {
+            Card.CardColor visible = item.Organ.Color;
+
+            if (item.Modifiers.Count > 0)
+            {
+                visible = item.Modifiers[0].Color;
+            }
+
             // Check if they are of the same color or wildcard virus.
-            if (Referee.SameColorOrWildcard(item.Organ.Color, medicine.Color) ||
-                (item.Modifiers.Count > 1 && item.GetLastModifier().Face == Card.CardFace.Virus &&
-                    Referee.SameColorOrWildcard(item.GetLastModifier().Color, medicine.Color)))
+            if (Referee.SameColorOrWildcard(visible, medicine.Color))
             {
 
                 switch (item.Status)
@@ -269,10 +274,15 @@ namespace Virus.Core
         /// <returns>True if the virus could be used in this body item</returns>
         public bool CanPlayVirus(BodyItem item, Card virus)
         {
+            Card.CardColor visible = item.Organ.Color;
+
+            if(item.Modifiers.Count > 0)
+            {
+                visible = item.Modifiers[0].Color;
+            }
+
             // Same color of organn (or wildcard) and medicine of the same color of the mediccine (or wildcard)
-            if (Referee.SameColorOrWildcard(item.Organ.Color, virus.Color) || 
-                (item.Modifiers.Count > 1 && item.GetLastModifier().Face == Card.CardFace.Medicine && 
-                    Referee.SameColorOrWildcard(item.GetLastModifier().Color, virus.Color)))
+            if (Referee.SameColorOrWildcard(visible, virus.Color))
             {
                 switch (item.Status)
                 {

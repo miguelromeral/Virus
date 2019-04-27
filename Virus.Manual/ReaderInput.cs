@@ -29,7 +29,10 @@ namespace Virus.Core
                 {
                     o1 = Scheduler.GetStringInt(move, 2);
                     item = player.Body.Items[o1];
-                    Console.WriteLine("{0}.- {1,20}", (c+1), item);
+                    Console.WriteLine("{0}.- ", (c+1), item);
+                    Scheduler.ChangeConsoleOutput(item.Organ.Color);
+                    Console.WriteLine("{0,20}", item);
+                    Scheduler.ChangeConsoleOutput();
                     c++;
                 }
 
@@ -51,7 +54,11 @@ namespace Virus.Core
                     o1 = Scheduler.GetStringInt(move, 2);
                     player = game.Players[p1];
                     item = player.Body.Items[o1];
-                    Console.WriteLine("{0}.     {1,20} : {2,20}", (c+1), player.ShortDescription, item);
+                    Console.Write("{0}.     {1,20} : ", (c+1), player.ShortDescription);
+                    Scheduler.ChangeConsoleOutput(item.Organ.Color);
+                    item.Organ.PrintCard();
+                    Console.WriteLine("");
+                    Scheduler.ChangeConsoleOutput();
                     c++;
                 }
 
@@ -144,16 +151,16 @@ namespace Virus.Core
         }
 
 
-        public string RequestMovementChoosenMedicalError(Player user, List<string> moves)
+        public string RequestMovementChoosenMedicalError(Player user, List<string> moves, Game game)
         {
             try
             {
                 Console.WriteLine("- Please, type the player number to switch the body.");
-                foreach (string m in moves)
+                for(int i=0; i<moves.Count;i++)
                 {
                     int mNum = -1;
-                    Int32.TryParse(m.Substring(0, 1), out mNum);
-                    Console.WriteLine(String.Format("- Player {0}.", mNum + 1));
+                    Int32.TryParse(moves[i].Substring(0, 1), out mNum);
+                    Console.WriteLine(String.Format("{0}.- {1}.", (i+ 1), game.Players[mNum].ShortDescription));
                 }
 
                 int p = Convert.ToInt32(Console.ReadLine()) - 1;
@@ -161,7 +168,7 @@ namespace Virus.Core
                 if (!Scheduler.IntInListString(moves, 0, p))
                     throw new Exception("You've not choosen a valid player number to switch your bodies.");
 
-                return Scheduler.GenerateMove(p, 0);
+                return moves[p];
             }
             catch (Exception)
             {
