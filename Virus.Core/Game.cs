@@ -306,7 +306,10 @@ namespace Virus.Core
             }
 
             WriteToLog("The game has been finished.", true);
-            WriteToLog(ToString(), true);
+
+            PrintCurrentGameState();
+
+            //WriteToLog(ToString(), true);
         }
 
 
@@ -316,21 +319,109 @@ namespace Virus.Core
         /// <returns>String overview of the game.</returns>
         public override string ToString()
         {
-            string printed = String.Empty;
-            printed += "Deck (" + Deck.Count + ") | Discards Stack (" + Discards.Count + ") | Total in game: (" + TotalCardsInGame + ")" + Environment.NewLine + Environment.NewLine;
-            printed += "Top player: "+WinningPlayer().ShortDescription + Environment.NewLine + Environment.NewLine;
+            return "Here it'll come the current state!";
+        }
 
-            printed += "Turn # " + Turn + Environment.NewLine; 
-            for(int i=0; i<Players.Count; i++)
+        public void PrintCurrentGameState()
+        {
+
+            int j = 1;
+            foreach (var p in TopPlayers())
             {
-                if(CurrentTurn == i)
+                Console.Write("[" + j + "][" + String.Format("{0,20}", p.ShortDescription) + "]" + Environment.NewLine);
+                j++;
+            }
+            Console.Write(Environment.NewLine);
+
+            Console.Write("+------------+------------+----------------+-------------------------------+" + Environment.NewLine);
+
+            Console.Write(String.Format("| #Turn: {0,3} | #Deck: {1,3} | #Discards: {2,3} | #Total Cards: {3,3}             |",
+                Turn, Deck.Count, Discards.Count, TotalCardsInGame) + Environment.NewLine);
+            Console.Write("+------------+------------+----------------+-------------------------------+" + Environment.NewLine);
+
+
+            for (int x = 0; x < Players.Count; x++)
+            {
+                Player p = Players[x];
+
+                Console.Write(String.Format("| {0,10} | {1,20} | AI: {2,11} | Body Pts: <{3,6}> |",
+                    (CurrentTurn == x ? "--------->" : ""),
+                    p.ShortDescription,
+                    p.AI.ToString(),
+                    p.Body.Points) + Environment.NewLine);
+
+                for (int y = 0; y < p.Body.Items.Count; y++)
                 {
-                    printed += "---> ";
+                    BodyItem item = p.Body.Items[y];
+                    //printed += "+------------+------------+----------------+-------------------------------+" + Environment.NewLine;
+                    Console.Write(String.Format("| {0,1}.   ", (y + 1)));
+
+                    ChangeConsoleOutput(item.Organ.Color);
+                    Console.Write(String.Format("{0,14}: ", item.Organ.ToString()));
+
+
+                    ChangeConsoleOutput(item.Organ.Color);
+
+                    int padd = 0;
+                    foreach(Card mod in item.Modifiers)
+                    {
+                        ChangeConsoleOutput(mod.Color);
+                        Console.Write("{0}", mod.ToStringShort());
+                        padd+=4;
+                    }
+
+                    ChangeConsoleOutput(null);
+                    while (padd < 38)
+                    {
+                        Console.Write(" ");
+                        padd++;
+                    }
+
+                    Console.Write(String.Format("     +={0,6} |", item.Points) + Environment.NewLine);
+
                 }
-                printed += Players[i];
+
+
+                Console.Write("+------------+------------+----------------+-------------------------------+" + Environment.NewLine);
+            }
+        }
+
+        public void ChangeConsoleOutput(Card.CardColor? color)
+        {
+            if(color == null)
+            {
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                return;
             }
 
-            return printed;
+            switch (color)
+            {
+                case Card.CardColor.Blue:
+                    Console.BackgroundColor = ConsoleColor.Blue;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+                case Card.CardColor.Green:
+                    Console.BackgroundColor = ConsoleColor.Green;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    break;
+                case Card.CardColor.Red:
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+                case Card.CardColor.Yellow:
+                    Console.BackgroundColor = ConsoleColor.Yellow;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    break;
+                case Card.CardColor.Wildcard:
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    break;
+                case Card.CardColor.Purple:
+                    Console.BackgroundColor = ConsoleColor.Blue;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+            }
         }
 
         /// <summary>
@@ -341,7 +432,9 @@ namespace Virus.Core
         public void PlayTurn(bool wait = false, bool printHand = false)
         {
             Player p = Players[CurrentTurn];
-            Console.WriteLine(this);
+
+            PrintCurrentGameState();
+
             if (printHand)
             {
                 p.PrintMyOptions();
@@ -712,77 +805,19 @@ namespace Virus.Core
             return Logger.Write(message, print);
         }
 
-        public Player WinningPlayer()
+
+        public List<Player> TopPlayers()
         {
-            List<Player> leaders = new List<Player>();
-            int value = 0, aux;
-            foreach(var p in Players)
+            List<Player> copy = new List<Player>();
+
+            foreach(Player p in Players)
             {
-                aux = p.HealthyOrgans;
-                if(aux >= value)
-                {
-                    if (aux > value)
-                    {
-                        leaders.Clear();
-                    }
-                    value = p.HealthyOrgans;
-                    leaders.Add(p);
-                }
+                copy.Add(Player.DeepClone(p));
             }
-            if(leaders.Count == 1)
-            {
-                return leaders[0];
-            }
-            else
-            {
-                // 2 or more players with the same number of healthy organs.
-                List<Player> newLeaders = new List<Player>();
-                value = Settings.NumberToWin;
-                foreach(var p in leaders)
-                {
-                    aux = p.Body.OrgansLeftToWin(this);
-                    if(aux <= value)
-                    {
-                        if (aux < value)
-                        {
-                            newLeaders.Clear();
-                        }
-                        value = p.Body.OrgansLeftToWin(this);
-                        newLeaders.Add(p);
-                    }
-                }
-                if(newLeaders.Count == 1)
-                {
-                    return newLeaders[0];
-                }
-                else
-                {
-                    // Same number of healthy organs and same number of cards to be winner, so compare the values in points of theirs bodies.
-                    leaders.Clear();
-                    value = 0;
-                    foreach(var p in newLeaders)
-                    {
-                        aux = p.Body.Points;
-                        if(aux >= value)
-                        {
-                            if (aux > value)
-                            {
-                                leaders.Clear();
-                            }
-                            value = p.Body.Points;
-                            leaders.Add(p);
-                        }
-                    }
-                    if(leaders.Count == 1)
-                    {
-                        return leaders[0];
-                    }
-                    else
-                    {
-                        return leaders[Scheduler.RandomIndex(leaders.Count)];
-                    }
-                }
-            }
+
+            copy.Sort(new PlayerComparer());
+
+            return copy;
         }
     }
 }

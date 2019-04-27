@@ -260,15 +260,18 @@ namespace Virus.Core
         /// <returns>String with the body item info.</returns>
         public override string ToString()
         {
-            string printed = String.Empty;
+            return String.Format("({0,14}:{1,9}) [Pts: {2,4}]", Organ.ToString(), ModifiersToString(), Points);
+        }
 
-            foreach(var mod in Modifiers)
+
+        public string ModifiersToString()
+        {
+            string printed = String.Empty;
+            foreach (var mod in Modifiers)
             {
                 printed += mod.ToStringShort();
             }
-
-            return String.Format("({0,14}:{1,9}) [Pts: {2,4}]", Organ.ToString(), printed, Points);
+            return printed;
         }
-
     }
 }
