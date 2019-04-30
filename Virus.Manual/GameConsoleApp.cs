@@ -27,6 +27,13 @@ namespace Virus.ConsoleApp
             Console.WriteLine("Press any key to begin the Virus!");
             Console.ReadLine();
 
+            Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            Players[0].Body.SetVirus(new Card(Card.CardColor.Red, Card.CardFace.Virus), 0, this);
+            Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[1].Body.SetMedicine(this, new Card(Card.CardColor.Red, Card.CardFace.Medicine));
+            Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Spreading);
+
 
             //Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
             //Players[1].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));

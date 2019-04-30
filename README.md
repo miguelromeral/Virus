@@ -31,34 +31,11 @@ It's a class library in .NET Standard Framework 2.0, so you could download and u
 
 **Virus.Universal** will be the project for Universal Windows Platform app. *Not implemented for the moment.*
 
-### :camera: Screenshots
+### :movie_camera: Video
 
-    Deck (20) | Discards Stack (32) | Total in game: (74)
-    
-    Turn # 31
-    [            Player 0 | IA:     Medium]
-    1.  (     Red Organ:         )
-    2.  (    Blue Organ:     (B@))
-    3.  (   Green Organ:         )
-    
-    [            Player 1 | IA:     Medium]
-    1.  (    Blue Organ: (^*)(^*))
-    
-    ---> [            Player 2 | IA:     Medium]
-    1.  (     Red Organ:         )
-    
-    [            Player 3 | IA:      First]
-    1.  (    Blue Organ:         )
-    2.  (   Green Organ:         )
-    
-    1.- Yellow Organ
-    2.- ^ Organ
-    3.- Green Virus
-    
-    Turn #31 (Player 2).
-    Press any key to continue.
+You can watch a video with the Virus.Automatic running and playing the laptop against itself!
 
-*Taken in Virus.Automatic, 4/19/2019*
+[![IMAGE ALT TEXT](https://i.vimeocdn.com/video/779427542_640.webp)](https://vimeo.com/333428180 "Virus! in C# (Game by Tranjis Games) Developed By MiguelRomeral")
 
 ## :pencil: TODO
 

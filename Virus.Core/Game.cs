@@ -291,9 +291,7 @@ namespace Virus.Core
             Console.WriteLine("Press any key to begin the Virus!");
             Console.ReadLine();
 
-            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            //Players[1].Body.SetMedicine(this, new Card(Card.CardColor.Red, Card.CardFace.Medicine));
-            //Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Virus);
+            
 
             while (!GameOver)
             {
@@ -305,9 +303,10 @@ namespace Virus.Core
                 }
             }
 
-            WriteToLog("The game has been finished.", true);
-
+            Console.Clear();
+            
             PrintCurrentGameState();
+            WriteToLog("The game has been finished.", true);
 
             //WriteToLog(ToString(), true);
         }
@@ -358,7 +357,7 @@ namespace Virus.Core
                 {
                     BodyItem item = p.Body.Items[y];
                     //printed += "+------------+------------+----------------+-------------------------------+" + Environment.NewLine;
-                    Console.Write(String.Format("| {0,1}.   ", (y + 1)));
+                    Console.Write(String.Format("| {0,1}.         | ", (y + 1)));
 
                     Scheduler.ChangeConsoleOutput(item.Organ.Color);
                     Console.Write(String.Format("{0,14}: ", item.Organ.ToString()));
@@ -370,7 +369,7 @@ namespace Virus.Core
                     int padd = (4 * item.Modifiers.Count);
 
                     Scheduler.ChangeConsoleOutput(foreground:f);
-                    while (padd < 41)
+                    while (padd < 33)
                     {
                         Console.Write(" ");
                         padd++;

@@ -71,10 +71,12 @@ namespace Virus.Core
                 case AICategory.Random:
                     return ChooseRandom(movesByCard);
                 case AICategory.Easy:
+                    return ChooseEasy(movesByCard);
                 case AICategory.Medium:
                 case AICategory.Hard:
                 default:
-                    return ChooseEasy(movesByCard);
+                    //return ChooseEasy(movesByCard);
+                    return ChooseMedium(movesByCard);
             }
         }
 
@@ -132,42 +134,109 @@ namespace Virus.Core
         {
             // Hand -> Game (by move)
             List<List<Game>> scenarios = AllScenariosByLists(movesbyCard);
-            Dictionary<string,Card> best = GetMoveMorePoints(scenarios, movesbyCard);
-            if(best == null)
+            Dictionary<string, Card> best = GetMoveMorePoints(scenarios, movesbyCard);
+            if (best == null)
             {
                 Game.DiscardAllHand(Me);
                 return null;
             }
             else
             {
-                foreach(var i in best)
+                foreach (var i in best)
                 {
                     return Game.PlayCardByMove(Me, i.Value, i.Key);
                 }
             }
 
-
-            /*
-            switch (myCard.Face)
-            {
-                case Card.CardFace.Organ:
-                case Card.CardFace.Medicine:
-                case Card.CardFace.Virus:
-                case Card.CardFace.Transplant:
-                case Card.CardFace.OrganThief:
-                case Card.CardFace.LatexGlove:
-                case Card.CardFace.MedicalError:
-                case Card.CardFace.Spreading:
-                default:
-                    //return moves[0];
-                    return null;
-            }
-            */
             return null;
         }
-        
+
+
+        public string ChooseMedium(List<List<string>> movesbycard)
+        {
+            // Hand -> Game (by move)
+            List<List<Game>> scenarios = AllScenariosByLists(movesbycard);
+            int maxPoints = 99999, current;
+            Dictionary<string, Card> best;
+            string bestmove = null;
+            Card card = null;
+            bool amiwinning = false;
+            Game aux;
+            int pts1, pts2, diff;
+
+            for (int i = 0; i < movesbycard.Count; i++)
+            {
+                var games = scenarios[i];
+                var moves = movesbycard[i];
+                for (int j = 0; j < movesbycard[i].Count; j++)
+                {
+                    aux = games[j];
+                    var qualy = aux.TopPlayers();
+                    Player top = qualy[0];
+                    Player follower = qualy[1];
+
+                    if(top.ID == Me.ID)
+                    {
+                        if (!amiwinning)
+                        {
+                            amiwinning = true;
+                            maxPoints = 0;
+                        }
+                        current = top.Body.Points - follower.Body.Points;
+                        if(current > maxPoints)
+                        {
+                            bestmove = moves[j];
+                            maxPoints = current;
+                            card = Me.Hand[i];
+                        }
+                    }
+                    else
+                    {
+                        if (!amiwinning) {
+                            foreach (var p in qualy)
+                            {
+                                if (p.ID == Me.ID)
+                                {
+                                    follower = p;
+                                }
+                            }
+                            current = top.Body.Points - follower.Body.Points;
+                            if (current < maxPoints)
+                            {
+                                bestmove = moves[j];
+                                maxPoints = current;
+                                card = Me.Hand[i];
+                            }
+                        }
+                    }
+                }
+            }
+
+            // CHECK IF NULL!
+            if (bestmove == null)
+            {
+                Game.DiscardAllHand(Me);
+                return null;
+            }
+
+            best = new Dictionary<string, Card>
+            {
+                { bestmove, card }
+            };
+            
+            foreach (var i in best)
+            {
+                return Game.PlayCardByMove(Me, i.Value, i.Key);
+            }
+            
+
+            return null;
+        }
+
         public List<List<Game>> AllScenariosByLists(List<List<string>> movesbycard)
         {
+            // IMPLEMENT HERE WITH THREADS!
+
             List<List<Game>> scenarios = new List<List<Game>>();
             for (int i = 0; i < Me.Hand.Count; i++)
             {
@@ -189,7 +258,7 @@ namespace Virus.Core
             }
             return scenarios;
         }
-
+        
         public Dictionary<string, Card> GetMoveMorePoints(List<List<Game>> scenarios, List<List<string>> movesbycard)
         {
             int maxPoints = 0, current;
