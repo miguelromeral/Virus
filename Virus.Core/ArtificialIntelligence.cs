@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Virus.Core
@@ -75,7 +76,6 @@ namespace Virus.Core
                 case AICategory.Medium:
                 case AICategory.Hard:
                 default:
-                    //return ChooseEasy(movesByCard);
                     return ChooseMedium(movesByCard);
             }
         }
@@ -132,81 +132,80 @@ namespace Virus.Core
 
         public string ChooseEasy(List<List<string>> movesbyCard)
         {
-            // Hand -> Game (by move)
-            List<List<Game>> scenarios = AllScenariosByLists(movesbyCard);
-            Dictionary<string, Card> best = GetMoveMorePoints(scenarios, movesbyCard);
+            List<Scenario> scenarios = AllScenariosByLists(movesbyCard);
+            int maxPoints = 0, current;
+            string best = null;
+            Card card = null;
+
+            foreach (var scen in scenarios)
+            {
+                scen.eventWaitHandle.WaitOne();
+                current = scen.Game.GetPlayerByID(Me.ID).Body.Points;
+                if (current > maxPoints)
+                {
+                    maxPoints = current;
+                    best = scen.Move;
+                    card = scen.Card;
+                }
+            }
+
             if (best == null)
             {
                 Game.DiscardAllHand(Me);
                 return null;
             }
-            else
-            {
-                foreach (var i in best)
-                {
-                    return Game.PlayCardByMove(Me, i.Value, i.Key);
-                }
-            }
-
-            return null;
+            return Game.PlayCardByMove(Me, card, best);
         }
 
 
         public string ChooseMedium(List<List<string>> movesbycard)
         {
-            // Hand -> Game (by move)
-            List<List<Game>> scenarios = AllScenariosByLists(movesbycard);
+            List<Scenario> scenarios = AllScenariosByLists(movesbycard);
             int maxPoints = 99999, current;
-            Dictionary<string, Card> best;
             string bestmove = null;
             Card card = null;
             bool amiwinning = false;
             Game aux;
-            int pts1, pts2, diff;
 
-            for (int i = 0; i < movesbycard.Count; i++)
+            foreach (Scenario scen in scenarios)
             {
-                var games = scenarios[i];
-                var moves = movesbycard[i];
-                for (int j = 0; j < movesbycard[i].Count; j++)
-                {
-                    aux = games[j];
-                    var qualy = aux.TopPlayers();
-                    Player top = qualy[0];
-                    Player follower = qualy[1];
+                aux = scen.Game;
+                var qualy = aux.TopPlayers();
+                Player top = qualy[0];
+                Player follower = qualy[1];
 
-                    if(top.ID == Me.ID)
+                if (top.ID == Me.ID)
+                {
+                    if (!amiwinning)
                     {
-                        if (!amiwinning)
+                        amiwinning = true;
+                        maxPoints = 0;
+                    }
+                    current = top.Body.Points - follower.Body.Points;
+                    if (current > maxPoints)
+                    {
+                        bestmove = scen.Move;
+                        maxPoints = current;
+                        card = scen.Card;
+                    }
+                }
+                else
+                {
+                    if (!amiwinning)
+                    {
+                        foreach (var p in qualy)
                         {
-                            amiwinning = true;
-                            maxPoints = 0;
+                            if (p.ID == Me.ID)
+                            {
+                                follower = p;
+                            }
                         }
                         current = top.Body.Points - follower.Body.Points;
-                        if(current > maxPoints)
+                        if (current < maxPoints)
                         {
-                            bestmove = moves[j];
+                            bestmove = scen.Move;
                             maxPoints = current;
-                            card = Me.Hand[i];
-                        }
-                    }
-                    else
-                    {
-                        if (!amiwinning) {
-                            foreach (var p in qualy)
-                            {
-                                if (p.ID == Me.ID)
-                                {
-                                    follower = p;
-                                }
-                            }
-                            current = top.Body.Points - follower.Body.Points;
-                            if (current < maxPoints)
-                            {
-                                bestmove = moves[j];
-                                maxPoints = current;
-                                card = Me.Hand[i];
-                            }
+                            card = scen.Card;
                         }
                     }
                 }
@@ -218,80 +217,26 @@ namespace Virus.Core
                 Game.DiscardAllHand(Me);
                 return null;
             }
-
-            best = new Dictionary<string, Card>
-            {
-                { bestmove, card }
-            };
-            
-            foreach (var i in best)
-            {
-                return Game.PlayCardByMove(Me, i.Value, i.Key);
-            }
-            
-
-            return null;
+            return Game.PlayCardByMove(Me, card, bestmove);
         }
+        
 
-        public List<List<Game>> AllScenariosByLists(List<List<string>> movesbycard)
+        public List<Scenario> AllScenariosByLists(List<List<string>> movesbycard)
         {
-            // IMPLEMENT HERE WITH THREADS!
-
-            List<List<Game>> scenarios = new List<List<Game>>();
+            List<Scenario> scenarios = new List<Scenario>();
             for (int i = 0; i < Me.Hand.Count; i++)
             {
                 Card card = Me.Hand[i];
                 List<Game> scenByCard = new List<Game>();
+                var list = movesbycard[i];
                 for (int j = 0; j < movesbycard[i].Count; j++)
                 {
-
-                    // La carta que se juega se elimina del original.
-
-                    Game aux = Game.DeepClone<Game>(Game);
-                    aux.Logger = null;
-
-                    var list = movesbycard[i];
-                    aux.PlayCardByMove(aux.GetPlayerByID(Me.ID), card, list[j]);
-                    scenByCard.Add(aux);
+                    Scenario scen = new Scenario(Game, Me, list[j], card, 1);
+                    ThreadPool.QueueUserWorkItem(Scenario.PerformUserWorkItem, scen);
+                    scenarios.Add(scen);
                 }
-                scenarios.Add(scenByCard);
             }
             return scenarios;
-        }
-        
-        public Dictionary<string, Card> GetMoveMorePoints(List<List<Game>> scenarios, List<List<string>> movesbycard)
-        {
-            int maxPoints = 0, current;
-            string best = null;
-            Card card = null;
-            Game aux;
-
-            for (int i = 0; i < movesbycard.Count; i++)
-            {
-                for (int j = 0; j < movesbycard[i].Count; j++)
-                {
-                    var games = scenarios[i];
-                    var moves = movesbycard[i];
-
-                    aux = games[j];
-                    current = aux.GetPlayerByID(Me.ID).Body.Points;
-                    if (current > maxPoints)
-                    {
-                        maxPoints = current;
-                        best = moves[j];
-                        card = Me.Hand[i];
-                    }
-                }
-            }
-
-            // CHECK IF NULL!
-            if (best == null)
-                return null;
-
-            return new Dictionary<string, Card>
-            {
-                { best, card }
-            };
         }
 
         public bool CanPlayOrganFromHand(List<List<string>> wholeMoves)

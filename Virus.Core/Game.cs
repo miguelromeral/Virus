@@ -295,7 +295,7 @@ namespace Virus.Core
 
             while (!GameOver)
             {
-                Console.Clear();
+                //Console.Clear();
                 PlayTurn(milis == 0, true);
                 if(milis != 0)
                 {
@@ -510,12 +510,12 @@ namespace Virus.Core
             try
             {
                 Player rival = Players[Scheduler.GetStringInt(move, 0)];
-                BodyItem stealed = rival.Body.Items[Scheduler.GetStringInt(move, 2)];
-                rival.Body.Items.Remove(stealed);
+                BodyItem stolen = rival.Body.Items[Scheduler.GetStringInt(move, 2)];
+                rival.Body.Items.Remove(stolen);
 
-                me.Body.Items.Add(stealed);
+                me.Body.Items.Add(stolen);
 
-                WriteToLog(me.ShortDescription+" has stealed the "+rival.ShortDescription+"'s organ "+stealed);
+                WriteToLog(me.ShortDescription+" has stolen the "+rival.ShortDescription+"'s organ "+stolen);
 
                 return null;
             }

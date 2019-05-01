@@ -48,7 +48,7 @@ namespace Virus.Core
         /// <summary>
         /// Default number of medicines in a game.
         /// </summary>
-        private const int nNumberMedicines = 5;
+        private const int nNumberMedicines = 4;
         /// <summary>
         /// Default number of viruses in a game.
         /// </summary>
@@ -363,7 +363,7 @@ namespace Virus.Core
                 defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberOrgans, splitter, nNumberOrgans);
                 defaultSettings += Environment.NewLine;
 
-                defaultSettings += "# Number of medicines by color (default: 5)." + Environment.NewLine;
+                defaultSettings += "# Number of medicines by color (default: 4)." + Environment.NewLine;
                 defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberMedicines, splitter, nNumberMedicines);
                 defaultSettings += Environment.NewLine;
 

@@ -11,23 +11,34 @@ namespace Virus.Core
         public Player Player;
         public string Move;
         public Card Card;
-        public int Index;
         public int Step;
+        //public State State;
+        public EventWaitHandle eventWaitHandle;
 
-        public Scenario(Game g, Player p, string m, Card c, int i, int s)
+        public Scenario(Game g, Player p, string m, Card c, int s)
         {
             Game = Game.DeepClone(g);
             Game.Logger = null;
-            Player = p;
+            eventWaitHandle = new ManualResetEvent(false);
             Move = m;
+            Player = p;
             Card = c;
-            Index = i;
             Step = s;
         }
 
-        public void Run()
+        
+        public static void PerformUserWorkItem(Object args)
         {
-            Game.PlayCardByMove(Game.GetPlayerByID(Player.ID), Card, Move);
+            Scenario scen = args as Scenario;
+            Player p = null;
+            foreach(var pl in scen.Game.Players)
+            {
+                if (pl.ID == scen.Player.ID)
+                    p = pl;
+            }
+            scen.Game.PlayCardByMove(p, scen.Card, scen.Move);
+            scen.eventWaitHandle.Set();
         }
+        
     }
 }
