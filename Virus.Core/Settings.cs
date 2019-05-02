@@ -37,6 +37,15 @@ namespace Virus.Core
         private const string strNumberWildcardMedicines = "NumberWildcardMedicines";
         private const string strNumberCardInHand = "NumberCardInHand";
         private const string strNumberToWin = "NumberOrgansToWin";
+        private const string strNumberBionicOrgans = "NumberBionicOrgans";
+        private const string strNumberEvolvedMedicines = "NumberEvolvedMedicines";
+        private const string strNumberEvolvedViruses = "NumberEvolvedViruses";
+        private const string strNumberWildcardEvolvedMedicines = "NumberWildcardEvolvedMedicines";
+        private const string strNumberWildcardEvolvedViruses = "NumberWildcardEvolvedViruses";
+        private const string strNumberOvertime = "NumberOvertime";
+        private const string strNumberSecondOpinion = "NumberSecondOpinion";
+        private const string strNumberProtectiveSuit = "NumberProtectiveSuit";
+        private const string strNumberQuarantine = "NumberQuarantine";
         private const char splitter = ' ';
         #endregion
 
@@ -93,6 +102,15 @@ namespace Virus.Core
         /// Default number of healthy organs to win.
         /// </summary>
         private const int nNumberToWin = 4;
+        private const int nNumberBionicOrgans = 1;
+        private const int nNumberEvolvedMedicines = 1;
+        private const int nNumberEvolvedViruses = 2;
+        private const int nNumberWildcardEvolvedMedicines = 3;
+        private const int nNumberWildcardEvolvedViruses = 1;
+        private const int nNumberOvertime = 2;
+        private const int nNumberSecondOpinion = 2;
+        private const int nNumberProtectiveSuit = 4;
+        private const int nNumberQuarantine = 4;
         #endregion
 
         #region Properties of the current game
@@ -148,6 +166,16 @@ namespace Virus.Core
         /// Number of healthy organs required to win the game.
         /// </summary>
         public int NumberToWin { get; set; }
+
+        public int NumberBionicOrgans { get; set; }
+        public int NumberEvolvedMedicines { get; set; }
+        public int NumberEvolvedViruses { get; set; }
+        public int NumberWildcardEvolvedMedicines { get; set; }
+        public int NumberWildcardEvolvedViruses { get; set; }
+        public int NumberOvertime { get; set; }
+        public int NumberSecondOpinion { get; set; }
+        public int NumberProtectiveSuit { get; set; }
+        public int NumberQuarantine { get; set; }
         #endregion
 
         /// <summary>
@@ -177,13 +205,23 @@ namespace Virus.Core
             NumberWildcardMedicines = nNumberWildcardMedicines;
             NumberCardInHand = nNumberCardInHand;
             NumberToWin = nNumberToWin;
+            
+            NumberBionicOrgans = nNumberBionicOrgans;
+            NumberEvolvedMedicines = nNumberEvolvedMedicines;
+            NumberEvolvedViruses = nNumberEvolvedViruses;
+            NumberWildcardEvolvedMedicines = nNumberWildcardEvolvedMedicines;
+            NumberWildcardEvolvedViruses = nNumberWildcardEvolvedViruses;
+            NumberOvertime = nNumberOvertime;
+            NumberSecondOpinion = nNumberSecondOpinion;
+            NumberProtectiveSuit = nNumberProtectiveSuit;
+            NumberQuarantine = nNumberQuarantine;
         }
 
-        /// <summary>
-        /// Load the game preferences from the settings file.
-        /// </summary>
-        /// <returns>True if it could have been loaded successfully</returns>
-        public bool LoadGamePreferences()
+            /// <summary>
+            /// Load the game preferences from the settings file.
+            /// </summary>
+            /// <returns>True if it could have been loaded successfully</returns>
+            public bool LoadGamePreferences()
         {
             // If the file settins doesn't exist, it's generated rigth here.
             if (!File.Exists(FILE_PREFERENCES))
@@ -305,6 +343,77 @@ namespace Virus.Core
                                                 NumberToWin = Convert.ToInt32(args[1]);
                                             }
                                             break;
+
+                                        case strNumberBionicOrgans:
+                                            value = Convert.ToInt32(args[1]);
+                                            if (value >= 0)
+                                            {
+                                                NumberBionicOrgans = Convert.ToInt32(args[1]);
+                                            }
+                                            break;
+
+                                        case strNumberEvolvedMedicines:
+                                            value = Convert.ToInt32(args[1]);
+                                            if (value >= 0)
+                                            {
+                                                NumberEvolvedMedicines = Convert.ToInt32(args[1]);
+                                            }
+                                            break;
+
+                                        case strNumberEvolvedViruses:
+                                            value = Convert.ToInt32(args[1]);
+                                            if (value >= 0)
+                                            {
+                                                NumberEvolvedViruses = Convert.ToInt32(args[1]);
+                                            }
+                                            break;
+
+                                        case strNumberWildcardEvolvedMedicines:
+                                            value = Convert.ToInt32(args[1]);
+                                            if (value >= 0)
+                                            {
+                                                NumberWildcardEvolvedMedicines = Convert.ToInt32(args[1]);
+                                            }
+                                            break;
+
+                                        case strNumberWildcardEvolvedViruses:
+                                            value = Convert.ToInt32(args[1]);
+                                            if (value >= 0)
+                                            {
+                                                NumberWildcardEvolvedViruses = Convert.ToInt32(args[1]);
+                                            }
+                                            break;
+
+                                        case strNumberOvertime:
+                                            value = Convert.ToInt32(args[1]);
+                                            if (value >= 0)
+                                            {
+                                                NumberOvertime = Convert.ToInt32(args[1]);
+                                            }
+                                            break;
+
+                                        case strNumberSecondOpinion:
+                                            value = Convert.ToInt32(args[1]);
+                                            if (value >= 0)
+                                            {
+                                                NumberSecondOpinion = Convert.ToInt32(args[1]);
+                                            }
+                                            break;
+
+                                        case strNumberProtectiveSuit:
+                                            value = Convert.ToInt32(args[1]);
+                                            if (value >= 0)
+                                            {
+                                                NumberProtectiveSuit = Convert.ToInt32(args[1]);
+                                            }
+                                            break;
+                                        case strNumberQuarantine:
+                                            value = Convert.ToInt32(args[1]);
+                                            if (value >= 0)
+                                            {
+                                                NumberQuarantine = Convert.ToInt32(args[1]);
+                                            }
+                                            break;
                                     }
                                 }
                             }
@@ -410,6 +519,44 @@ namespace Virus.Core
                 defaultSettings += "# Number of organs in the body to win (default: 4)." + Environment.NewLine;
                 defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberToWin, splitter, nNumberToWin);
                 defaultSettings += Environment.NewLine;
+                
+                defaultSettings += "# Number of bionic organs (default: "+nNumberBionicOrgans+")." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberBionicOrgans, splitter, nNumberBionicOrgans);
+                defaultSettings += Environment.NewLine;
+                
+                defaultSettings += "# Number of evolved medicines (default: " + nNumberEvolvedMedicines + ")." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberEvolvedMedicines, splitter, nNumberEvolvedMedicines);
+                defaultSettings += Environment.NewLine;
+
+                defaultSettings += "# Number of evolved viruses (default: " + nNumberEvolvedViruses + ")." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberEvolvedViruses, splitter, nNumberEvolvedViruses);
+                defaultSettings += Environment.NewLine;
+
+                defaultSettings += "# Number of wildcard evolved medicines (default: " + nNumberWildcardEvolvedMedicines + ")." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberWildcardEvolvedMedicines, splitter, nNumberWildcardEvolvedMedicines);
+                defaultSettings += Environment.NewLine;
+
+                defaultSettings += "# Number of wildcard evolved viruses (default: " + nNumberWildcardEvolvedViruses + ")." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberWildcardEvolvedViruses, splitter, nNumberWildcardEvolvedViruses);
+                defaultSettings += Environment.NewLine;
+
+                defaultSettings += "# Number of overtime (default: " + nNumberOvertime + ")." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberOvertime, splitter, nNumberOvertime);
+                defaultSettings += Environment.NewLine;
+
+                defaultSettings += "# Number of second opinion (default: " + nNumberSecondOpinion + ")." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberSecondOpinion, splitter, nNumberSecondOpinion);
+                defaultSettings += Environment.NewLine;
+
+                defaultSettings += "# Number of protective suit (default: " + nNumberProtectiveSuit + ")." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberProtectiveSuit, splitter, nNumberProtectiveSuit);
+                defaultSettings += Environment.NewLine;
+
+                defaultSettings += "# Number of quarentine (default: " + nNumberQuarantine + ")." + Environment.NewLine;
+                defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberQuarantine, splitter, nNumberQuarantine);
+                defaultSettings += Environment.NewLine;
+
+
 
                 #endregion
                 using (StreamWriter sw = File.AppendText(FILE_PREFERENCES))
