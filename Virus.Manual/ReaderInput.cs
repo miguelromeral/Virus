@@ -48,7 +48,7 @@ namespace Virus.Core
             
         }
 
-        public int RequestMovementChoosenTransplant(List<string> moves, Game game)
+        public string RequestMovementChoosenTransplant(List<string> moves, Game game)
         {
             try
             {
@@ -84,14 +84,12 @@ namespace Virus.Core
                 if (p < 0 || p >= moves.Count)
                     throw new Exception("You've not choosen a valid combination to transplant organs.");
                 
-                return p;
+                return moves[p];
             }
             catch (Exception)
             {
-                throw new Exception("THE INPUT IS NOT VALID.");
+                return null;
             }
-
-
         }
 
 

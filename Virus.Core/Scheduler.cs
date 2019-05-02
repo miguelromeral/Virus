@@ -229,10 +229,7 @@ namespace Virus.Core
         {
             return new Random().Next(begin, end);
         }
-
-
-
-
+        
         public static void ChangeConsoleOutput(Card.CardColor? color = null, ConsoleColor background = ConsoleColor.Black, ConsoleColor foreground = ConsoleColor.White)
         {
             if (color == null)
@@ -275,5 +272,6 @@ namespace Virus.Core
             }
 
         }
+        
     }
 }

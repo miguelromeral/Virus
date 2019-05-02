@@ -47,6 +47,7 @@ namespace Virus.Core
                     {
                         moves.Add(Scheduler.GenerateMove(me.ID, me.GetIndexOfCardInHand(myCard)));
                     }
+
                     break;
                 #endregion
 
@@ -173,6 +174,7 @@ namespace Virus.Core
                         }
                         myCardIndex++;
                     }
+                    
                     return moves;
                 #endregion
 

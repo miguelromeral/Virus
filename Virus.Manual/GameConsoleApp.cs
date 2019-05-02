@@ -70,22 +70,18 @@ namespace Virus.ConsoleApp
             WriteToLog(ToString(), true);
         }
 
-        public void PrintGameState(string message = null, bool user = false, string action = Scheduler.ACTION_PLAYING, List<string> moves = null)
+        public void PrintGameState(bool fail = false, bool user = false, string action = Scheduler.ACTION_PLAYING, List<string> moves = null)
         {
             //Console.Clear();
-            Console.WriteLine("------------------------------------------------------------");
-
-
             if (user)
             {
                 if (!action.Equals(Scheduler.ACTION_CHOOSING))
                     PrintCurrentGameState();
 
-                if (message != null)
+                if (fail)
                 {
                     Console.WriteLine(new string('*', 70));
-                    Console.WriteLine("** MOVEMENT NOT ALLOWED: " + new string(' ', 43) + "**");
-                    Console.WriteLine(String.Format("** {0,63} **", message));
+                    Console.WriteLine("** MOVEMENT NOT ALLOWED. Please, try again. " + new string(' ', 30) + "**");
                     Console.WriteLine(new string('*', 70));
 
                 }
@@ -113,14 +109,13 @@ namespace Virus.ConsoleApp
             }
         }
         
-        public bool ReadUserInput(string message = null, bool moveDone = false)
+        public bool ReadUserInput(bool moveDone = false)
         {
             // IDEA: if the user doesn't input the data right then 10 times, make random turn (via IA)
             try
             {
                 Player me = Players[0];
-                Card myCard;
-                PrintGameState(message, true);
+                PrintGameState(moveDone, true);
                 int myCardIndex = Convert.ToInt32(Console.ReadLine());
                 if (myCardIndex < 0 || myCardIndex > Settings.NumberCardInHand)
                 {
@@ -132,7 +127,7 @@ namespace Virus.ConsoleApp
                     int todiscard = -1;
                     while (todiscard != 0)
                     {
-                        PrintGameState(message, true, Scheduler.ACTION_DISCARDING);
+                        PrintGameState(moveDone, true, Scheduler.ACTION_DISCARDING);
                         if (me.Hand.Count > 0)
                         {
                             todiscard = Convert.ToInt32(Console.ReadLine());
@@ -165,16 +160,17 @@ namespace Virus.ConsoleApp
                 }
                 else
                 {
-                    myCard = me.Hand[(myCardIndex - 1)];
-                    message = PlayGameCardByUser(Players[0], myCard);
-                    ThrowExceptionIfMessage(message);
+                    if(!PlayGameCardByUser(Players[0], myCardIndex - 1))
+                    {
+                        throw new Exception();
+                    }
                 }
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 if (!moveDone)
-                    return ReadUserInput(ex.Message, moveDone);
+                    return ReadUserInput(false);
                 else
                     return true;
             }
@@ -194,186 +190,67 @@ namespace Virus.ConsoleApp
             }
             return null;
         }
-
-
-        private void ThrowExceptionIfMessage(string message = null)
+        
+        public bool PlayGameCardByUser(Player player, int index)
         {
-            try
+            Card myCard = player.Hand[index];
+            List<string> moves = Referee.GetListMovements(player, myCard);
+            
+            switch (moves.Count)
             {
-                if (message != null)
-                {
-                    throw new Exception("** " + message + " **");
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-
-        public string PlayGameCardByUser(Player player, Card myCard)
-        {
-            List<string> moves = new List<string>();
-            switch (myCard.Face)
-            {
-                #region PLAY ORGAN
-                case Card.CardFace.Organ:
-
-                    return PlayCardByMove(player, myCard, null);
-                #endregion
-
-                #region PLAY MEDICINE
-                case Card.CardFace.Medicine:
-                    moves = Referee.GetListMovements(player, myCard);
-                    if (moves.Count == 0)
-                    {
-                        return "You don't have any organ available to play this medicine.";
-                    }
-                    if (moves.Count == 1)
-                    {
-                        return PlayCardByMove(player, myCard, moves[0]);
-                    }
-                    if (moves.Count > 1)
-                    {
-                        string choosen = reader.RequestMovementChoosen(player, moves);
-
-                        if (choosen == null)
-                            throw new Exception("The input doesn't belong to any available move.");
-
-                        return PlayCardByMove(player, myCard, choosen);
-                    }
-
-                    break;
-                #endregion
-
-                #region PLAY VIRUS
-                case Card.CardFace.Virus:
-                    moves = Referee.GetListMovements(player, myCard);
-                    if (moves.Count == 0)
-                    {
-                        return "You don't have any organ available to play this virus.";
-                    }
-                    if (moves.Count == 1)
-                    {
-                        return PlayCardByMove(player, myCard, moves[0]);
-                    }
-                    if (moves.Count > 1)
-                    {
-                        string choosen = reader.RequestMovementChoosen(player, moves);
-
-                        if (choosen == null)
-                            throw new Exception("The input doesn't belong to any available move.");
-                        
-                        return PlayCardByMove(player, myCard, choosen);
-                    }
-                    break;
-                #endregion
-
-                #region PLAY TRANSPLANT
-                case Card.CardFace.Transplant:
-                    moves = Referee.GetListMovements(player, myCard);
-                    if (moves.Count == 0)
-                    {
-                        return "You currently can't swith any organ between you and your rivals.";
-                    }
-                    if (moves.Count == 1)
-                    {
-                        return PlayCardByMove(player, myCard, moves[0]);
-                    }
-                    if (moves.Count > 1)
-                    {
-                        int opt = reader.RequestMovementChoosenTransplant(moves, this);
-                        return PlayCardByMove(player, myCard, moves[opt]);
-                    }
-                    break;
-                #endregion
-
-                #region PLAY ORGAN THIEF
-                case Card.CardFace.OrganThief:
-                    moves = Referee.GetListMovements(player, myCard);
-                    if (moves.Count == 0)
-                    {
-                        return "You currently can't steal any body of your rivals.";
-                    }
-                    if (moves.Count == 1)
-                    {
-                        return PlayCardByMove(player, myCard, moves[0]);
-                    }
-                    if (moves.Count > 1)
-                    {
-                        string choosen = reader.RequestMovementChoosen(player, moves);
-
-                        if (choosen == null)
-                            throw new Exception("The input doesn't belong to any available move.");
-
-                        return PlayCardByMove(player, myCard, choosen);
-                    }
-                    break;
-                #endregion
-
-                #region PLAY SPREADING
-                case Card.CardFace.Spreading:
-                    List<List<string>> wholeMoves = Scheduler.GetListOfListsSpreadingMoves(Referee.GetListMovements(player, myCard));
-                    if (wholeMoves.Count == 0)
-                    {
-                        return "You currently can't spread your virus to any free organ of your rival's bodies.";
-                    }
-                    if (wholeMoves.Count > 0)
-                    { 
-                        List<string> choosen = new List<string>();
-                        foreach (var move in wholeMoves)
-                        {
-                            string input = ProcessSpreadingItem(move);
-                            if (input == null)
-                            {
-                                return "One or more input in spreading options is not valid.";
-                            }
-                            else
-                            {
-                                choosen.Add(input);
-                            }
-                        }
-                        return PlayGameCardSpreading(Scheduler.GetMoveByMultiple(choosen));
-                        
-                    }
-                    break;
-                #endregion
-
-                #region PLAY LATEX GLOVE
-                case Card.CardFace.LatexGlove:
-                    return PlayCardByMove(player, myCard, null);
-                #endregion
-
-                #region PLAY MEDICAL ERROR
-                case Card.CardFace.MedicalError:
-                    moves = Referee.GetListMovements(player, myCard);
-                    if (moves.Count == 0)
-                    {
-                        return "You don't have any player to change yours bodies.";
-                    }
-                    if (moves.Count == 1)
-                    {
-                        return PlayCardByMove(player, myCard, moves[0]);
-                    }
-                    if (moves.Count > 1)
-                    {
-                        string choosen = reader.RequestMovementChoosenMedicalError(player, moves, this);
-
-                        if (choosen == null)
-                            throw new Exception("The input doesn't belong to any available move.");
-
-                        return PlayCardByMove(player, myCard, choosen);
-                    }
-                    break;
-                #endregion
-
+                case 0: return false;
+                case 1:
+                    PlayCardByMove(player, myCard, moves[0]);
+                    return true;
                 default:
-                    return " UNKNOWN CARD PLAYED IN GAME";
+                    string choosen = null;
+                    switch (myCard.Face)
+                    {
+                        case Card.CardFace.Transplant:
+                            choosen = reader.RequestMovementChoosenTransplant(moves, this);
+                            break;
+                            
+                        case Card.CardFace.Spreading:
+                            List<List<string>> wholeMoves = Scheduler.GetListOfListsSpreadingMoves(Referee.GetListMovements(player, myCard));
+                            if (wholeMoves.Count == 0)
+                            {
+                                return false;
+                            }
+                            if (wholeMoves.Count > 0)
+                            {
+                                List<string> choosenlist = new List<string>();
+                                foreach (var move in wholeMoves)
+                                {
+                                    string input = ProcessSpreadingItem(move);
+                                    if (input == null)
+                                    {
+                                        return false;
+                                    }
+                                    else
+                                    {
+                                        choosenlist.Add(input);
+                                    }
+                                }
+                                PlayGameCardSpreading(Scheduler.GetMoveByMultiple(choosenlist));
+                                return true;
+
+                            }
+                            break;
+
+                        case Card.CardFace.MedicalError:
+                            choosen = reader.RequestMovementChoosenMedicalError(player, moves, this);
+                            break;
+
+                        default:
+                            choosen = reader.RequestMovementChoosen(player, moves);
+                            break;
+                    }
+                    if (choosen == null)
+                        return false;
+
+                    PlayCardByMove(player, myCard, choosen);
+                    return true;
             }
-            return "END OF SWITCH";
         }
-
-
     }
 }
