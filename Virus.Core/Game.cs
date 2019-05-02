@@ -148,6 +148,12 @@ namespace Virus.Core
                     }
                     WriteToLog(Settings.NumberViruses + " " + color + " viruses created.");
 
+                    for (i = 0; i < Settings.NumberEvolvedMedicines; i++)
+                    {
+                        deck.Add(new Card(color, Card.CardFace.EvolvedMedicine));
+                    }
+                    WriteToLog(Settings.NumberEvolvedMedicines + " " + color + " evolved medicines created.");
+
                 }
             }
 
@@ -593,12 +599,7 @@ namespace Virus.Core
                     return PlayGameCardMedicine(player, myCard, move);
 
                 case Card.CardFace.Virus:
-                    //p = Scheduler.GetStringInt(move, 0);
-                    //c = Scheduler.GetStringInt(move, 2);
-                    //if(Players[p].Body.Items[c].Modifiers.Count == 0)
-                    //{
-                        RemoveCardFromHand(player, myCard);
-                    //}
+                    RemoveCardFromHand(player, myCard);
                     return PlayGameCardVirus(player, myCard, move);
 
                 case Card.CardFace.Transplant:
@@ -620,6 +621,10 @@ namespace Virus.Core
                 case Card.CardFace.MedicalError:
                     DiscardFromHand(player, myCard);
                     return PlayMedicalError(player, move);
+                    
+                case Card.CardFace.EvolvedMedicine:
+                    RemoveCardFromHand(player, myCard);
+                    return PlayGameCardEvolvedMedicine(player, myCard, move);
             }
             
             return null;
@@ -662,8 +667,14 @@ namespace Virus.Core
         /// <returns></returns>
         public string PlayGameCardMedicine(Player player, Card myCard, string move)
         {
-            WriteToLog(player.ShortDescription + " has used a "+myCard+" in his " + player.Body.Items[Scheduler.GetStringInt(move, 2)]);
-            return player.Body.SetMedicine(this, myCard, Scheduler.GetStringInt(move, 2));
+            WriteToLog(player.ShortDescription + " has used a " + myCard + " in his " + player.Body.Items[Scheduler.GetStringInt(move, 2)]);
+            return player.Body.Items[Scheduler.GetStringInt(move, 2)].NewMedicine(this, myCard);
+        }
+
+        public string PlayGameCardEvolvedMedicine(Player player, Card myCard, string move)
+        {
+            WriteToLog(player.ShortDescription + " has used a " + myCard + " in his " + player.Body.Items[Scheduler.GetStringInt(move, 2)]);
+            return player.Body.Items[Scheduler.GetStringInt(move, 2)].NewEvolvedMedicine(this, myCard);
         }
 
         /// <summary>

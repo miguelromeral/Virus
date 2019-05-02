@@ -57,14 +57,10 @@ namespace Virus.Core
 
             for(int i=0; i< Me.Hand.Count; i++)
             {
+
                 movesByCard.Add(Game.Referee.GetListMovements(Me, Me.Hand[i]));
             }
 
-            return DoMoveByAI(movesByCard);
-        }
-
-        public string DoMoveByAI(List<List<string>> movesByCard)
-        {
             switch (Me.AI)
             {
                 case AICategory.First:
@@ -156,8 +152,7 @@ namespace Virus.Core
             }
             return Game.PlayCardByMove(Me, card, best);
         }
-
-
+        
         public string ChooseMedium(List<List<string>> movesbycard)
         {
             List<Scenario> scenarios = AllScenariosByLists(movesbycard);

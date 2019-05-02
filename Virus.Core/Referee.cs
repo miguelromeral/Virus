@@ -211,6 +211,19 @@ namespace Virus.Core
                         }
                     }
                     return moves;
+                #endregion
+
+                #region PLAY EVOLVED MEDICINE
+                case Card.CardFace.EvolvedMedicine:
+                    body = me.Body;
+                    for (int i = 0; i < body.Items.Count; i++)
+                    {
+                        if (CanPlayEvolvedMedicine(body.Items[i], myCard))
+                        {
+                            moves.Add(Scheduler.GenerateMove(me.ID, i));
+                        }
+                    }
+                    break;
                     #endregion
             }
             return moves;
@@ -234,7 +247,7 @@ namespace Virus.Core
             }
             return true;
         }
-        
+
         /// <summary>
         /// Check if a medicine could be used in a body item.
         /// </summary>
@@ -243,7 +256,7 @@ namespace Virus.Core
         /// <returns>True if the body item acepts this medicine</returns>
         public bool CanPlayMedicine(BodyItem item, Card medicine)
         {
-            if(item.Organ.Color != Card.CardColor.Bionic)
+            if (item.Organ.Color == Card.CardColor.Bionic)
             {
                 return false;
             }
@@ -251,13 +264,40 @@ namespace Virus.Core
             if (Referee.SameColorOrWildcard(item.Organ.Color, medicine.Color) ||
                 (item.Status == BodyItem.State.Infected &&
                 Referee.SameColorOrWildcard(item.Modifiers[0].Color, medicine.Color)))
-            { 
+            {
                 switch (item.Status)
                 {
                     case BodyItem.State.Free:
                     case BodyItem.State.Vaccinated:
                     case BodyItem.State.Infected:
                         return true;
+                    default:
+                        return false;
+                }
+            }
+            return false;
+        }
+        public bool CanPlayEvolvedMedicine(BodyItem item, Card medicine)
+        {
+            if (item.Organ.Color == Card.CardColor.Bionic)
+            {
+                return false;
+            }
+
+            if (Referee.SameColorOrWildcard(item.Organ.Color, medicine.Color) ||
+                (item.Status == BodyItem.State.Infected &&
+                Referee.SameColorOrWildcard(item.Modifiers[0].Color, medicine.Color)))
+            {
+                switch (item.Status)
+                {
+                    case BodyItem.State.Free:
+                    case BodyItem.State.Vaccinated:
+                        return true;
+                    case BodyItem.State.Infected:
+                        
+                        // ****** CHECK HERE IF EVOLVED VIRUS OR NOT
+                        return true;
+
                     default:
                         return false;
                 }
@@ -273,7 +313,7 @@ namespace Virus.Core
         /// <returns>True if the virus could be used in this body item</returns>
         public bool CanPlayVirus(BodyItem item, Card virus)
         {
-            if(item.Organ.Color != Card.CardColor.Bionic)
+            if(item.Organ.Color == Card.CardColor.Bionic)
             {
                 return false;
             }

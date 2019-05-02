@@ -130,18 +130,6 @@ namespace Virus.Core
             }
             return message;
         }
-
-        /// <summary>
-        /// Set a new medicine to a body item of the body by index.
-        /// </summary>
-        /// <param name="game">Game</param>
-        /// <param name="medicine">Medicine card</param>
-        /// <param name="index">Index of the body item</param>
-        /// <returns>Error message if the medicine couldn't been played.</returns>
-        public string SetMedicine(Game game, Card medicine, int index = 0)
-        {
-            return Items[index].NewMedicine(game, medicine);
-        }
         
         public int OrgansLeftToWin(Game game)
         {

@@ -338,7 +338,7 @@ namespace Virus.Core
                                             break;
                                         case strNumberToWin:
                                             value = Convert.ToInt32(args[1]);
-                                            if (value > 1 && value <= 5)
+                                            if (value > 1 && value <= 6)
                                             {
                                                 NumberToWin = Convert.ToInt32(args[1]);
                                             }

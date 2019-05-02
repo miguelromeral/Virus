@@ -63,35 +63,30 @@ namespace Virus.Core
         {
             get
             {
-                switch (Modifiers.Count)
+                if(Modifiers.Count == 0)
                 {
-                    case 0:
-                        // Free Organ
-                        // No medicines or virus played.
-                        return State.Free;
-                    case 1:
-                        switch (Modifiers[0].Face)
-                        {
-                            // Vaccinated Organ
-                            case Card.CardFace.Medicine:
-                                return State.Vaccinated;
-                            // Infected Organ
-                            case Card.CardFace.Virus:
-                                return State.Infected;
-                            default:
-                                return State.NOTINGAME;
-                        }
-                    case 2:
-                        if (Modifiers[0].Face == Card.CardFace.Medicine)
-                        {
+                    // Free Organ
+                    // No medicines or virus played.
+                    return State.Free;
+                }
+                else { 
+                    if(Modifiers.Count > 1)
+                    {
+                        return State.Immunized;
+                    }
+                    switch (Modifiers[0].Face)
+                    {
+                        // Vaccinated Organ
+                        case Card.CardFace.Medicine:
+                            return State.Vaccinated;
+                        // Infected Organ
+                        case Card.CardFace.Virus:
+                            return State.Infected;
+                        case Card.CardFace.EvolvedMedicine:
                             return State.Immunized;
-                        }
-                        else
-                        {
+                        default:
                             return State.NOTINGAME;
-                        }
-                    default:
-                        return State.NOTINGAME;
+                    }
                 }
             }
         }
@@ -162,7 +157,39 @@ namespace Virus.Core
                 default:
                     return "UNKNOWN STATE PUTTING THE MEDICINE.";
             }
-            
+
+        }
+        public string NewEvolvedMedicine(Game game, Card medicine)
+        {
+            if (medicine.Color == Card.CardColor.Wildcard)
+            {
+                Points += (int) ((Scheduler.POINTS_MEDICINE * 1.25) / 2);
+            }
+            else
+            {
+                Points += (int)(Scheduler.POINTS_MEDICINE * 1.25);
+            }
+
+            switch (Status)
+            {
+                case State.Free:
+                case State.Vaccinated:
+                    Modifiers.Add(medicine);
+                    return null;
+                case State.Infected:
+
+                    // TBD
+
+                    //game.MoveToDiscards(Modifiers.ElementAt(0));
+                    //Modifiers.RemoveAt(0);
+                    //game.MoveToDiscards(medicine);
+                    return null;
+                case State.Immunized:
+                    // Player can't play more medicines into a immunized organ.
+                    return String.Format("Your {0} is already immunized.", Organ);
+            }
+            return "UNKNOWN";
+
         }
 
         /// <summary>

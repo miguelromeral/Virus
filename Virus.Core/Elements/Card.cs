@@ -82,7 +82,8 @@ namespace Virus.Core
             /// <summary>
             /// Medical error is used to switch your whole body to ahy other of your rivals.
             /// </summary>
-            MedicalError
+            MedicalError,
+            EvolvedMedicine
         }
         #endregion
 
@@ -213,15 +214,16 @@ namespace Virus.Core
         /// Get a single character in function of its face.
         /// </summary>
         /// <returns>Char with the face</returns>
-        public char ToStringShortFace()
+        public string ToStringShortFace()
         {
-            char charFace;
+            string charFace;
             switch (Face)
             {
-                case CardFace.Organ: charFace = 'O'; break;
-                case CardFace.Medicine: charFace = '*'; break;
-                case CardFace.Virus: charFace = '@'; break;
-                default: charFace = '+'; break;
+                case CardFace.Organ: charFace = "O"; break;
+                case CardFace.Medicine: charFace = "*"; break;
+                case CardFace.EvolvedMedicine: charFace = "**"; break;
+                case CardFace.Virus: charFace = "@"; break;
+                default: charFace = "+"; break;
             }
             return charFace;
         }

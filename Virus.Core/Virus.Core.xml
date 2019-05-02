@@ -73,15 +73,6 @@
             <param name="game">Game.</param>
             <returns>Error message if it couldn't have been played.</returns>
         </member>
-        <member name="M:Virus.Core.Body.SetMedicine(Virus.Core.Game,Virus.Core.Card,System.Int32)">
-            <summary>
-            Set a new medicine to a body item of the body by index.
-            </summary>
-            <param name="game">Game</param>
-            <param name="medicine">Medicine card</param>
-            <param name="index">Index of the body item</param>
-            <returns>Error message if the medicine couldn't been played.</returns>
-        </member>
         <member name="T:Virus.Core.BodyItem">
             <summary>
             A body item, composed by, at least, on Organ and can store the medicines and virus played in that Organ.
