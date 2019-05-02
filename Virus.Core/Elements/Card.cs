@@ -41,7 +41,8 @@ namespace Virus.Core
             /// <summary>
             /// Wildcard color. It can be used like a red, yellow, green or blue.
             /// </summary>
-            Wildcard
+            Wildcard,
+            Bionic
         }
 
         /// <summary>
@@ -141,6 +142,7 @@ namespace Virus.Core
                 case CardColor.Yellow:
                 case CardColor.Blue:
                 case CardColor.Green:
+                case CardColor.Bionic:
                     // Normal format.
                     value = String.Format(value,
                         Color.ToString(),
@@ -167,6 +169,7 @@ namespace Virus.Core
                 case CardColor.Yellow:
                 case CardColor.Blue:
                 case CardColor.Green:
+                case CardColor.Bionic:
                     // Normal format.
                     value = String.Format(value,
                         Color.ToString(),
@@ -183,7 +186,7 @@ namespace Virus.Core
         /// <returns>2 characters info for this card.</returns>
         public string ToStringShort()
         {   
-            return String.Format("({0}{1})", ToStringShortColor(), ToStringShortFace());   
+            return String.Format("({0}{1,2})", ToStringShortColor(), ToStringShortFace());   
         }
         
         /// <summary>
@@ -201,6 +204,7 @@ namespace Virus.Core
                 case CardColor.Blue: charColor = 'B'; break;
                 case CardColor.Purple: charColor = null; break;
                 case CardColor.Wildcard: charColor = '^'; break;
+                case CardColor.Bionic: charColor = '<'; break;
             }
             return charColor;
         }

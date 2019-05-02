@@ -128,7 +128,7 @@ namespace Virus.Core
             #region ORGANS. MEDICINES & VIRUS BY COLOR
             foreach (Card.CardColor color in (Card.CardColor[])Enum.GetValues(typeof(Card.CardColor)))
             {
-                if (color != Card.CardColor.Purple && color != Card.CardColor.Wildcard)
+                if (color != Card.CardColor.Purple && color != Card.CardColor.Wildcard && color != Card.CardColor.Bionic)
                 {
                     for (i = 0; i < Settings.NumberOrgans; i++)
                     {
@@ -150,6 +150,13 @@ namespace Virus.Core
 
                 }
             }
+
+            for (i = 0; i < Settings.NumberBionicOrgans; i++)
+            {
+                deck.Add(new Card(Card.CardColor.Bionic, Card.CardFace.Organ));
+            }
+            WriteToLog(Settings.NumberBionicOrgans + " bionic organs created.");
+
             #endregion
 
             #region WILDCARD CARDS
@@ -290,9 +297,7 @@ namespace Virus.Core
         public void Start(int milis = 0) {
             Console.WriteLine("Press any key to begin the Virus!");
             Console.ReadLine();
-
             
-
             while (!GameOver)
             {
                 //Console.Clear();
@@ -366,7 +371,7 @@ namespace Virus.Core
                     item.PrintModifiers();
                     Scheduler.ChangeConsoleOutput(foreground: f);
 
-                    int padd = (4 * item.Modifiers.Count);
+                    int padd = (5 * item.Modifiers.Count);
 
                     Scheduler.ChangeConsoleOutput(foreground:f);
                     while (padd < 33)
@@ -401,9 +406,8 @@ namespace Virus.Core
             {
                 p.PrintMyOptions();
             }
-
             Console.WriteLine();
-            WriteToLog("Turn #" + Turn + " (" + p.ShortDescription + ").", true);
+            WriteToLog("Turn #" + Turn + " (" + p.ShortDescription + ").");
             if (wait)
             {
                 Console.WriteLine("Press any key to continue.");

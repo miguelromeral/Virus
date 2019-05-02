@@ -260,7 +260,7 @@ namespace Virus.Core
         /// <returns>String with the body item info.</returns>
         public override string ToString()
         {
-            return String.Format("({0,14}:{1,9}) [Pts: {2,4}]", Organ.ToString(), ModifiersToString(), Points);
+            return String.Format("({0,14}:{1,9})", Organ.ToString(), ModifiersToString(), Points);
         }
 
         public void PrintBodyItem()

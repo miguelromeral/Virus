@@ -268,6 +268,10 @@ namespace Virus.Core
                     Console.BackgroundColor = ConsoleColor.DarkMagenta;
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
+                case Card.CardColor.Bionic:
+                    Console.BackgroundColor = ConsoleColor.Gray;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    break;
             }
 
         }

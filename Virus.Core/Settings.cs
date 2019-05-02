@@ -53,7 +53,7 @@ namespace Virus.Core
         /// <summary>
         /// Default number of organs in a game.
         /// </summary>
-        private const int nNumberOrgans = 5;
+        private const int nNumberOrgans = 6;
         /// <summary>
         /// Default number of medicines in a game.
         /// </summary>
@@ -468,7 +468,7 @@ namespace Virus.Core
 # is a comment, and the game will ignore it.
 
 ";
-                defaultSettings += "# Number of organs by color (default: 5)." + Environment.NewLine;
+                defaultSettings += "# Number of organs by color (default: 6)." + Environment.NewLine;
                 defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberOrgans, splitter, nNumberOrgans);
                 defaultSettings += Environment.NewLine;
 

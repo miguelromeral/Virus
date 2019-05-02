@@ -93,10 +93,14 @@ namespace Virus.Core
             else
             {
                 BodyItem item = new BodyItem(organ);
-                if(organ.Color == Card.CardColor.Wildcard)
+                if (organ.Color == Card.CardColor.Wildcard)
                 {
                     // A Wildcard organ could substitute anyone. It's better valued.
                     item.Points += (Scheduler.POINTS_ORGAN / 5);
+                }
+                if (organ.Color == Card.CardColor.Bionic)
+                {
+                    item.Points += (Scheduler.POINTS_ORGAN / 4);
                 }
                 Items.Add(item);
 
