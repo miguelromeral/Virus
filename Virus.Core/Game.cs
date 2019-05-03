@@ -344,8 +344,7 @@ namespace Virus.Core
             
             PrintCurrentGameState();
             WriteToLog("The game has been finished.", true);
-
-            //WriteToLog(ToString(), true);
+            WriteToLog(ToString(), false);
         }
 
 
@@ -378,12 +377,22 @@ namespace Virus.Core
                 {
                     BodyItem item = p.Body.Items[y];
                     res += String.Format("| {0,1}.         | ", (y + 1));
+
+                    if(item.Status == BodyItem.State.Immunized)
+                    {
+                        res += "(+) ";
+                    }
+                    else
+                    {
+                        res += "    ";
+                    }
+
                     res += String.Format("{0,14}: ", item.Organ.ToString());
                     res += item.GetModifiers();
 
                     int padd = (5 * item.Modifiers.Count);
 
-                    while (padd < 33)
+                    while (padd < 29)
                     {
                         res += " ";
                         padd++;
@@ -437,6 +446,16 @@ namespace Virus.Core
                     //printed += "+------------+------------+----------------+-------------------------------+" + Environment.NewLine;
                     Console.Write(String.Format("| {0,1}.         | ", (y + 1)));
 
+
+                    if (item.Status == BodyItem.State.Immunized)
+                    {
+                        Console.Write("(+) ");
+                    }
+                    else
+                    {
+                        Console.Write("    ");
+                    }
+
                     Scheduler.ChangeConsoleOutput(item.Organ.Color);
                     Console.Write(String.Format("{0,14}: ", item.Organ.ToString()));
                     
@@ -447,7 +466,7 @@ namespace Virus.Core
                     int padd = (5 * item.Modifiers.Count);
 
                     Scheduler.ChangeConsoleOutput(foreground:f);
-                    while (padd < 33)
+                    while (padd < 29)
                     {
                         Console.Write(" ");
                         padd++;
@@ -658,6 +677,10 @@ namespace Virus.Core
                 toswitch.Hand = aux;
 
                 WriteToLog(me.ShortDescription + " has switched his hand with the " + toswitch.ShortDescription + "'s one.");
+
+                Turn--;
+
+                WriteToLog(me.ShortDescription + " can play again with his new hand.");
 
                 return null;
             }

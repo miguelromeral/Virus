@@ -49,12 +49,14 @@ namespace Virus.ConsoleApp
                 Player p = Players[CurrentTurn];
                 if (p.AI.Equals(ArtificialIntelligence.AICategory.Human))
                 {
+                    WriteToLog("Turn #" + Turn + " (" + p.ShortDescription + ").");
                     if (p.Hand.Count > 0)
                     {
-                        var pt = 1;
-                        Console.WriteLine("Your turn (" + pt + ")");
                         ReadUserInput();
-                        pt++;
+                    }
+                    else
+                    {
+                        Console.WriteLine("You don't have any card in your hand. Press any key to pass the turn.");
                     }
                     DrawCardsToFill(p);
                     Turn++;
@@ -75,9 +77,10 @@ namespace Virus.ConsoleApp
                 }
             }
             Console.WriteLine();
-            
+
+            PrintCurrentGameState();
             WriteToLog("The game has been finished.", true);
-            WriteToLog(ToString(), true);
+            WriteToLog(ToString(), false);
         }
 
         public void PrintGameState(bool fail = false, bool user = false, string action = Scheduler.ACTION_PLAYING, List<string> moves = null)

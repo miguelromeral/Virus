@@ -59,7 +59,7 @@ namespace Virus.Core
                 int count = 0;
                 foreach (var item in Body.Items)
                 {
-                    if (item.IsHealthy)
+                    if (item != null && item.IsHealthy)
                     {
                         count++;
                     }
