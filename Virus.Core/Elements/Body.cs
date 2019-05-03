@@ -118,19 +118,35 @@ namespace Virus.Core
         public string SetVirus(Card virus, int index, Game game)
         {
             BodyItem item = Items[index];
-            
+
             string message = item.NewVirus(virus, game);
             // if when we added the virus, the body item has more than one virus, we have to
             // remove them from the whole body.
             if (message != null && message.Equals(BodyItem.RULE_DELETEBODY))
             {
                 Items.Remove(item);
-                game.WriteToLog("The "+item+" has been removed from the body.");
+                game.WriteToLog("The " + item + " has been removed from the body.");
                 message = null;
             }
             return message;
         }
-        
+
+        public string SetEvolvedVirus(Card virus, int index, Game game)
+        {
+            BodyItem item = Items[index];
+
+            string message = item.NewEvolvedVirus(virus, game);
+            // if when we added the virus, the body item has more than one virus, we have to
+            // remove them from the whole body.
+            if (message != null && message.Equals(BodyItem.RULE_DELETEBODY))
+            {
+                Items.Remove(item);
+                game.WriteToLog("The " + item + " has been removed from the body.");
+                message = null;
+            }
+            return message;
+        }
+
         public int OrgansLeftToWin(Game game)
         {
             int count = game.Settings.NumberToWin;

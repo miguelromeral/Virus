@@ -81,6 +81,7 @@ namespace Virus.Core
                             return State.Vaccinated;
                         // Infected Organ
                         case Card.CardFace.Virus:
+                        case Card.CardFace.EvolvedVirus:
                             return State.Infected;
                         case Card.CardFace.EvolvedMedicine:
                             return State.Immunized;
@@ -177,12 +178,9 @@ namespace Virus.Core
                     Modifiers.Add(medicine);
                     return null;
                 case State.Infected:
-
-                    // TBD
-
-                    //game.MoveToDiscards(Modifiers.ElementAt(0));
-                    //Modifiers.RemoveAt(0);
-                    //game.MoveToDiscards(medicine);
+                    game.MoveToDiscards(Modifiers.ElementAt(0));
+                    Modifiers.RemoveAt(0);
+                    game.MoveToDiscards(medicine);
                     return null;
                 case State.Immunized:
                     // Player can't play more medicines into a immunized organ.
@@ -280,6 +278,45 @@ namespace Virus.Core
                     return "UNKNOWN STATE PUTTING THE VIRUS.";
             }
         }
+        public string NewEvolvedVirus(Card virus, Game game)
+        {
+            if (Status != State.Immunized)
+            {
+                // It's easier to remove a wildcard virus!
+                if (virus.Color == Card.CardColor.Wildcard)
+                {
+                    Points -= (int)((Scheduler.POINTS_MEDICINE * 1.25) / 2);
+                }
+                else
+                {
+                    Points -= (int)(Scheduler.POINTS_MEDICINE * 1.25);
+                }
+            }
+
+            switch (Status)
+            {
+                case State.Free:
+                    Modifiers.Add(virus);
+                    return null;
+                case State.Vaccinated:
+                    game.MoveToDiscards(virus);
+                    Card medicine = Modifiers.ElementAt(0);
+                    game.MoveToDiscards(medicine);
+                    Modifiers.Remove(medicine);
+                    return null;
+                case State.Infected:
+                    game.MoveToDiscards(virus);
+                    foreach (var c in GetAllCardsInBody())
+                    {
+                        game.MoveToDiscards(c);
+                    }
+                    return RULE_DELETEBODY;
+                case State.Immunized:
+                    return String.Format("The {0} is immunized. You cannot put the virus.", Organ);
+                default:
+                    return "UNKNOWN STATE PUTTING THE VIRUS.";
+            }
+        }
 
         /// <summary>
         /// Returns a body item description.
@@ -313,6 +350,16 @@ namespace Virus.Core
                 Console.Write("{0}", mod.ToStringShort());
             }
             Scheduler.ChangeConsoleOutput();
+        }
+
+        public string GetModifiers()
+        {
+            string res = String.Empty;
+            foreach (Card mod in Modifiers)
+            {
+                res += mod.ToStringShort();
+            }
+            return res;
         }
 
         public string ModifiersToString()

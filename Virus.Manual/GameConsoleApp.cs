@@ -33,7 +33,12 @@ namespace Virus.ConsoleApp
             //Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
             //Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Spreading);
 
-            
+
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[0].Body.SetEvolvedVirus(new Card(Card.CardColor.Red, Card.CardFace.EvolvedVirus), 0, this);
+            //Players[0].Hand[0] = new Card(Card.CardColor.Wildcard, Card.CardFace.EvolvedMedicine);
+            //Players[0].Hand[1] = new Card(Card.CardColor.Wildcard, Card.CardFace.Medicine);
+
             while (!GameOver)
             {
                 Player p = Players[CurrentTurn];
@@ -127,7 +132,7 @@ namespace Virus.ConsoleApp
                     int todiscard = -1;
                     while (todiscard != 0)
                     {
-                        PrintGameState(moveDone, true, Scheduler.ACTION_DISCARDING);
+                        PrintGameState(user: true, action: Scheduler.ACTION_DISCARDING);
                         if (me.Hand.Count > 0)
                         {
                             todiscard = Convert.ToInt32(Console.ReadLine());

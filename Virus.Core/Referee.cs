@@ -226,7 +226,31 @@ namespace Virus.Core
                         }
                     }
                     break;
+                #endregion
+
+                #region PLAY EVOLVED VIRUS
+                case Card.CardFace.EvolvedVirus:
+                    myId = me.ID;
+                    for (int i = 0; i < Game.Players.Count; i++)
+                    {
+                        Player rival = Game.Players[i];
+                        // Can't play virus against myself.
+                        if (rival.ID != me.ID)
+                        {
+                            body = rival.Body;
+                            for (int j = 0; j < body.Items.Count; j++)
+                            {
+                                var item = body.Items[j];
+                                if (CanPlayVirus(item, myCard))
+                                {
+                                    moves.Add(Scheduler.GenerateMove(rival.ID, j));
+                                }
+                            }
+                        }
+                    }
+                    break;
                     #endregion
+
             }
             return moves;
         }
@@ -271,8 +295,16 @@ namespace Virus.Core
                 {
                     case BodyItem.State.Free:
                     case BodyItem.State.Vaccinated:
-                    case BodyItem.State.Infected:
                         return true;
+                    case BodyItem.State.Infected:
+                        
+                        if(item.Modifiers[0].Face == Card.CardFace.EvolvedVirus)
+                        {
+                            return false;
+                        }
+                        else{
+                            return true;
+                        }
                     default:
                         return false;
                 }
@@ -296,8 +328,6 @@ namespace Virus.Core
                     case BodyItem.State.Vaccinated:
                         return true;
                     case BodyItem.State.Infected:
-                        
-                        // ****** CHECK HERE IF EVOLVED VIRUS OR NOT
                         return true;
 
                     default:
@@ -337,6 +367,32 @@ namespace Virus.Core
             }
             return false;
         }
+
+        public bool CanPlayEvolvedVirus(BodyItem item, Card virus)
+        {
+            if (item.Organ.Color == Card.CardColor.Bionic)
+            {
+                return false;
+            }
+
+            // Same color of organn (or wildcard) and medicine of the same color of the mediccine (or wildcard)
+            if (Referee.SameColorOrWildcard(item.Organ.Color, virus.Color) ||
+                (item.Status == BodyItem.State.Vaccinated &&
+                Referee.SameColorOrWildcard(item.Modifiers[0].Color, virus.Color)))
+            {
+                switch (item.Status)
+                {
+                    case BodyItem.State.Free:
+                    case BodyItem.State.Vaccinated:
+                    case BodyItem.State.Infected:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+            return false;
+        }
+
 
         /// <summary>
         /// Check if two color are the same or wildcard color.

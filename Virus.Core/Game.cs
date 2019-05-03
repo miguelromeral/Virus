@@ -154,6 +154,12 @@ namespace Virus.Core
                     }
                     WriteToLog(Settings.NumberEvolvedMedicines + " " + color + " evolved medicines created.");
 
+                    for (i = 0; i < Settings.NumberEvolvedViruses; i++)
+                    {
+                        deck.Add(new Card(color, Card.CardFace.EvolvedVirus));
+                    }
+                    WriteToLog(Settings.NumberEvolvedViruses + " " + color + " evolved viruses created.");
+
                 }
             }
 
@@ -183,8 +189,20 @@ namespace Virus.Core
                 deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.Virus));
             }
             WriteToLog(Settings.NumberWildcardViruses + " wildcard viruses created.");
+
+            for (i = 0; i < Settings.NumberWildcardEvolvedMedicines; i++)
+            {
+                deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.EvolvedMedicine));
+            }
+            WriteToLog(Settings.NumberWildcardEvolvedMedicines + " wildcard evolved medicines created.");
+
+            for (i = 0; i < Settings.NumberWildcardEvolvedViruses; i++)
+            {
+                deck.Add(new Card(Card.CardColor.Wildcard, Card.CardFace.EvolvedVirus));
+            }
+            WriteToLog(Settings.NumberWildcardEvolvedViruses + " wildcard evolved viruses created.");
             #endregion
-            
+
             #region THREATMENTS
             for (i = 0; i < Settings.NumberThreatmentsSpreading; i++)
             {
@@ -303,7 +321,7 @@ namespace Virus.Core
         public void Start(int milis = 0) {
             Console.WriteLine("Press any key to begin the Virus!");
             Console.ReadLine();
-            
+
             while (!GameOver)
             {
                 //Console.Clear();
@@ -329,7 +347,48 @@ namespace Virus.Core
         /// <returns>String overview of the game.</returns>
         public override string ToString()
         {
-            return "***********************************************************Here it'll come the current state!";
+            string res = String.Empty;
+
+            res += "+------------+------------+----------------+-------------------------------+" + Environment.NewLine;
+
+            res += String.Format("| #Turn: {0,3} | #Deck: {1,3} | #Discards: {2,3} | #Total Cards: {3,3}             |",
+                Turn, Deck.Count, Discards.Count, TotalCardsInGame) + Environment.NewLine;
+            res += "+------------+------------+----------------+-------------------------------+" + Environment.NewLine;
+
+
+            for (int x = 0; x < Players.Count; x++)
+            {
+                Player p = Players[x];
+
+                res += String.Format("| {0,10} | {1,20} | AI: {2,11} | Body Pts: <{3,6}> |",
+                    (CurrentTurn == x ? "<My Turn>" : ""),
+                    p.ShortDescription,
+                    p.AI.ToString(),
+                    p.Body.Points) + Environment.NewLine;
+
+                for (int y = 0; y < p.Body.Items.Count; y++)
+                {
+                    BodyItem item = p.Body.Items[y];
+                    res += String.Format("| {0,1}.         | ", (y + 1));
+                    res += String.Format("{0,14}: ", item.Organ.ToString());
+                    res += item.GetModifiers();
+
+                    int padd = (5 * item.Modifiers.Count);
+
+                    while (padd < 33)
+                    {
+                        res += " ";
+                        padd++;
+                    }
+
+                    res += String.Format("  +={0,6} |", item.Points) + Environment.NewLine;
+                }
+
+
+                res += "+------------+-------------------------------------------------------------+" + Environment.NewLine;
+            }
+
+            return res;
         }
 
         public void PrintCurrentGameState()
@@ -621,10 +680,14 @@ namespace Virus.Core
                 case Card.CardFace.MedicalError:
                     DiscardFromHand(player, myCard);
                     return PlayMedicalError(player, move);
-                    
+
                 case Card.CardFace.EvolvedMedicine:
                     RemoveCardFromHand(player, myCard);
                     return PlayGameCardEvolvedMedicine(player, myCard, move);
+
+                case Card.CardFace.EvolvedVirus:
+                    RemoveCardFromHand(player, myCard);
+                    return PlayGameCardEvolvedVirus(player, myCard, move);
             }
             
             return null;
@@ -691,7 +754,15 @@ namespace Virus.Core
             
             return Players[Scheduler.GetStringInt(move, 0)].Body.SetVirus(myCard, Scheduler.GetStringInt(move, 2), this);
         }
-        
+
+        public string PlayGameCardEvolvedVirus(Player player, Card myCard, string move)
+        {
+            WriteToLog(player.ShortDescription + " has used a " + myCard + " to " + Players[Scheduler.GetStringInt(move, 0)].ShortDescription + "'s " +
+                Players[Scheduler.GetStringInt(move, 0)].Body.Items[Scheduler.GetStringInt(move, 2)]);
+
+            return Players[Scheduler.GetStringInt(move, 0)].Body.SetEvolvedVirus(myCard, Scheduler.GetStringInt(move, 2), this);
+        }
+
         /// <summary>
         /// Remove a card from the hand of a player. IT'S NOT GOING to the deck stack but will be in a body.
         /// </summary>

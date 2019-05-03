@@ -83,7 +83,8 @@ namespace Virus.Core
             /// Medical error is used to switch your whole body to ahy other of your rivals.
             /// </summary>
             MedicalError,
-            EvolvedMedicine
+            EvolvedMedicine,
+            EvolvedVirus,
         }
         #endregion
 
@@ -223,6 +224,7 @@ namespace Virus.Core
                 case CardFace.Medicine: charFace = "*"; break;
                 case CardFace.EvolvedMedicine: charFace = "**"; break;
                 case CardFace.Virus: charFace = "@"; break;
+                case CardFace.EvolvedVirus: charFace = "@@"; break;
                 default: charFace = "+"; break;
             }
             return charFace;
