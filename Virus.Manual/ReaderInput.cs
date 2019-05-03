@@ -146,8 +146,8 @@ namespace Virus.Core
                 }
 
                 int p = Convert.ToInt32(Console.ReadLine()) - 1;
-
-                if (!Scheduler.IntInListString(moves, 0, p))
+                
+                if(p < 0 || p >= moves.Count)
                     throw new Exception("You've not choosen a valid player number to switch your bodies.");
 
                 return moves[p];

@@ -85,6 +85,8 @@ namespace Virus.Core
             MedicalError,
             EvolvedMedicine,
             EvolvedVirus,
+            SecondOpinion,
+            Quarantine,
         }
         #endregion
 

@@ -39,6 +39,11 @@ namespace Virus.ConsoleApp
             //Players[0].Hand[0] = new Card(Card.CardColor.Wildcard, Card.CardFace.EvolvedMedicine);
             //Players[0].Hand[1] = new Card(Card.CardColor.Wildcard, Card.CardFace.Medicine);
 
+            //Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.SecondOpinion);
+            //Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.MedicalError);
+
+
+
             while (!GameOver)
             {
                 Player p = Players[CurrentTurn];
@@ -243,6 +248,7 @@ namespace Virus.ConsoleApp
                             break;
 
                         case Card.CardFace.MedicalError:
+                        case Card.CardFace.SecondOpinion:
                             choosen = reader.RequestMovementChoosenMedicalError(player, moves, this);
                             break;
 

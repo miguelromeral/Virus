@@ -224,6 +224,14 @@ namespace Virus.Core
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.MedicalError));
             }
+            for (i = 0; i < Settings.NumberSecondOpinion; i++)
+            {
+                deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.SecondOpinion));
+            }
+            for (i = 0; i < Settings.NumberQuarantine; i++)
+            {
+                deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Quarantine));
+            }
             #endregion
 
             return deck;
@@ -465,6 +473,7 @@ namespace Virus.Core
         {
             Player p = Players[CurrentTurn];
 
+
             PrintCurrentGameState();
 
             if (printHand)
@@ -628,7 +637,27 @@ namespace Virus.Core
                 me.Body = toswitch.Body;
                 toswitch.Body = aux;
 
-                WriteToLog(me.ShortDescription+" has switched his body by the "+toswitch.ShortDescription+"'s one.");
+                WriteToLog(me.ShortDescription + " has switched his body by the " + toswitch.ShortDescription + "'s one.");
+
+                return null;
+            }
+            catch (Exception)
+            {
+                return "EXCEPTION: CAN'T ABLE TO SWITCH BODIES.";
+            }
+        }
+
+        public string PlaySecondOpinion(Player me, string move)
+        {
+            try
+            {
+                Player toswitch = Players[Scheduler.GetStringInt(move, 0)];
+
+                List<Card> aux = me.Hand;
+                me.Hand = toswitch.Hand;
+                toswitch.Hand = aux;
+
+                WriteToLog(me.ShortDescription + " has switched his hand with the " + toswitch.ShortDescription + "'s one.");
 
                 return null;
             }
@@ -688,6 +717,14 @@ namespace Virus.Core
                 case Card.CardFace.EvolvedVirus:
                     RemoveCardFromHand(player, myCard);
                     return PlayGameCardEvolvedVirus(player, myCard, move);
+
+                case Card.CardFace.SecondOpinion:
+                    DiscardFromHand(player, myCard);
+                    return PlaySecondOpinion(player, move);
+
+                case Card.CardFace.Quarantine:
+                    DiscardFromHand(player, myCard);
+                    return PlayQuarantine(player, move);
             }
             
             return null;
@@ -761,6 +798,17 @@ namespace Virus.Core
                 Players[Scheduler.GetStringInt(move, 0)].Body.Items[Scheduler.GetStringInt(move, 2)]);
 
             return Players[Scheduler.GetStringInt(move, 0)].Body.SetEvolvedVirus(myCard, Scheduler.GetStringInt(move, 2), this);
+        }
+
+        public string PlayQuarantine(Player player, string move)
+        {
+            BodyItem item = player.Body.Items[Scheduler.GetStringInt(move, 2)];
+            Card virus = item.Modifiers[0];
+            item.Modifiers.Remove(virus);
+
+            WriteToLog(player.ShortDescription + " has set in quarantine the " + virus + " that belonged to his " + item.ToString());
+
+            return null;
         }
 
         /// <summary>

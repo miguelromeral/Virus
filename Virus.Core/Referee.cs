@@ -201,8 +201,9 @@ namespace Virus.Core
                     break;
                 #endregion
 
-                #region PLAY MEDICAL ERROR
+                #region PLAY MEDICAL ERROR OR SECOND OPINION
                 case Card.CardFace.MedicalError:
+                case Card.CardFace.SecondOpinion:
                     myId = me.ID;
                     for (int i = 0; i < Game.Players.Count; i++)
                     {
@@ -246,6 +247,22 @@ namespace Virus.Core
                                     moves.Add(Scheduler.GenerateMove(rival.ID, j));
                                 }
                             }
+                        }
+                    }
+                    break;
+                #endregion
+
+
+                #region QUARANTINE
+                case Card.CardFace.Quarantine:
+                    body = me.Body;
+                    for (int j = 0; j < body.Items.Count; j++)
+                    {
+                        var item = body.Items[j];
+                        // If I haven't this organ yet and the rival's isn't immunized.
+                        if (item.Status.Equals(BodyItem.State.Infected))
+                        {
+                            moves.Add(Scheduler.GenerateMove(me.ID, j));
                         }
                     }
                     break;
