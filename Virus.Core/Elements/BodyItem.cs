@@ -128,7 +128,7 @@ namespace Virus.Core
         /// <param name="game">Whole game. It's needed to remove cards when virus are played before.</param>
         /// <param name="medicine">Medicine card.</param>
         /// <returns>String with a error message if it cannot be added. Null if all right.</returns>
-        public string NewMedicine(Game game, Card medicine)
+        public bool NewMedicine(Game game, Card medicine)
         {
             if (medicine.Color == Card.CardColor.Wildcard)
             {
@@ -144,23 +144,22 @@ namespace Virus.Core
                 case State.Free:
                 case State.Vaccinated:
                     Modifiers.Add(medicine);
-                    return null;
+                    return true;
                 case State.Infected:
                     // If the item has a virus, one medicine avoids its effect, and both
                     // cards are moved to discards stack.
                     game.MoveToDiscards(Modifiers.ElementAt(0));
                     Modifiers.RemoveAt(0);
                     game.MoveToDiscards(medicine);
-                    return null;
+                    return true;
                 case State.Immunized:
-                    // Player can't play more medicines into a immunized organ.
-                    return String.Format("Your {0} is already immunized.", Organ);
+                    return false;
                 default:
-                    return "UNKNOWN STATE PUTTING THE MEDICINE.";
+                    return false;
             }
 
         }
-        public string NewEvolvedMedicine(Game game, Card medicine)
+        public bool NewEvolvedMedicine(Game game, Card medicine)
         {
             if (medicine.Color == Card.CardColor.Wildcard)
             {
@@ -176,17 +175,16 @@ namespace Virus.Core
                 case State.Free:
                 case State.Vaccinated:
                     Modifiers.Add(medicine);
-                    return null;
+                    return true;
                 case State.Infected:
                     game.MoveToDiscards(Modifiers.ElementAt(0));
                     Modifiers.RemoveAt(0);
                     game.MoveToDiscards(medicine);
-                    return null;
+                    return true;
                 case State.Immunized:
-                    // Player can't play more medicines into a immunized organ.
-                    return String.Format("Your {0} is already immunized.", Organ);
+                    return false;
             }
-            return "UNKNOWN";
+            return false;
 
         }
 

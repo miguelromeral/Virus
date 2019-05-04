@@ -582,7 +582,7 @@ namespace Virus.Core
         /// </summary>
         /// <param name="move">Move to spread</param>
         /// <returns>Error message if couldn't be switched</returns>
-        public string PlayGameCardTransplant(string move)
+        public void PlayGameCardTransplant(string move)
         {
             try
             {
@@ -602,13 +602,10 @@ namespace Virus.Core
                 Players[p2].Body.Items[o2] = bone;
 
                 WriteToLog(one.ShortDescription + " has transplantated his " + bone + " by the " + two.ShortDescription + "'s organ "+btwo);
-
-                return null;
+                
             }
             catch (Exception)
-            {
-                return "EXCEPTION: CAN'T ABLE TO TRANSPLANT ORGANS.";
-            }
+            {}
         }
         
         /// <summary>
@@ -617,7 +614,7 @@ namespace Virus.Core
         /// <param name="me">Player to receive the new body item</param>
         /// <param name="move">Move that indicates who and what to steal</param>
         /// <returns>Error message if there is</returns>
-        public string PlayOrganThief(Player me, string move)
+        public void PlayOrganThief(Player me, string move)
         {
             try
             {
@@ -628,13 +625,10 @@ namespace Virus.Core
                 me.Body.Items.Add(stolen);
 
                 WriteToLog(me.ShortDescription+" has stolen the "+rival.ShortDescription+"'s organ "+stolen);
-
-                return null;
+                
             }
             catch (Exception)
-            {
-                return "EXCEPTION: CAN'T ABLE TO STEAL ORGAN.";
-            }
+            {}
         }
         
         /// <summary>
@@ -642,7 +636,7 @@ namespace Virus.Core
         /// </summary>
         /// <param name="me">Player who has used the card.</param>
         /// <returns>Error message if it is</returns>
-        public string PlayLatexGlove(Player me)
+        public void PlayLatexGlove(Player me)
         {
             foreach (Player rival in Players)
             {
@@ -652,7 +646,6 @@ namespace Virus.Core
                     DiscardAllHand(rival);
                 }
             }
-            return null;
         }
 
         /// <summary>
@@ -661,7 +654,7 @@ namespace Virus.Core
         /// <param name="me">Player who has used the card.</param>
         /// <param name="move">Move that indicates who switch the whole body</param>
         /// <returns></returns>
-        public string PlayMedicalError(Player me, string move)
+        public void PlayMedicalError(Player me, string move)
         {
             try
             {
@@ -672,16 +665,12 @@ namespace Virus.Core
                 toswitch.Body = aux;
 
                 WriteToLog(me.ShortDescription + " has switched his body by the " + toswitch.ShortDescription + "'s one.");
-
-                return null;
             }
             catch (Exception)
-            {
-                return "EXCEPTION: CAN'T ABLE TO SWITCH BODIES.";
-            }
+            {}
         }
 
-        public string PlaySecondOpinion(Player me, string move)
+        public void PlaySecondOpinion(Player me, string move)
         {
             try
             {
@@ -696,13 +685,10 @@ namespace Virus.Core
                 Turn--;
 
                 WriteToLog(me.ShortDescription + " can play again with his new hand.");
-
-                return null;
+                
             }
             catch (Exception)
-            {
-                return "EXCEPTION: CAN'T ABLE TO SWITCH BODIES.";
-            }
+            {}
         }
 
         /// <summary>
@@ -712,64 +698,75 @@ namespace Virus.Core
         /// <param name="myCard">Card used</param>
         /// <param name="move">Move with the option selected</param>
         /// <returns></returns>
-        public string PlayCardByMove(Player player, Card myCard, string move)
+        public void PlayCardByMove(Player player, Card myCard, string move)
         {
             switch (myCard.Face)
             {
                 case Card.CardFace.Organ:
                     RemoveCardFromHand(player, myCard);
-                    return PlayGameCardOrgan(player, myCard);
+                    PlayGameCardOrgan(player, myCard);
+                    break;
 
                 case Card.CardFace.Medicine:
                     RemoveCardFromHand(player, myCard);
-                    return PlayGameCardMedicine(player, myCard, move);
+                    PlayGameCardMedicine(player, myCard, move);
+                    break;
 
                 case Card.CardFace.Virus:
                     RemoveCardFromHand(player, myCard);
-                    return PlayGameCardVirus(player, myCard, move);
+                    PlayGameCardVirus(player, myCard, move);
+                    break;
 
                 case Card.CardFace.Transplant:
                     DiscardFromHand(player, myCard);
-                    return PlayGameCardTransplant(move);
+                    PlayGameCardTransplant(move);
+                    break;
 
                 case Card.CardFace.OrganThief:
                     DiscardFromHand(player, myCard);
-                    return PlayOrganThief(player, move);
+                    PlayOrganThief(player, move);
+                    break;
 
                 case Card.CardFace.Spreading:
                     DiscardFromHand(player, myCard);
-                    return PlayGameCardSpreading(move);
+                    PlayGameCardSpreading(move);
+                    break;
 
                 case Card.CardFace.LatexGlove:
                     DiscardFromHand(player, myCard);
-                    return PlayLatexGlove(player);
+                    PlayLatexGlove(player);
+                    break;
 
                 case Card.CardFace.MedicalError:
                     DiscardFromHand(player, myCard);
-                    return PlayMedicalError(player, move);
+                    PlayMedicalError(player, move);
+                    break;
 
                 case Card.CardFace.EvolvedMedicine:
                     RemoveCardFromHand(player, myCard);
-                    return PlayGameCardEvolvedMedicine(player, myCard, move);
+                    PlayGameCardEvolvedMedicine(player, myCard, move);
+                    break;
 
                 case Card.CardFace.EvolvedVirus:
                     RemoveCardFromHand(player, myCard);
-                    return PlayGameCardEvolvedVirus(player, myCard, move);
+                    PlayGameCardEvolvedVirus(player, myCard, move);
+                    break;
 
                 case Card.CardFace.SecondOpinion:
                     DiscardFromHand(player, myCard);
-                    return PlaySecondOpinion(player, move);
+                    PlaySecondOpinion(player, move);
+                    break;
 
                 case Card.CardFace.Quarantine:
                     DiscardFromHand(player, myCard);
-                    return PlayQuarantine(player, move);
+                    PlayQuarantine(player, move);
+                    break;
 
                 case Card.CardFace.Overtime:
                     DiscardFromHand(player, myCard);
-                    return PlayOvertime(player);
+                    PlayOvertime(player);
+                    break;
             }
-            
-            return null;
         }
 
         /// <summary>
@@ -777,7 +774,7 @@ namespace Virus.Core
         /// </summary>
         /// <param name="move">All moves to spreading in only one string</param>
         /// <returns>Error message if its</returns>
-        public string PlayGameCardSpreading(string move)
+        public void PlayGameCardSpreading(string move)
         {
             // All move is in the same string. Here we split and process each one.
             string[] choosen = move.Split(Scheduler.MULTI_MOVE_SEPARATOR);
@@ -785,7 +782,6 @@ namespace Virus.Core
                 string m = Scheduler.GetManyMoveItem(new string[] { choosen[i], choosen[i + 1] });
                 DoSpreadingOneItem(m);
             }
-            return null;
         }
 
         /// <summary>
@@ -794,10 +790,10 @@ namespace Virus.Core
         /// <param name="player">Player who uses it</param>
         /// <param name="myCard">Organ card</param>
         /// <returns>Error message if its</returns>
-        public string PlayGameCardOrgan(Player player, Card myCard)
+        private void PlayGameCardOrgan(Player player, Card myCard)
         {
             WriteToLog(player.ShortDescription + " has played a " + myCard);
-            return player.Body.SetOrgan(myCard);
+            player.Body.SetOrgan(myCard);
         }
 
         /// <summary>
@@ -807,16 +803,16 @@ namespace Virus.Core
         /// <param name="myCard">Medicine card</param>
         /// <param name="move">Move to indicates in which organ uses it</param>
         /// <returns></returns>
-        public string PlayGameCardMedicine(Player player, Card myCard, string move)
+        private void PlayGameCardMedicine(Player player, Card myCard, string move)
         {
             WriteToLog(player.ShortDescription + " has used a " + myCard + " in his " + player.Body.Items[Scheduler.GetStringInt(move, 2)]);
-            return player.Body.Items[Scheduler.GetStringInt(move, 2)].NewMedicine(this, myCard);
+            player.Body.Items[Scheduler.GetStringInt(move, 2)].NewMedicine(this, myCard);
         }
 
-        public string PlayGameCardEvolvedMedicine(Player player, Card myCard, string move)
+        public void PlayGameCardEvolvedMedicine(Player player, Card myCard, string move)
         {
             WriteToLog(player.ShortDescription + " has used a " + myCard + " in his " + player.Body.Items[Scheduler.GetStringInt(move, 2)]);
-            return player.Body.Items[Scheduler.GetStringInt(move, 2)].NewEvolvedMedicine(this, myCard);
+            player.Body.Items[Scheduler.GetStringInt(move, 2)].NewEvolvedMedicine(this, myCard);
         }
 
         /// <summary>
@@ -826,38 +822,35 @@ namespace Virus.Core
         /// <param name="myCard">Virus card</param>
         /// <param name="move">Move to put this virus</param>
         /// <returns>Error message if its</returns>
-        public string PlayGameCardVirus(Player player, Card myCard, string move)
+        private void PlayGameCardVirus(Player player, Card myCard, string move)
         {
             WriteToLog(player.ShortDescription + " has used a "+myCard+" to " + Players[Scheduler.GetStringInt(move, 0)].ShortDescription+"'s "+
                 Players[Scheduler.GetStringInt(move, 0)].Body.Items[Scheduler.GetStringInt(move, 2)]);
             
-            return Players[Scheduler.GetStringInt(move, 0)].Body.SetVirus(myCard, Scheduler.GetStringInt(move, 2), this);
+            Players[Scheduler.GetStringInt(move, 0)].Body.SetVirus(myCard, Scheduler.GetStringInt(move, 2), this);
         }
 
-        public string PlayGameCardEvolvedVirus(Player player, Card myCard, string move)
+        public void PlayGameCardEvolvedVirus(Player player, Card myCard, string move)
         {
             WriteToLog(player.ShortDescription + " has used a " + myCard + " to " + Players[Scheduler.GetStringInt(move, 0)].ShortDescription + "'s " +
                 Players[Scheduler.GetStringInt(move, 0)].Body.Items[Scheduler.GetStringInt(move, 2)]);
 
-            return Players[Scheduler.GetStringInt(move, 0)].Body.SetEvolvedVirus(myCard, Scheduler.GetStringInt(move, 2), this);
+            Players[Scheduler.GetStringInt(move, 0)].Body.SetEvolvedVirus(myCard, Scheduler.GetStringInt(move, 2), this);
         }
 
-        public string PlayQuarantine(Player player, string move)
+        public void PlayQuarantine(Player player, string move)
         {
             BodyItem item = player.Body.Items[Scheduler.GetStringInt(move, 2)];
             Card virus = item.Modifiers[0];
             item.Modifiers.Remove(virus);
 
             WriteToLog(player.ShortDescription + " has set in quarantine the " + virus + " that belonged to his " + item.ToString());
-
-            return null;
         }
 
-        public string PlayOvertime(Player player)
+        public void PlayOvertime(Player player)
         {
             WriteToLog(player.ShortDescription + " has used Overtime.");
             PlayerInOvertime = player.ID;
-            return null;
         }
 
         /// <summary>

@@ -51,7 +51,7 @@ namespace Virus.Core
             return (AICategory) random.Next(1, Enum.GetValues(typeof(AICategory)).Length);
         }
 
-        public string PlayTurn()
+        public void PlayTurn()
         {
             List<List<string>> movesByCard = new List<List<string>>();
 
@@ -64,34 +64,39 @@ namespace Virus.Core
             switch (Me.AI)
             {
                 case AICategory.First:
-                    return ChooseFirstMove(movesByCard);
+                    ChooseFirstMove(movesByCard);
+                    break;
                 case AICategory.Random:
-                    return ChooseRandom(movesByCard);
+                    ChooseRandom(movesByCard);
+                    break;
                 case AICategory.Easy:
-                    return ChooseEasy(movesByCard);
+                    ChooseEasy(movesByCard);
+                    break;
                 case AICategory.Medium:
                 case AICategory.Hard:
                 default:
-                    return ChooseMedium(movesByCard);
+                    ChooseMedium(movesByCard);
+                    break;
             }
         }
 
-        public string ChooseFirstMove(List<List<string>> movesByCard)
+        public void ChooseFirstMove(List<List<string>> movesByCard)
         {
             for (int i = 0; i < Me.Hand.Count; i++)
             {
                 if (movesByCard[i].Count > 0)
                 {
                     string bestMove = movesByCard[i].ElementAt(0);
-                    return Game.PlayCardByMove(Me, Me.Hand[i], bestMove);
+                    Game.PlayCardByMove(Me, Me.Hand[i], bestMove);
+                    return;
                 }
             }
             Game.DiscardAllHand(Me);
-            return null;
+            return;
             
         }
 
-        public string ChooseRandom(List<List<string>> movesByCard)
+        public void ChooseRandom(List<List<string>> movesByCard)
         {
             int sel;
             if (movesByCard.Count > 0)
@@ -107,7 +112,8 @@ namespace Virus.Core
                     if(movesByCard[sel].Count > 0)
                     {
                         string move = movesByCard[sel].ElementAt(random.Next(0, movesByCard[sel].Count));
-                        return Game.PlayCardByMove(Me, Me.Hand[sel], move);
+                        Game.PlayCardByMove(Me, Me.Hand[sel], move);
+                        return;
                     }
                 } while (visited.Count < movesByCard.Count);
 
@@ -115,18 +121,15 @@ namespace Virus.Core
                 if (sel == -1)
                 {
                     Game.DiscardAllHand(Me);
-                    return null;
                 }
                 else
                 {
                     Game.DiscardFromHand(Me, Me.Hand[sel]);
-                    return null;
                 }
             }
-            return "END RANDOM";
         }
 
-        public string ChooseEasy(List<List<string>> movesbyCard)
+        public void ChooseEasy(List<List<string>> movesbyCard)
         {
             List<Scenario> scenarios = AllScenariosByLists(movesbyCard);
             int maxPoints = 0, current;
@@ -148,12 +151,12 @@ namespace Virus.Core
             if (best == null)
             {
                 Game.DiscardAllHand(Me);
-                return null;
+                return;
             }
-            return Game.PlayCardByMove(Me, card, best);
+            Game.PlayCardByMove(Me, card, best);
         }
         
-        public string ChooseMedium(List<List<string>> movesbycard)
+        public void ChooseMedium(List<List<string>> movesbycard)
         {
             List<Scenario> scenarios = AllScenariosByLists(movesbycard);
             int maxPoints = 99999, current;
@@ -210,9 +213,9 @@ namespace Virus.Core
             if (bestmove == null)
             {
                 Game.DiscardAllHand(Me);
-                return null;
+                return;
             }
-            return Game.PlayCardByMove(Me, card, bestmove);
+            Game.PlayCardByMove(Me, card, bestmove);
         }
         
 

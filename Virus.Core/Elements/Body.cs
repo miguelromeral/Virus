@@ -19,10 +19,12 @@ namespace Virus.Core
         public int Points
         {
             get {
+
                 int p = 0;
                 foreach(var item in Items)
                 {
-                    p += item.Points;
+                    if(item != null)
+                        p += item.Points;
                 }
                 return p;
             }
@@ -84,11 +86,11 @@ namespace Virus.Core
         /// </summary>
         /// <param name="organ">Card of the organ.</param>
         /// <returns>String with the error message if it couldn't be added. Null in other case.</returns>
-        public string SetOrgan(Card organ)
+        public bool SetOrgan(Card organ)
         {
             if (HaveThisOrgan(organ.Color))
             {
-                return "You already have this organ in your body.";
+                return false;
             }
             else
             {
@@ -104,7 +106,7 @@ namespace Virus.Core
                 }
                 Items.Add(item);
 
-                return null;
+                return true;
             }
         }
 
@@ -115,7 +117,7 @@ namespace Virus.Core
         /// <param name="index">Index of the body item to use this body iitem.</param>
         /// <param name="game">Game.</param>
         /// <returns>Error message if it couldn't have been played.</returns>
-        public string SetVirus(Card virus, int index, Game game)
+        public void SetVirus(Card virus, int index, Game game)
         {
             BodyItem item = Items[index];
 
@@ -126,12 +128,10 @@ namespace Virus.Core
             {
                 Items.Remove(item);
                 game.WriteToLog("The " + item + " has been removed from the body.");
-                message = null;
             }
-            return message;
         }
 
-        public string SetEvolvedVirus(Card virus, int index, Game game)
+        public void SetEvolvedVirus(Card virus, int index, Game game)
         {
             BodyItem item = Items[index];
 
@@ -142,9 +142,7 @@ namespace Virus.Core
             {
                 Items.Remove(item);
                 game.WriteToLog("The " + item + " has been removed from the body.");
-                message = null;
             }
-            return message;
         }
 
         public int OrgansLeftToWin(Game game)

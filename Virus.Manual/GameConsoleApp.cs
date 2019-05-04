@@ -270,6 +270,7 @@ namespace Virus.ConsoleApp
                             choosen = reader.RequestMovementChoosen(player, moves);
                             break;
                     }
+
                     if (choosen == null)
                         return false;
 
