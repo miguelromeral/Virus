@@ -339,7 +339,7 @@ namespace Virus.Core
             Console.ReadLine();
 
 
-            Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.LatexGlove);
+            Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Transplant);
             //Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
             Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
             //Players[2].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
@@ -602,27 +602,29 @@ namespace Virus.Core
         /// </summary>
         /// <param name="move">Move to spread</param>
         /// <returns>Error message if couldn't be switched</returns>
-        public void PlayGameCardTransplant(string move)
+        public void PlayGameCardTransplant(Player me, Card myCard, string move, List<string> wholemoves)
         {
             try
             {
-                Player one, two;
-                BodyItem bone, btwo;
-                int p1, p2, o1, o2;
-                p1 = Scheduler.GetStringInt(move, 0);
-                o1 = Scheduler.GetStringInt(move, 2);
-                p2 = Scheduler.GetStringInt(move, 4);
-                o2 = Scheduler.GetStringInt(move, 6);
-                one = Players[p1];
-                two = Players[p2];
-                bone = one.Body.Items[o1];
-                btwo = two.Body.Items[o2];
+                if (!ProtectiveSuitScenario(me, myCard, move, wholemoves))
+                {
+                    Player one, two;
+                    BodyItem bone, btwo;
+                    int p1, p2, o1, o2;
+                    p1 = Scheduler.GetStringInt(move, 0);
+                    o1 = Scheduler.GetStringInt(move, 2);
+                    p2 = Scheduler.GetStringInt(move, 4);
+                    o2 = Scheduler.GetStringInt(move, 6);
+                    one = Players[p1];
+                    two = Players[p2];
+                    bone = one.Body.Items[o1];
+                    btwo = two.Body.Items[o2];
 
-                Players[p1].Body.Items[o1] = btwo;
-                Players[p2].Body.Items[o2] = bone;
+                    Players[p1].Body.Items[o1] = btwo;
+                    Players[p2].Body.Items[o2] = bone;
 
-                WriteToLog(one.ShortDescription + " has transplantated his " + bone + " by the " + two.ShortDescription + "'s organ "+btwo);
-                
+                    WriteToLog(one.ShortDescription + " has transplantated his " + bone + " by the " + two.ShortDescription + "'s organ " + btwo);
+                }
             }
             catch (Exception)
             {}
@@ -700,22 +702,25 @@ namespace Virus.Core
             {}
         }
 
-        public void PlaySecondOpinion(Player me, string move)
+        public void PlaySecondOpinion(Player me, Card myCard, string move, List<string> wholemoves)
         {
             try
             {
-                Player toswitch = Players[Scheduler.GetStringInt(move, 0)];
 
-                List<Card> aux = me.Hand;
-                me.Hand = toswitch.Hand;
-                toswitch.Hand = aux;
+                if (!ProtectiveSuitScenario(me, myCard, move, wholemoves))
+                {
+                    Player toswitch = Players[Scheduler.GetStringInt(move, 0)];
 
-                WriteToLog(me.ShortDescription + " has switched his hand with the " + toswitch.ShortDescription + "'s one.");
+                    List<Card> aux = me.Hand;
+                    me.Hand = toswitch.Hand;
+                    toswitch.Hand = aux;
 
-                Turn--;
+                    WriteToLog(me.ShortDescription + " has switched his hand with the " + toswitch.ShortDescription + "'s one.");
 
-                WriteToLog(me.ShortDescription + " can play again with his new hand.");
-                
+                    Turn--;
+
+                    WriteToLog(me.ShortDescription + " can play again with his new hand.");
+                }
             }
             catch (Exception)
             {}
@@ -749,8 +754,9 @@ namespace Virus.Core
                     break;
 
                 case Card.CardFace.Transplant:
-                    DiscardFromHand(player, myCard);
-                    PlayGameCardTransplant(move);   
+                    if (discard)
+                        DiscardFromHand(player, myCard);
+                    PlayGameCardTransplant(player, myCard, move, wholemoves);   
                     break;
 
                 case Card.CardFace.OrganThief:
@@ -786,8 +792,9 @@ namespace Virus.Core
                     break;
 
                 case Card.CardFace.SecondOpinion:
-                    DiscardFromHand(player, myCard);
-                    PlaySecondOpinion(player, move);
+                    if(discard)
+                        DiscardFromHand(player, myCard);
+                    PlaySecondOpinion(player, myCard, move, wholemoves);
                     break;
 
                 case Card.CardFace.Quarantine:
@@ -844,11 +851,17 @@ namespace Virus.Core
             int index;
             switch (card.Face)
             {
+                case Card.CardFace.Transplant:
+                    index = Scheduler.GetStringInt(move, 0);
+                    int i2 = Scheduler.GetStringInt(move, 4);
+                    index = (index == me.ID ? i2 : index);
+                    return Players[index];
                 case Card.CardFace.Virus:
                 case Card.CardFace.EvolvedVirus:
                 case Card.CardFace.OrganThief:
                 case Card.CardFace.MedicalError:
                 case Card.CardFace.LatexGlove:
+                case Card.CardFace.SecondOpinion:
                     index = Scheduler.GetStringInt(move, 0);
                     return Players[index];
 

@@ -501,7 +501,7 @@
             <param name="moves">Move that indicates the spreading order</param>
             <returns>Error message if it couldn't be spreaded</returns>
         </member>
-        <member name="M:Virus.Core.Game.PlayGameCardTransplant(System.String)">
+        <member name="M:Virus.Core.Game.PlayGameCardTransplant(Virus.Core.Player,Virus.Core.Card,System.String,System.Collections.Generic.List{System.String})">
             <summary>
             Do a transplant in the game. Switch two body items.
             </summary>

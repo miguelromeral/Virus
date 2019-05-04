@@ -308,7 +308,16 @@ namespace Virus.Core
                 switch (card.Face)
                 {
                     case Card.CardFace.Transplant:
-                        break;
+                        foreach (string m in moves)
+                        {
+                            if (Scheduler.GetStringInt(m, 0) != playerid &&
+                                    Scheduler.GetStringInt(m, 4) != playerid)
+                            {
+                                filtered.Add(m);
+                            }
+                        }
+
+                    break;
                     case Card.CardFace.Spreading:
                         break;
                     case Card.CardFace.Virus:
