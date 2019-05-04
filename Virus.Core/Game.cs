@@ -339,13 +339,13 @@ namespace Virus.Core
             Console.ReadLine();
 
 
-            Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.EvolvedVirus);
+            Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.MedicalError);
             Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
             Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
             Players[2].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
-            Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            Players[0].Body.SetOrgan(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
-            Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            Players[1].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
+            Players[2].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
 
             while (!GameOver)
             {
@@ -634,17 +634,20 @@ namespace Virus.Core
         /// <param name="me">Player to receive the new body item</param>
         /// <param name="move">Move that indicates who and what to steal</param>
         /// <returns>Error message if there is</returns>
-        public void PlayOrganThief(Player me, string move)
+        public void PlayOrganThief(Player me, Card myCard, string move, List<string> wholemoves)
         {
             try
             {
-                Player rival = Players[Scheduler.GetStringInt(move, 0)];
-                BodyItem stolen = rival.Body.Items[Scheduler.GetStringInt(move, 2)];
-                rival.Body.Items.Remove(stolen);
+                if (!ProtectiveSuitScenario(me, myCard, move, wholemoves))
+                {
+                    Player rival = Players[Scheduler.GetStringInt(move, 0)];
+                    BodyItem stolen = rival.Body.Items[Scheduler.GetStringInt(move, 2)];
+                    rival.Body.Items.Remove(stolen);
 
-                me.Body.Items.Add(stolen);
+                    me.Body.Items.Add(stolen);
 
-                WriteToLog(me.ShortDescription+" has stolen the "+rival.ShortDescription+"'s organ "+stolen);
+                    WriteToLog(me.ShortDescription + " has stolen the " + rival.ShortDescription + "'s organ " + stolen);
+                }
                 
             }
             catch (Exception)
@@ -674,17 +677,20 @@ namespace Virus.Core
         /// <param name="me">Player who has used the card.</param>
         /// <param name="move">Move that indicates who switch the whole body</param>
         /// <returns></returns>
-        public void PlayMedicalError(Player me, string move)
+        public void PlayMedicalError(Player me, Card myCard, string move, List<string> wholemoves)
         {
             try
             {
-                Player toswitch = Players[Scheduler.GetStringInt(move, 0)];
+                if (!ProtectiveSuitScenario(me, myCard, move, wholemoves))
+                {
+                    Player toswitch = Players[Scheduler.GetStringInt(move, 0)];
 
-                Body aux = me.Body;
-                me.Body = toswitch.Body;
-                toswitch.Body = aux;
+                    Body aux = me.Body;
+                    me.Body = toswitch.Body;
+                    toswitch.Body = aux;
 
-                WriteToLog(me.ShortDescription + " has switched his body by the " + toswitch.ShortDescription + "'s one.");
+                    WriteToLog(me.ShortDescription + " has switched his body by the " + toswitch.ShortDescription + "'s one.");
+                }
             }
             catch (Exception)
             {}
@@ -718,7 +724,7 @@ namespace Virus.Core
         /// <param name="myCard">Card used</param>
         /// <param name="move">Move with the option selected</param>
         /// <returns></returns>
-        public void PlayCardByMove(Player player, Card myCard, string move, List<string> wholemoves)
+        public void PlayCardByMove(Player player, Card myCard, string move, List<string> wholemoves, bool discard = true)
         {
             switch (myCard.Face)
             {
@@ -733,18 +739,20 @@ namespace Virus.Core
                     break;
 
                 case Card.CardFace.Virus:
-                    RemoveCardFromHand(player, myCard);
+                    if(discard)
+                        RemoveCardFromHand(player, myCard);
                     PlayGameCardVirus(player, myCard, move, wholemoves);
                     break;
 
                 case Card.CardFace.Transplant:
                     DiscardFromHand(player, myCard);
-                    PlayGameCardTransplant(move);
+                    PlayGameCardTransplant(move);   
                     break;
 
                 case Card.CardFace.OrganThief:
-                    DiscardFromHand(player, myCard);
-                    PlayOrganThief(player, move);
+                    if(discard)
+                        DiscardFromHand(player, myCard);
+                    PlayOrganThief(player, myCard, move, wholemoves);
                     break;
 
                 case Card.CardFace.Spreading:
@@ -758,8 +766,9 @@ namespace Virus.Core
                     break;
 
                 case Card.CardFace.MedicalError:
-                    DiscardFromHand(player, myCard);
-                    PlayMedicalError(player, move);
+                    if(discard)
+                        DiscardFromHand(player, myCard);
+                    PlayMedicalError(player, myCard, move, wholemoves);
                     break;
 
                 case Card.CardFace.EvolvedMedicine:
@@ -807,7 +816,7 @@ namespace Virus.Core
                 move = player.Computer.ChooseBestOptionProtectiveSuit(wholemoves);
 
                 if (move != null) {
-                    PlayCardByMove(player, myCard, move, wholemoves);
+                    PlayCardByMove(player, myCard, move, wholemoves, false);
                 }
 
                 return true;
@@ -822,6 +831,8 @@ namespace Virus.Core
             {
                 case Card.CardFace.Virus:
                 case Card.CardFace.EvolvedVirus:
+                case Card.CardFace.OrganThief:
+                case Card.CardFace.MedicalError:
                     index = Scheduler.GetStringInt(move, 0);
                     return Players[index];
 

@@ -508,7 +508,7 @@
             <param name="move">Move to spread</param>
             <returns>Error message if couldn't be switched</returns>
         </member>
-        <member name="M:Virus.Core.Game.PlayOrganThief(Virus.Core.Player,System.String)">
+        <member name="M:Virus.Core.Game.PlayOrganThief(Virus.Core.Player,Virus.Core.Card,System.String,System.Collections.Generic.List{System.String})">
             <summary>
             Steal one body item to one player.
             </summary>
@@ -523,7 +523,7 @@
             <param name="me">Player who has used the card.</param>
             <returns>Error message if it is</returns>
         </member>
-        <member name="M:Virus.Core.Game.PlayMedicalError(Virus.Core.Player,System.String)">
+        <member name="M:Virus.Core.Game.PlayMedicalError(Virus.Core.Player,Virus.Core.Card,System.String,System.Collections.Generic.List{System.String})">
             <summary>
             Switch two bodies.
             </summary>
@@ -531,7 +531,7 @@
             <param name="move">Move that indicates who switch the whole body</param>
             <returns></returns>
         </member>
-        <member name="M:Virus.Core.Game.PlayCardByMove(Virus.Core.Player,Virus.Core.Card,System.String,System.Collections.Generic.List{System.String})">
+        <member name="M:Virus.Core.Game.PlayCardByMove(Virus.Core.Player,Virus.Core.Card,System.String,System.Collections.Generic.List{System.String},System.Boolean)">
             <summary>
             Play a card in the game given the move choosen.
             </summary>
