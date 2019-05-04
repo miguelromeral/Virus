@@ -67,6 +67,9 @@ namespace Virus.Core
                 return false;
             }
         }
+        public int? PlayerInOvertime { get; set; }
+
+
         /// <summary>
         /// Total cards in the game.
         /// </summary>
@@ -108,6 +111,7 @@ namespace Virus.Core
             Referee = new Referee(this);
 
             Turn = 1;
+            PlayerInOvertime = null;
 
             Deck = Shuffle(InitializeCards());
             WriteToLog(Deck.Count+" cards shuffled.", true);
@@ -231,6 +235,10 @@ namespace Virus.Core
             for (i = 0; i < Settings.NumberQuarantine; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Quarantine));
+            }
+            for (i = 0; i < Settings.NumberOvertime; i++)
+            {
+                deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Overtime));
             }
             #endregion
 
@@ -513,11 +521,18 @@ namespace Virus.Core
             }
             else
             {
+                if(PlayerInOvertime != null && PlayerInOvertime == p.ID)
+                {
+                    PlayerInOvertime = null;
+                }
                 WriteToLog("The player has no cards in his hand. Pass the turn.");
             }
-            // Once the player has used (or discarded) cards, fill the hand to the number.
-            DrawCardsToFill(p);
-            Turn++;
+            if (PlayerInOvertime == null || PlayerInOvertime != p.ID)
+            {
+                // Once the player has used (or discarded) cards, fill the hand to the number.
+                DrawCardsToFill(p);
+                Turn++;
+            }
         }
 
         /// <summary>
@@ -748,6 +763,10 @@ namespace Virus.Core
                 case Card.CardFace.Quarantine:
                     DiscardFromHand(player, myCard);
                     return PlayQuarantine(player, move);
+
+                case Card.CardFace.Overtime:
+                    DiscardFromHand(player, myCard);
+                    return PlayOvertime(player);
             }
             
             return null;
@@ -831,6 +850,13 @@ namespace Virus.Core
 
             WriteToLog(player.ShortDescription + " has set in quarantine the " + virus + " that belonged to his " + item.ToString());
 
+            return null;
+        }
+
+        public string PlayOvertime(Player player)
+        {
+            WriteToLog(player.ShortDescription + " has used Overtime.");
+            PlayerInOvertime = player.ID;
             return null;
         }
 

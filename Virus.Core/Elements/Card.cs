@@ -87,6 +87,7 @@ namespace Virus.Core
             EvolvedVirus,
             SecondOpinion,
             Quarantine,
+            Overtime,
         }
         #endregion
 

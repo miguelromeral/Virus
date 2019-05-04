@@ -42,6 +42,9 @@ namespace Virus.ConsoleApp
             //Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.SecondOpinion);
             //Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.MedicalError);
 
+            Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Organ);
+            Players[0].Hand[1] = new Card(Card.CardColor.Red, Card.CardFace.Medicine);
+            Players[0].Hand[2] = new Card(Card.CardColor.Purple, Card.CardFace.Overtime);
 
 
             while (!GameOver)
@@ -56,10 +59,18 @@ namespace Virus.ConsoleApp
                     }
                     else
                     {
-                        Console.WriteLine("You don't have any card in your hand. Press any key to pass the turn.");
+                        if (PlayerInOvertime != null && PlayerInOvertime == p.ID)
+                        {
+                            PlayerInOvertime = null;
+                        }
+                        WriteToLog("The player has no cards in his hand. Pass the turn.");
                     }
-                    DrawCardsToFill(p);
-                    Turn++;
+                    if (PlayerInOvertime == null || PlayerInOvertime != p.ID)
+                    {
+                        // Once the player has used (or discarded) cards, fill the hand to the number.
+                        DrawCardsToFill(p);
+                        Turn++;
+                    }
                 }
                 // IA Turn
                 else

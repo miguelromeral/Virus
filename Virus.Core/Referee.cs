@@ -87,8 +87,9 @@ namespace Virus.Core
                     break;
                 #endregion
 
-                #region PLAY LATEX GLOVE
+                #region PLAY LATEX GLOVE OR OVERTIME
                 case Card.CardFace.LatexGlove:
+                case Card.CardFace.Overtime:
                     moves.Add(Scheduler.GenerateMove(me.ID, 0));
                     break;
                 #endregion
