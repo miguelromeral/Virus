@@ -531,7 +531,7 @@
             <param name="move">Move that indicates who switch the whole body</param>
             <returns></returns>
         </member>
-        <member name="M:Virus.Core.Game.PlayCardByMove(Virus.Core.Player,Virus.Core.Card,System.String)">
+        <member name="M:Virus.Core.Game.PlayCardByMove(Virus.Core.Player,Virus.Core.Card,System.String,System.Collections.Generic.List{System.String})">
             <summary>
             Play a card in the game given the move choosen.
             </summary>
@@ -564,7 +564,7 @@
             <param name="move">Move to indicates in which organ uses it</param>
             <returns></returns>
         </member>
-        <member name="M:Virus.Core.Game.PlayGameCardVirus(Virus.Core.Player,Virus.Core.Card,System.String)">
+        <member name="M:Virus.Core.Game.PlayGameCardVirus(Virus.Core.Player,Virus.Core.Card,System.String,System.Collections.Generic.List{System.String})">
             <summary>
             Play virus from one player.
             </summary>
@@ -671,7 +671,7 @@
             </summary>
             <param name="g">Current game</param>
         </member>
-        <member name="M:Virus.Core.Referee.GetListMovements(Virus.Core.Player,Virus.Core.Card)">
+        <member name="M:Virus.Core.Referee.GetListMovements(Virus.Core.Player,Virus.Core.Card,System.Boolean)">
             <summary>
             Get a whole list of movements allowed if the player uses this card.
             </summary>

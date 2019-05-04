@@ -80,6 +80,51 @@ namespace Virus.Core
             }
         }
 
+        public bool DefendFromCard(Player rival, Card c)
+        {
+            if(rival.ID == Me.ID)
+            {
+                return false;
+            }
+
+            // TODO Algorithm to detect if I sould play a Protective Suit.
+            bool shouldi = true;
+
+            if (shouldi)
+            {
+                int index = -1;
+                for(int i=0; i<Me.Hand.Count; i++)
+                {
+                    if(Me.Hand[i].Face == Card.CardFace.ProtectiveSuit)
+                    {
+                        index = i;
+                    }
+                }
+                Game.DiscardFromHand(Me, index);
+                Me.PlayedProtectiveSuit = true;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+        public string ChooseBestOptionProtectiveSuit(List<string> moves)
+        {
+            if(moves.Count > 0)
+            {
+                // TODO, CHOOSE BEST
+                return moves[0];
+            }
+            else
+            {
+                return null;
+            }
+        }
+        
+
         public void ChooseFirstMove(List<List<string>> movesByCard)
         {
             for (int i = 0; i < Me.Hand.Count; i++)
@@ -87,7 +132,7 @@ namespace Virus.Core
                 if (movesByCard[i].Count > 0)
                 {
                     string bestMove = movesByCard[i].ElementAt(0);
-                    Game.PlayCardByMove(Me, Me.Hand[i], bestMove);
+                    Game.PlayCardByMove(Me, Me.Hand[i], bestMove, movesByCard[i]);
                     return;
                 }
             }
@@ -112,7 +157,7 @@ namespace Virus.Core
                     if(movesByCard[sel].Count > 0)
                     {
                         string move = movesByCard[sel].ElementAt(random.Next(0, movesByCard[sel].Count));
-                        Game.PlayCardByMove(Me, Me.Hand[sel], move);
+                        Game.PlayCardByMove(Me, Me.Hand[sel], move, movesByCard[sel]);
                         return;
                     }
                 } while (visited.Count < movesByCard.Count);
@@ -132,6 +177,7 @@ namespace Virus.Core
         public void ChooseEasy(List<List<string>> movesbyCard)
         {
             List<Scenario> scenarios = AllScenariosByLists(movesbyCard);
+            List<string> listmoves = null;
             int maxPoints = 0, current;
             string best = null;
             Card card = null;
@@ -145,6 +191,7 @@ namespace Virus.Core
                     maxPoints = current;
                     best = scen.Move;
                     card = scen.Card;
+                    listmoves = scen.AllMoves;
                 }
             }
 
@@ -153,13 +200,14 @@ namespace Virus.Core
                 Game.DiscardAllHand(Me);
                 return;
             }
-            Game.PlayCardByMove(Me, card, best);
+            Game.PlayCardByMove(Me, card, best, listmoves);
         }
         
         public void ChooseMedium(List<List<string>> movesbycard)
         {
             List<Scenario> scenarios = AllScenariosByLists(movesbycard);
             int maxPoints = 99999, current;
+            List<string> list = null;
             string bestmove = null;
             Card card = null;
             bool amiwinning = false;
@@ -185,6 +233,7 @@ namespace Virus.Core
                         bestmove = scen.Move;
                         maxPoints = current;
                         card = scen.Card;
+                        list = scen.AllMoves;
                     }
                 }
                 else
@@ -204,6 +253,7 @@ namespace Virus.Core
                             bestmove = scen.Move;
                             maxPoints = current;
                             card = scen.Card;
+                            list = scen.AllMoves;
                         }
                     }
                 }
@@ -215,7 +265,7 @@ namespace Virus.Core
                 Game.DiscardAllHand(Me);
                 return;
             }
-            Game.PlayCardByMove(Me, card, bestmove);
+            Game.PlayCardByMove(Me, card, bestmove, list);
         }
         
 
@@ -229,7 +279,7 @@ namespace Virus.Core
                 var list = movesbycard[i];
                 for (int j = 0; j < movesbycard[i].Count; j++)
                 {
-                    Scenario scen = new Scenario(Game, Me, list[j], card, 1);
+                    Scenario scen = new Scenario(Game, Me, list[j], card, 1, list);
                     ThreadPool.QueueUserWorkItem(Scenario.PerformUserWorkItem, scen);
                     scenarios.Add(scen);
                 }

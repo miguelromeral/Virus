@@ -88,6 +88,7 @@ namespace Virus.Core
             SecondOpinion,
             Quarantine,
             Overtime,
+            ProtectiveSuit
         }
         #endregion
 

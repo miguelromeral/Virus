@@ -338,6 +338,13 @@ namespace Virus.Core
             Console.WriteLine("Press any key to begin the Virus!");
             Console.ReadLine();
 
+
+            Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Virus);
+            Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            Players[1].Body.SetOrgan(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
+            Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+
             while (!GameOver)
             {
                 //Console.Clear();
@@ -527,11 +534,22 @@ namespace Virus.Core
                 }
                 WriteToLog("The player has no cards in his hand. Pass the turn.");
             }
+
+
             if (PlayerInOvertime == null || PlayerInOvertime != p.ID)
             {
                 // Once the player has used (or discarded) cards, fill the hand to the number.
                 DrawCardsToFill(p);
                 Turn++;
+                CleanFlagsProtectiveSuite();
+            }
+        }
+
+        private void CleanFlagsProtectiveSuite()
+        {
+            foreach(var p in Players)
+            {
+                p.PlayedProtectiveSuit = false;
             }
         }
 
@@ -698,7 +716,7 @@ namespace Virus.Core
         /// <param name="myCard">Card used</param>
         /// <param name="move">Move with the option selected</param>
         /// <returns></returns>
-        public void PlayCardByMove(Player player, Card myCard, string move)
+        public void PlayCardByMove(Player player, Card myCard, string move, List<string> wholemoves)
         {
             switch (myCard.Face)
             {
@@ -714,7 +732,7 @@ namespace Virus.Core
 
                 case Card.CardFace.Virus:
                     RemoveCardFromHand(player, myCard);
-                    PlayGameCardVirus(player, myCard, move);
+                    PlayGameCardVirus(player, myCard, move, wholemoves);
                     break;
 
                 case Card.CardFace.Transplant:
@@ -767,6 +785,59 @@ namespace Virus.Core
                     PlayOvertime(player);
                     break;
             }
+        }
+        
+        public bool ProtectiveSuitScenario(Player player, Card myCard, string move, List<string> wholemoves)
+        {
+            Player rival = GetPlayerByMove(player, myCard, move);
+            bool psused = SomeoneHasDefend();
+            if (rival.DoIHaveProtectiveSuit() && rival.Computer.DefendFromCard(player, myCard))
+            {
+
+                WriteToLog(rival.ShortDescription+" has protected with a Protective Suit.");
+
+                if (!psused)
+                {
+                    wholemoves = Referee.AddMyOwnMoves(wholemoves, myCard);
+                }
+                wholemoves = Referee.RemoveMovesPlayer(wholemoves, rival.ID, myCard);
+
+                move = player.Computer.ChooseBestOptionProtectiveSuit(wholemoves);
+
+                if (move != null) {
+                    PlayCardByMove(player, myCard, move, wholemoves);
+                }
+
+                return true;
+            }
+            return false;
+        }
+
+        private Player GetPlayerByMove(Player me, Card card, string move)
+        {
+            int index;
+            switch (card.Face)
+            {
+                case Card.CardFace.Virus:
+                    index = Scheduler.GetStringInt(move, 0);
+                    return Players[index];
+
+                // TODO: the rest of cards.
+
+                default: return null;
+            }
+        }
+
+        private bool SomeoneHasDefend()
+        {
+            foreach(Player p in Players)
+            {
+                if (p.PlayedProtectiveSuit)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -822,12 +893,15 @@ namespace Virus.Core
         /// <param name="myCard">Virus card</param>
         /// <param name="move">Move to put this virus</param>
         /// <returns>Error message if its</returns>
-        private void PlayGameCardVirus(Player player, Card myCard, string move)
+        private void PlayGameCardVirus(Player player, Card myCard, string move, List<string> wholemoves)
         {
-            WriteToLog(player.ShortDescription + " has used a "+myCard+" to " + Players[Scheduler.GetStringInt(move, 0)].ShortDescription+"'s "+
-                Players[Scheduler.GetStringInt(move, 0)].Body.Items[Scheduler.GetStringInt(move, 2)]);
-            
-            Players[Scheduler.GetStringInt(move, 0)].Body.SetVirus(myCard, Scheduler.GetStringInt(move, 2), this);
+            if (!ProtectiveSuitScenario(player, myCard, move, wholemoves))
+            {
+                WriteToLog(player.ShortDescription + " has used a " + myCard + " to " + Players[Scheduler.GetStringInt(move, 0)].ShortDescription + "'s " +
+                    Players[Scheduler.GetStringInt(move, 0)].Body.Items[Scheduler.GetStringInt(move, 2)]);
+
+                Players[Scheduler.GetStringInt(move, 0)].Body.SetVirus(myCard, Scheduler.GetStringInt(move, 2), this);
+            }
         }
 
         public void PlayGameCardEvolvedVirus(Player player, Card myCard, string move)
@@ -956,6 +1030,17 @@ namespace Virus.Core
             copy.Sort(new PlayerComparer());
 
             return copy;
+        }
+
+        public bool CouldPlayProtectiveSuite(Card card)
+        {
+            switch (card.Face)
+            {
+                case Card.CardFace.Virus:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 }

@@ -224,7 +224,7 @@ namespace Virus.ConsoleApp
             {
                 case 0: return false;
                 case 1:
-                    PlayCardByMove(player, myCard, moves[0]);
+                    PlayCardByMove(player, myCard, moves[0], moves);
                     return true;
                 default:
                     string choosen = null;
@@ -274,7 +274,7 @@ namespace Virus.ConsoleApp
                     if (choosen == null)
                         return false;
 
-                    PlayCardByMove(player, myCard, choosen);
+                    PlayCardByMove(player, myCard, choosen, moves);
                     return true;
             }
         }

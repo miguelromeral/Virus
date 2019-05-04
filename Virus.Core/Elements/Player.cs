@@ -49,6 +49,9 @@ namespace Virus.Core
         /// </summary>
         public Body Body;
 
+        public bool PlayedProtectiveSuit = false;
+
+
         /// <summary>
         /// Count of how many healthy organs has this user.
         /// </summary>
@@ -86,8 +89,8 @@ namespace Virus.Core
             else
             {
                 Computer = new ArtificialIntelligence(game, this);
-                AI = ArtificialIntelligence.AICategory.Medium;
-                //AI = ArtificialIntelligence.AICategory.First;
+                //AI = ArtificialIntelligence.AICategory.Medium;
+                AI = ArtificialIntelligence.AICategory.First;
             }
         }
         #endregion
@@ -164,6 +167,20 @@ namespace Virus.Core
             return -1;
         }
 
+
+        public bool DoIHaveProtectiveSuit()
+        {
+            foreach(Card c in Hand)
+            {
+                if (c.Face == Card.CardFace.ProtectiveSuit)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
         public static Player DeepClone<Player>(Player obj)
         {
             using (var ms = new MemoryStream())
@@ -175,6 +192,6 @@ namespace Virus.Core
                 return p;
             }
         }
-
+        
     }
 }

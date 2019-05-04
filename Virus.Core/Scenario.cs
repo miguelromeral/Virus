@@ -10,12 +10,13 @@ namespace Virus.Core
         public Game Game;
         public Player Player;
         public string Move;
+        public List<string> AllMoves;
         public Card Card;
         public int Step;
         //public State State;
         public EventWaitHandle eventWaitHandle;
 
-        public Scenario(Game g, Player p, string m, Card c, int s)
+        public Scenario(Game g, Player p, string m, Card c, int s, List<string> list)
         {
             Game = Game.DeepClone(g);
             Game.Logger = null;
@@ -24,6 +25,7 @@ namespace Virus.Core
             Player = p;
             Card = c;
             Step = s;
+            AllMoves = list;
         }
 
         
@@ -36,7 +38,7 @@ namespace Virus.Core
                 if (pl.ID == scen.Player.ID)
                     p = pl;
             }
-            scen.Game.PlayCardByMove(p, scen.Card, scen.Move);
+            scen.Game.PlayCardByMove(p, scen.Card, scen.Move, null);
             scen.eventWaitHandle.Set();
         }
         

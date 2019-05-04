@@ -32,7 +32,7 @@ namespace Virus.Core
         /// <param name="me">Player who is gonna play</param>
         /// <param name="myCard">Card to play</param>
         /// <returns>List of possible moves with that card</returns>
-        public List<string> GetListMovements(Player me, Card myCard)
+        public List<string> GetListMovements(Player me, Card myCard, bool countme = false)
         {
             List<string> moves = new List<string>();
             Body body;
@@ -71,6 +71,7 @@ namespace Virus.Core
                     {
                         Player rival = Game.Players[i];
                         // Can't play virus against myself.
+                        
                         if (rival.ID != me.ID)
                         {
                             body = rival.Body;
@@ -237,7 +238,7 @@ namespace Virus.Core
                     {
                         Player rival = Game.Players[i];
                         // Can't play virus against myself.
-                        if (rival.ID != me.ID)
+                        if (rival.ID != me.ID || countme)
                         {
                             body = rival.Body;
                             for (int j = 0; j < body.Items.Count; j++)
@@ -273,6 +274,14 @@ namespace Virus.Core
             return moves;
         }
         
+
+        public List<string> AddMyOwnMoves(List<string> moves, Card card)
+        {
+            // TODO, set my own moves.
+            return moves;
+        }
+
+
         /// <summary>
         /// Check if the player already hasn't an organ of this color.
         /// </summary>
@@ -291,6 +300,39 @@ namespace Virus.Core
             }
             return true;
         }
+
+        public List<string> RemoveMovesPlayer(List<string> moves, int playerid, Card card)
+        {
+            List<string> filtered = new List<string>();
+            
+                switch (card.Face)
+                {
+                    case Card.CardFace.Transplant:
+                        break;
+                    case Card.CardFace.Spreading:
+                        break;
+                    case Card.CardFace.Virus:
+                    case Card.CardFace.EvolvedVirus:
+                    case Card.CardFace.OrganThief:
+                    case Card.CardFace.MedicalError:
+                    case Card.CardFace.SecondOpinion:
+
+                        foreach(string m in moves)
+                        {
+                            if (Scheduler.GetStringInt(m, 0) != playerid)
+                            {
+                                filtered.Add(m);
+                            }
+                        }
+
+                        break;
+                    case Card.CardFace.LatexGlove:
+                        break;
+                }
+        
+            return filtered;
+        }
+
 
         /// <summary>
         /// Check if a medicine could be used in a body item.
