@@ -339,10 +339,10 @@ namespace Virus.Core
             Console.ReadLine();
 
 
-            Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.MedicalError);
+            Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.LatexGlove);
+            //Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
             Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
-            Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
-            Players[2].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            //Players[2].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
             Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
             Players[1].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
             Players[2].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
@@ -659,14 +659,18 @@ namespace Virus.Core
         /// </summary>
         /// <param name="me">Player who has used the card.</param>
         /// <returns>Error message if it is</returns>
-        public void PlayLatexGlove(Player me)
+        public void PlayLatexGlove(Player me, Card myCard)
         {
             foreach (Player rival in Players)
             {
                 if (rival.ID != me.ID)
                 {
-                    WriteToLog(rival.ShortDescription + " is going to lost his hand due to a latex glove played by " + me.ShortDescription);
-                    DiscardAllHand(rival);
+
+                    if (!ProtectiveSuitScenario(me, myCard, Scheduler.GenerateMove(rival.ID, 0), null))
+                    {
+                        WriteToLog(rival.ShortDescription + " is going to lost his hand due to a latex glove played by " + me.ShortDescription);
+                        DiscardAllHand(rival);
+                    }
                 }
             }
         }
@@ -762,7 +766,7 @@ namespace Virus.Core
 
                 case Card.CardFace.LatexGlove:
                     DiscardFromHand(player, myCard);
-                    PlayLatexGlove(player);
+                    PlayLatexGlove(player, myCard);
                     break;
 
                 case Card.CardFace.MedicalError:
@@ -807,16 +811,27 @@ namespace Virus.Core
 
                 WriteToLog(rival.ShortDescription+" has protected with a Protective Suit.");
 
-                if (!psused)
+                if (wholemoves == null)
                 {
-                    wholemoves = Referee.GetListMovements(player, myCard, true);
+                    // Playable cards that doesn't require play a move.
+
+                    
                 }
-                wholemoves = Referee.RemoveMovesPlayer(wholemoves, rival.ID, myCard);
+                else
+                {
 
-                move = player.Computer.ChooseBestOptionProtectiveSuit(wholemoves);
+                    if (!psused)
+                    {
+                        wholemoves = Referee.GetListMovements(player, myCard, true);
+                    }
+                    wholemoves = Referee.RemoveMovesPlayer(wholemoves, rival.ID, myCard);
 
-                if (move != null) {
-                    PlayCardByMove(player, myCard, move, wholemoves, false);
+                    move = player.Computer.ChooseBestOptionProtectiveSuit(wholemoves);
+
+                    if (move != null)
+                    {
+                        PlayCardByMove(player, myCard, move, wholemoves, false);
+                    }
                 }
 
                 return true;
@@ -833,6 +848,7 @@ namespace Virus.Core
                 case Card.CardFace.EvolvedVirus:
                 case Card.CardFace.OrganThief:
                 case Card.CardFace.MedicalError:
+                case Card.CardFace.LatexGlove:
                     index = Scheduler.GetStringInt(move, 0);
                     return Players[index];
 

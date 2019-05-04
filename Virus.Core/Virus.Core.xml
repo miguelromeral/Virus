@@ -516,7 +516,7 @@
             <param name="move">Move that indicates who and what to steal</param>
             <returns>Error message if there is</returns>
         </member>
-        <member name="M:Virus.Core.Game.PlayLatexGlove(Virus.Core.Player)">
+        <member name="M:Virus.Core.Game.PlayLatexGlove(Virus.Core.Player,Virus.Core.Card)">
             <summary>
             Remove any hand of the players but me.
             </summary>
