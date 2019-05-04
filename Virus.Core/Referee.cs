@@ -72,7 +72,7 @@ namespace Virus.Core
                         Player rival = Game.Players[i];
                         // Can't play virus against myself.
                         
-                        if (rival.ID != me.ID)
+                        if (rival.ID != me.ID || countme)
                         {
                             body = rival.Body;
                             for (int j = 0; j < body.Items.Count; j++)

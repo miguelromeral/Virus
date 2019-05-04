@@ -339,10 +339,12 @@ namespace Virus.Core
             Console.ReadLine();
 
 
-            Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Virus);
+            Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.EvolvedVirus);
             Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            Players[2].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
             Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            Players[1].Body.SetOrgan(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
+            Players[0].Body.SetOrgan(new Card(Card.CardColor.Wildcard, Card.CardFace.Organ));
             Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
 
             while (!GameOver)
@@ -767,7 +769,7 @@ namespace Virus.Core
 
                 case Card.CardFace.EvolvedVirus:
                     RemoveCardFromHand(player, myCard);
-                    PlayGameCardEvolvedVirus(player, myCard, move);
+                    PlayGameCardEvolvedVirus(player, myCard, move, wholemoves);
                     break;
 
                 case Card.CardFace.SecondOpinion:
@@ -798,7 +800,7 @@ namespace Virus.Core
 
                 if (!psused)
                 {
-                    wholemoves = Referee.AddMyOwnMoves(wholemoves, myCard);
+                    wholemoves = Referee.GetListMovements(player, myCard, true);
                 }
                 wholemoves = Referee.RemoveMovesPlayer(wholemoves, rival.ID, myCard);
 
@@ -819,6 +821,7 @@ namespace Virus.Core
             switch (card.Face)
             {
                 case Card.CardFace.Virus:
+                case Card.CardFace.EvolvedVirus:
                     index = Scheduler.GetStringInt(move, 0);
                     return Players[index];
 
@@ -904,12 +907,15 @@ namespace Virus.Core
             }
         }
 
-        public void PlayGameCardEvolvedVirus(Player player, Card myCard, string move)
+        public void PlayGameCardEvolvedVirus(Player player, Card myCard, string move, List<string> wholemoves)
         {
-            WriteToLog(player.ShortDescription + " has used a " + myCard + " to " + Players[Scheduler.GetStringInt(move, 0)].ShortDescription + "'s " +
+            if (!ProtectiveSuitScenario(player, myCard, move, wholemoves))
+            {
+                WriteToLog(player.ShortDescription + " has used a " + myCard + " to " + Players[Scheduler.GetStringInt(move, 0)].ShortDescription + "'s " +
                 Players[Scheduler.GetStringInt(move, 0)].Body.Items[Scheduler.GetStringInt(move, 2)]);
 
-            Players[Scheduler.GetStringInt(move, 0)].Body.SetEvolvedVirus(myCard, Scheduler.GetStringInt(move, 2), this);
+                Players[Scheduler.GetStringInt(move, 0)].Body.SetEvolvedVirus(myCard, Scheduler.GetStringInt(move, 2), this);
+            }
         }
 
         public void PlayQuarantine(Player player, string move)
