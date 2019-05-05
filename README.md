@@ -37,20 +37,39 @@ You can watch a video with the Virus.Automatic running and playing the laptop ag
 
 [![IMAGE ALT TEXT](https://i.vimeocdn.com/video/779427542_640.webp)](https://vimeo.com/333428180 "Virus! in C# (Game by Tranjis Games) Developed By MiguelRomeral")
 
+
 ## :pencil: TODO
 
-* :arrow_forward: Documented
+Your ideas are welcome! So you can open an issue with that one and we'll note down it!
+
+##### Done
+
 * :heavy_check_mark: Be able to read configuration of the game from a file (like Linux .conf files)
 * :heavy_check_mark: AI to be able to play any card on the deck.
+* :heavy_check_mark: Virus 2 Evolution! cards implemented and playable by every user.
+* :heavy_check_mark: Finish to fill Logger calls to file.
+* :heavy_check_mark: Implemented AI levels: Human, First, Random, Easy, Medium.
+* :heavy_check_mark: Decision's choice in asynchronous code.
+
+##### In progress
+
+* :arrow_forward: Add comments and xml document to code.
 * :arrow_forward: Refactor code to have the main actions unified (i.e.: not have three different snippets that discard cards. Better have one and its appropiate log call).
+* :arrow_forward: Implement AI Hard level.
+* :arrow_forward: Looking for some bugs.
+
+##### To Do
+
 * :o: Create string resources to allow more than one language.
-* :arrow_forward: Finish to fill Logger calls to file.
-* :arrow_forward: Implement AI in all levels (easy, medium, hard) and its strategies.
+* :o: Available for multiplayer (more than one human).
 * :o: Create statistics from each move played.
-* :arrow_forward: Create an ConsoleApp to allow human interaction.
 * :o: GUI in UWP with XAML.
+
+##### Other possible projects
+
 * :o: MVC Application with HTML and Javascript.
-* :o: GUI in Unity?
+* :o: GUI in Unity.
+* :o: Xamarin app.
 
 ## :envelope: Contact
 
