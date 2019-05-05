@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -272,6 +273,38 @@ namespace Virus.Core
             }
 
         }
+
+
+        public static List<string> GetAllMovesSpreading(List<List<string>> whole)
+        {
+            switch (whole.Count)
+            {
+                case 0:
+                    return new List<string>();
+                case 1:
+                    return whole[0];
+                default:
+                    List<string> all = whole[0];
+                    List<string> aux = new List<string>();
+                    for(int i=1; i<whole.Count; i++)
+                    {
+                        List<string> l = whole[i];
+                        foreach(string eli in all)
+                        {
+                            foreach(string elf in l)
+                            {
+                                aux.Add(GetManyMoveItem(new string[] { eli, elf }));
+                            }
+                        }
+                        all = aux;
+                        aux = new List<string>();
+                    }
+
+                    return all;
+            }
+        }
+
         
+
     }
 }

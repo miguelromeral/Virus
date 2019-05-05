@@ -339,13 +339,21 @@ namespace Virus.Core
             Console.ReadLine();
 
 
-            Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Transplant);
-            //Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
-            Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            //Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Spreading);
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[0].Body.Items[0].NewEvolvedVirus(new Card(Card.CardColor.Red, Card.CardFace.EvolvedVirus), this);
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+            //Players[0].Body.Items[1].NewVirus(new Card(Card.CardColor.Blue, Card.CardFace.Virus), this);
+
+            //Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
             //Players[2].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
-            Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            Players[1].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
-            Players[2].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+
+            //Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[2].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+
+            
 
             while (!GameOver)
             {
@@ -706,7 +714,6 @@ namespace Virus.Core
         {
             try
             {
-
                 if (!ProtectiveSuitScenario(me, myCard, move, wholemoves))
                 {
                     Player toswitch = Players[Scheduler.GetStringInt(move, 0)];
@@ -766,8 +773,9 @@ namespace Virus.Core
                     break;
 
                 case Card.CardFace.Spreading:
-                    DiscardFromHand(player, myCard);
-                    PlayGameCardSpreading(move);
+                    if (discard)
+                        DiscardFromHand(player, myCard);
+                    PlayGameCardSpreading(player, myCard, move, wholemoves);
                     break;
 
                 case Card.CardFace.LatexGlove:
@@ -808,21 +816,59 @@ namespace Virus.Core
                     break;
             }
         }
+
         
+        public List<Player> GetListPlayesInSpreadingMove(Player me, string move)
+        {
+            List<Player> rivals = new List<Player>();
+
+            string[] moves = move.Split(Scheduler.MULTI_MOVE_SEPARATOR);
+
+            for (int i = 0; i < moves.Length; i ++)
+            {
+                Player p = Players[Scheduler.GetStringInt(moves[i],0)];
+                if (!rivals.Contains(p) && me.ID != p.ID)
+                {
+                    rivals.Add(p);
+                }
+            }
+            return rivals;
+        }
+
         public bool ProtectiveSuitScenario(Player player, Card myCard, string move, List<string> wholemoves)
         {
             Player rival = GetPlayerByMove(player, myCard, move);
+            if(rival == null)
+            {
+                List<Player> rivals = GetListPlayesInSpreadingMove(player, move);
+                foreach(var r in rivals)
+                {
+                    if(ProceedProtectiveSuit(player, r, myCard, move, wholemoves))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            else
+            {
+                return ProceedProtectiveSuit(player, rival, myCard, move, wholemoves);
+            }
+        }
+
+        public bool ProceedProtectiveSuit(Player player, Player rival, Card myCard, string move, List<string> wholemoves)
+        {
             bool psused = SomeoneHasDefend();
             if (rival.DoIHaveProtectiveSuit() && rival.Computer.DefendFromCard(player, myCard))
             {
 
-                WriteToLog(rival.ShortDescription+" has protected with a Protective Suit.");
+                WriteToLog(rival.ShortDescription + " has protected with a Protective Suit.");
 
                 if (wholemoves == null)
                 {
                     // Playable cards that doesn't require play a move.
 
-                    
+
                 }
                 else
                 {
@@ -831,7 +877,7 @@ namespace Virus.Core
                     {
                         wholemoves = Referee.GetListMovements(player, myCard, true);
                     }
-                    wholemoves = Referee.RemoveMovesPlayer(wholemoves, rival.ID, myCard);
+                    wholemoves = Referee.RemoveMovesPlayer(wholemoves, rival.ID, myCard, player);
 
                     move = player.Computer.ChooseBestOptionProtectiveSuit(wholemoves);
 
@@ -851,6 +897,8 @@ namespace Virus.Core
             int index;
             switch (card.Face)
             {
+                case Card.CardFace.Spreading:
+                    return null;
                 case Card.CardFace.Transplant:
                     index = Scheduler.GetStringInt(move, 0);
                     int i2 = Scheduler.GetStringInt(move, 4);
@@ -888,13 +936,17 @@ namespace Virus.Core
         /// </summary>
         /// <param name="move">All moves to spreading in only one string</param>
         /// <returns>Error message if its</returns>
-        public void PlayGameCardSpreading(string move)
+        public void PlayGameCardSpreading(Player player, Card myCard, string move, List<string> wholemoves)
         {
-            // All move is in the same string. Here we split and process each one.
-            string[] choosen = move.Split(Scheduler.MULTI_MOVE_SEPARATOR);
-            for(int i=0; i <= (choosen.Length / 2); i+=2){
-                string m = Scheduler.GetManyMoveItem(new string[] { choosen[i], choosen[i + 1] });
-                DoSpreadingOneItem(m);
+
+            if (!ProtectiveSuitScenario(player, myCard, move, wholemoves))
+            {
+                string[] choosen = move.Split(Scheduler.MULTI_MOVE_SEPARATOR);
+                for (int i = 0; i <= (choosen.Length / 2); i += 2)
+                {
+                    string m = Scheduler.GetManyMoveItem(new string[] { choosen[i], choosen[i + 1] });
+                    DoSpreadingOneItem(m);
+                }
             }
         }
 

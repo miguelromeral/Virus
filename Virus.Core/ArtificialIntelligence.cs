@@ -141,6 +141,8 @@ namespace Virus.Core
             
         }
 
+        
+
         public void ChooseRandom(List<List<string>> movesByCard)
         {
             int sel;

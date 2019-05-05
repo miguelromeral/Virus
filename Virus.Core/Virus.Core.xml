@@ -540,7 +540,7 @@
             <param name="move">Move with the option selected</param>
             <returns></returns>
         </member>
-        <member name="M:Virus.Core.Game.PlayGameCardSpreading(System.String)">
+        <member name="M:Virus.Core.Game.PlayGameCardSpreading(Virus.Core.Player,Virus.Core.Card,System.String,System.Collections.Generic.List{System.String})">
             <summary>
             Play a spreading card given the move selected.
             </summary>

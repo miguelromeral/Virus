@@ -138,6 +138,7 @@ namespace Virus.Core
                 #region PLAY SPREADING
                 case Card.CardFace.Spreading:
                     int myCardIndex = 0;
+                    List<List<string>> ListOfLists = new List<List<string>>();
                     Card modifier;
                     // Check every body item of our body.
                     foreach (BodyItem item in me.Body.Items)
@@ -148,11 +149,13 @@ namespace Virus.Core
                         {
                             if (item.Status.Equals(BodyItem.State.Infected))
                             {
+                                moves = new List<string>();
+
                                 // Recover every player in the game.
                                 int rivalid = 0;
                                 foreach (Player rival in Game.Players)
                                 {
-                                    if (rival.ID != me.ID)
+                                    if (rival.ID != me.ID && !rival.PlayedProtectiveSuit)
                                     {
                                         // Check every body item for this rival.
                                         int rivalBodyItemIndex = 0;
@@ -172,12 +175,14 @@ namespace Virus.Core
                                     }
                                     rivalid++;
                                 }
+
+                                ListOfLists.Add(moves);
                             }
                         }
                         myCardIndex++;
                     }
                     
-                    return moves;
+                    return Scheduler.GetAllMovesSpreading(ListOfLists);
                 #endregion
 
                 #region PLAY ORGAN THIEF
@@ -301,7 +306,7 @@ namespace Virus.Core
             return true;
         }
 
-        public List<string> RemoveMovesPlayer(List<string> moves, int playerid, Card card)
+        public List<string> RemoveMovesPlayer(List<string> moves, int playerid, Card card, Player me)
         {
             List<string> filtered = new List<string>();
             
@@ -319,7 +324,23 @@ namespace Virus.Core
 
                     break;
                     case Card.CardFace.Spreading:
-                        break;
+
+                    foreach (var move in moves)
+                    {
+                        string[] choosen = move.Split(Scheduler.MULTI_MOVE_SEPARATOR);
+                        for (int i = 0; i <= (choosen.Length / 2); i += 2)
+                        {
+                            string m = Scheduler.GetManyMoveItem(new string[] { choosen[i], choosen[i + 1] });
+                            if (Char.GetNumericValue(m.ToCharArray()[4]) != playerid)
+                            {
+                                filtered.Add(m);
+                            }
+                        }
+                    }
+
+                    return GetListMovements(me, card, false);
+
+                    break;
                     case Card.CardFace.Virus:
                     case Card.CardFace.EvolvedVirus:
                     case Card.CardFace.OrganThief:

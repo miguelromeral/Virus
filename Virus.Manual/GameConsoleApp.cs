@@ -255,7 +255,7 @@ namespace Virus.ConsoleApp
                                         choosenlist.Add(input);
                                     }
                                 }
-                                PlayGameCardSpreading(Scheduler.GetMoveByMultiple(choosenlist));
+                                PlayGameCardSpreading(player, myCard, Scheduler.GetMoveByMultiple(choosenlist), moves);
                                 return true;
 
                             }
