@@ -180,7 +180,7 @@ namespace Virus.Core
         {
             try
             {
-                Console.WriteLine("- Please, type the player number to switch the body.");
+                Console.WriteLine("- Please, type the player number to use this card.");
                 for(int i=0; i<moves.Count;i++)
                 {
                     int mNum = -1;
@@ -191,7 +191,7 @@ namespace Virus.Core
                 int p = Convert.ToInt32(Console.ReadLine()) - 1;
                 
                 if(p < 0 || p >= moves.Count)
-                    throw new Exception("You've not choosen a valid player number to switch your bodies.");
+                    throw new Exception("You've not choosen a valid player number.");
 
                 return moves[p];
             }
@@ -202,19 +202,5 @@ namespace Virus.Core
 
 
         }
-
-        public bool OnlyMyMoves(Player user, List<string> moves)
-        {
-            foreach(var move in moves)
-            {
-                if (Scheduler.GetStringInt(move, 0) != user.ID)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-        
     }
 }

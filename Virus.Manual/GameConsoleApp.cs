@@ -29,12 +29,16 @@ namespace Virus.ConsoleApp
 
             //Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
             //Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
-            //Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.LatexGlove);
+            Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.EvolvedVirus);
+            Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            Players[2].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
 
 
 
             //Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Spreading);
-            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
             //Players[0].Body.Items[0].NewEvolvedVirus(new Card(Card.CardColor.Red, Card.CardFace.EvolvedVirus), this);
             //Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
             //Players[0].Body.Items[1].NewVirus(new Card(Card.CardColor.Blue, Card.CardFace.Virus), this);
@@ -192,7 +196,7 @@ namespace Virus.ConsoleApp
                 }
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 if (!moveDone)
                     return ReadUserInput(false);
@@ -216,11 +220,18 @@ namespace Virus.ConsoleApp
             return null;
         }
         
-        public bool PlayGameCardByUser(Player player, int index)
+        public bool PlayGameCardByUser(Player player, int index, List<string> moves = null, Card myCard = null)
         {
-            Card myCard = player.Hand[index];
-            List<string> moves = Referee.GetListMovements(player, myCard);
-            
+            if(myCard == null)
+            {
+                myCard = player.Hand[index];
+            }
+
+            if (moves == null)
+            {
+                moves = Referee.GetListMovements(player, myCard);
+            }
+
             switch (moves.Count)
             {
                 case 0: return false;
@@ -318,12 +329,19 @@ namespace Virus.ConsoleApp
                         }
                         wholemoves = Referee.RemoveMovesPlayer(wholemoves, rival.ID, myCard, player);
 
-                        move = player.Computer.ChooseBestOptionProtectiveSuit(wholemoves);
-
-                        if (move != null)
+                        if (player.AI == ArtificialIntelligence.AICategory.Human)
                         {
-                            PlayCardByMove(player, myCard, move, wholemoves, false);
+                            return PlayGameCardByUser(player, -1, wholemoves, myCard);
                         }
+                        else
+                        {
+                            move = player.Computer.ChooseBestOptionProtectiveSuit(wholemoves);
+                            if (move != null)
+                            {
+                                PlayCardByMove(player, myCard, move, wholemoves, false);
+                            }
+                        }
+                        
                     }
 
                     return true;

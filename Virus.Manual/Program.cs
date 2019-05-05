@@ -12,7 +12,7 @@ namespace Virus.ConsoleApp
         static void Main(string[] args)
         {
             GameConsoleApp game = new GameConsoleApp(3, firstHuman:true);
-            game.Play(0);
+            game.Play(1000);
             Console.WriteLine("Press any key to exit");
             Console.ReadLine();
         }
