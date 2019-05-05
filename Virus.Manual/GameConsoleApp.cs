@@ -27,29 +27,17 @@ namespace Virus.ConsoleApp
             Console.WriteLine("Press any key to begin the Virus!");
             Console.ReadLine();
 
-            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            //Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
-            Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.EvolvedVirus);
-            Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
-            Players[2].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
 
-
-
-            //Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Spreading);
-            Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            //Players[0].Body.Items[0].NewEvolvedVirus(new Card(Card.CardColor.Red, Card.CardFace.EvolvedVirus), this);
-            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
-            //Players[0].Body.Items[1].NewVirus(new Card(Card.CardColor.Blue, Card.CardFace.Virus), this);
-
+            //Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.EvolvedVirus);
             //Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
             //Players[2].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
-            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
 
+            
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            ////Players[0].Body.Items[0].NewVirus(new Card(Card.CardColor.Red, Card.CardFace.Virus), this);
+            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
             //Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            //Players[2].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+            
 
 
             while (!GameOver)
@@ -331,6 +319,9 @@ namespace Virus.ConsoleApp
 
                         if (player.AI == ArtificialIntelligence.AICategory.Human)
                         {
+                            if(wholemoves.Count == 0) {
+                                return true;
+                            }
                             return PlayGameCardByUser(player, -1, wholemoves, myCard);
                         }
                         else

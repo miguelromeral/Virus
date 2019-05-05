@@ -86,9 +86,9 @@ namespace Virus.Core
             {
                 return false;
             }
-
-            // TODO Algorithm to detect if I sould play a Protective Suit.
-            bool shouldi = ShouldIDefend(rival, c, move);
+            
+            //bool shouldi = ShouldIDefend(rival, c, move);
+            bool shouldi = true;
 
             if (shouldi)
             {
