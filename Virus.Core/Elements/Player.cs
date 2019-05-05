@@ -82,6 +82,7 @@ namespace Virus.Core
         {
             Console.WriteLine("Creating new player.");
             Body = new Body();
+            Computer = new ArtificialIntelligence(game, this);
             if (human)
             {
                 AI = ArtificialIntelligence.AICategory.Human;

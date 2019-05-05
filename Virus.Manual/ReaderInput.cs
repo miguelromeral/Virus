@@ -30,7 +30,7 @@ namespace Virus.Core
                 o1 = Scheduler.GetStringInt(move, 2);
                 player = game.Players[p1];
                 item = player.Body.Items[o1];
-                Console.Write("{0}. {1,20} : ", (c+1), player.ShortDescription);
+                Console.Write("{0}. {1,20} : ", (c + 1), player.ShortDescription);
                 Scheduler.ChangeConsoleOutput(item.Organ.Color);
                 item.Organ.PrintCard();
                 item.PrintModifiers();
@@ -45,7 +45,7 @@ namespace Virus.Core
                 throw new Exception("You've not choosen a valid option.");
 
             return moves[p];
-            
+
         }
 
         public string RequestMovementChoosenTransplant(List<string> moves, Game game)
@@ -75,7 +75,7 @@ namespace Virus.Core
                     Console.Write("   - {0,20}: ", two.ShortDescription);
                     btwo.PrintBodyItem();
                     Console.WriteLine("");
-                    
+
                     c++;
                 }
 
@@ -83,7 +83,7 @@ namespace Virus.Core
 
                 if (p < 0 || p >= moves.Count)
                     throw new Exception("You've not choosen a valid combination to transplant organs.");
-                
+
                 return moves[p];
             }
             catch (Exception)
@@ -131,6 +131,49 @@ namespace Virus.Core
 
 
         }
+
+
+
+        public bool ReadDefendFromCard(Player rival, Card c, string move, Player Me)
+        {
+            if (rival.ID == Me.ID)
+            {
+                return false;
+            }
+
+            Console.Write("*** " + rival.ShortDescription + " is trying to play a ");
+            Scheduler.ChangeConsoleOutput(c.Color);
+            c.PrintCard();
+            Scheduler.ChangeConsoleOutput();
+            Console.WriteLine(" against you. Do you want to protect? [Y|y]: Yes, [N|n]: No. Default: Yes");
+
+            char option = Console.ReadKey().KeyChar;
+
+            bool shouldi = true;
+
+            if (option == 'N' || option == 'n')
+                shouldi = false;
+
+            if (shouldi)
+            {
+                int index = -1;
+                for (int i = 0; i < Me.Hand.Count; i++)
+                {
+                    if (Me.Hand[i].Face == Card.CardFace.ProtectiveSuit)
+                    {
+                        index = i;
+                    }
+                }
+                game.DiscardFromHand(Me, index);
+                Me.PlayedProtectiveSuit = true;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    
 
 
         public string RequestMovementChoosenMedicalError(Player user, List<string> moves, Game game)

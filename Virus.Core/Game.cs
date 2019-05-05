@@ -212,34 +212,56 @@ namespace Virus.Core
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Spreading));
             }
+            WriteToLog(Settings.NumberThreatmentsSpreading + " spreading cards created.");
+
             for (i = 0; i < Settings.NumberThreatmentsOrganThief; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.OrganThief));
             }
+            WriteToLog(Settings.NumberThreatmentsOrganThief + " organ thief cards created.");
+
             for (i = 0; i < Settings.NumberThreatmentsTransplant; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Transplant));
             }
+            WriteToLog(Settings.NumberThreatmentsTransplant + " transplant cards created.");
+
             for (i = 0; i < Settings.NumberThreatmentsLatexGlove; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.LatexGlove));
             }
+            WriteToLog(Settings.NumberThreatmentsLatexGlove + " latex glove cards created.");
+
             for (i = 0; i < Settings.NumberThreatmentsMedicalError; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.MedicalError));
             }
+            WriteToLog(Settings.NumberThreatmentsMedicalError + " medical error cards created.");
+
             for (i = 0; i < Settings.NumberSecondOpinion; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.SecondOpinion));
             }
+            WriteToLog(Settings.NumberSecondOpinion + " second opinion cards created.");
+
             for (i = 0; i < Settings.NumberQuarantine; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Quarantine));
             }
+            WriteToLog(Settings.NumberQuarantine + " quarantine cards created.");
+
             for (i = 0; i < Settings.NumberOvertime; i++)
             {
                 deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.Overtime));
             }
+            WriteToLog(Settings.NumberOvertime + " overtime cards created.");
+
+            for (i = 0; i < Settings.NumberProtectiveSuit; i++)
+            {
+                deck.Add(new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit));
+            }
+            WriteToLog(Settings.NumberProtectiveSuit + " protective suit cards created.");
+
             #endregion
 
             return deck;
@@ -856,13 +878,13 @@ namespace Virus.Core
             }
         }
 
-        public bool ProceedProtectiveSuit(Player player, Player rival, Card myCard, string move, List<string> wholemoves)
+        public virtual bool ProceedProtectiveSuit(Player player, Player rival, Card myCard, string move, List<string> wholemoves)
         {
             bool psused = SomeoneHasDefend();
-            if (rival.DoIHaveProtectiveSuit() && rival.Computer.DefendFromCard(player, myCard))
+            if (rival.DoIHaveProtectiveSuit() && rival.Computer.DefendFromCard(player, myCard, move))
             {
 
-                WriteToLog(rival.ShortDescription + " has protected with a Protective Suit.");
+                WriteToLog(rival.ShortDescription + " has protected with a Protective Suit.", true);
 
                 if (wholemoves == null)
                 {
@@ -878,7 +900,7 @@ namespace Virus.Core
                         wholemoves = Referee.GetListMovements(player, myCard, true);
                     }
                     wholemoves = Referee.RemoveMovesPlayer(wholemoves, rival.ID, myCard, player);
-
+                    
                     move = player.Computer.ChooseBestOptionProtectiveSuit(wholemoves);
 
                     if (move != null)
@@ -892,7 +914,7 @@ namespace Virus.Core
             return false;
         }
 
-        private Player GetPlayerByMove(Player me, Card card, string move)
+        public Player GetPlayerByMove(Player me, Card card, string move)
         {
             int index;
             switch (card.Face)
@@ -919,7 +941,7 @@ namespace Virus.Core
             }
         }
 
-        private bool SomeoneHasDefend()
+        protected bool SomeoneHasDefend()
         {
             foreach(Player p in Players)
             {

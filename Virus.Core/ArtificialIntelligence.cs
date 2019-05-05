@@ -80,7 +80,7 @@ namespace Virus.Core
             }
         }
 
-        public bool DefendFromCard(Player rival, Card c)
+        public bool DefendFromCard(Player rival, Card c, string move)
         {
             if(rival.ID == Me.ID)
             {
@@ -88,7 +88,7 @@ namespace Virus.Core
             }
 
             // TODO Algorithm to detect if I sould play a Protective Suit.
-            bool shouldi = true;
+            bool shouldi = ShouldIDefend(rival, c, move);
 
             if (shouldi)
             {
@@ -110,13 +110,49 @@ namespace Virus.Core
             }
         }
 
+        public bool ShouldIDefend(Player rival, Card card, string move)
+        {
+            Scenario scen = new Scenario(Game, rival, move, card, 1, null);
+
+            // Develop it in the future with more enthusiasm.
+
+            if(scen.Game.TopPlayers()[0].ID != Me.ID)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         public string ChooseBestOptionProtectiveSuit(List<string> moves)
         {
-            if(moves.Count > 0)
+            List<List<string>> aux = new List<List<string>>();
+
+            if (moves.Count > 0)
             {
-                // TODO, CHOOSE BEST
-                return moves[0];
+                switch (Me.AI)
+                {
+                    case AICategory.First:
+                        return moves[0];
+                        
+                    case AICategory.Random:
+                    default:
+                        return moves[random.Next(0, moves.Count)];
+                        
+                    //case AICategory.Easy:
+                    //    aux.Add(moves);
+                    //    ChooseEasy(aux);
+                    //    break;
+                    //case AICategory.Medium:
+                    //case AICategory.Hard:
+                    //default:
+                    //    aux.Add(moves);
+                    //    ChooseMedium(aux);
+                    //    break;
+                }
+                return null;
             }
             else
             {
@@ -140,9 +176,7 @@ namespace Virus.Core
             return;
             
         }
-
         
-
         public void ChooseRandom(List<List<string>> movesByCard)
         {
             int sel;

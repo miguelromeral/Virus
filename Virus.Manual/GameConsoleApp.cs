@@ -10,7 +10,7 @@ namespace Virus.ConsoleApp
     [Serializable]
     class GameConsoleApp : Game
     {
-        private ReaderInput reader;
+        public ReaderInput reader;
 
         #region Constructor
         public GameConsoleApp(
@@ -28,23 +28,24 @@ namespace Virus.ConsoleApp
             Console.ReadLine();
 
             //Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            //Players[0].Body.SetVirus(new Card(Card.CardColor.Red, Card.CardFace.Virus), 0, this);
-            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            //Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            //Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.LatexGlove);
+
+
+
             //Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Spreading);
-
-
             //Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            //Players[0].Body.SetEvolvedVirus(new Card(Card.CardColor.Red, Card.CardFace.EvolvedVirus), 0, this);
-            //Players[0].Hand[0] = new Card(Card.CardColor.Wildcard, Card.CardFace.EvolvedMedicine);
-            //Players[0].Hand[1] = new Card(Card.CardColor.Wildcard, Card.CardFace.Medicine);
+            //Players[0].Body.Items[0].NewEvolvedVirus(new Card(Card.CardColor.Red, Card.CardFace.EvolvedVirus), this);
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+            //Players[0].Body.Items[1].NewVirus(new Card(Card.CardColor.Blue, Card.CardFace.Virus), this);
 
-            //Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.SecondOpinion);
-            //Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.MedicalError);
+            //Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            //Players[2].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
 
-            Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Organ);
-            Players[0].Hand[1] = new Card(Card.CardColor.Red, Card.CardFace.Medicine);
-            Players[0].Hand[2] = new Card(Card.CardColor.Purple, Card.CardFace.Overtime);
+            //Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[2].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
 
 
             while (!GameOver)
@@ -80,11 +81,11 @@ namespace Virus.ConsoleApp
                     {
                         System.Threading.Thread.Sleep(milis);
                     }
-                    else
-                    {
-                        Console.WriteLine("Press any key to begin the Virus!");
-                        Console.ReadLine();
-                    }
+                    //else
+                    //{
+                    //    Console.WriteLine("Press any key to begin the Virus!");
+                    //    Console.ReadLine();
+                    //}
                 }
             }
             Console.WriteLine();
@@ -277,6 +278,58 @@ namespace Virus.ConsoleApp
                     PlayCardByMove(player, myCard, choosen, moves);
                     return true;
             }
+        }
+
+
+        
+        public override bool ProceedProtectiveSuit(Player player, Player rival, Card myCard, string move, List<string> wholemoves)
+        {
+            bool psused = SomeoneHasDefend();
+
+            bool play = rival.DoIHaveProtectiveSuit();
+
+            if (play) {
+                if (rival.AI == ArtificialIntelligence.AICategory.Human)
+                {
+                    play = reader.ReadDefendFromCard(player, myCard, move, rival);
+                }
+                else
+                {
+                    play = rival.Computer.DefendFromCard(player, myCard, move);
+                }
+
+                if (play)
+                {
+
+                    WriteToLog(rival.ShortDescription + " has protected with a Protective Suit.", true);
+
+                    if (wholemoves == null)
+                    {
+                        // Playable cards that doesn't require play a move.
+
+
+                    }
+                    else
+                    {
+
+                        if (!psused)
+                        {
+                            wholemoves = Referee.GetListMovements(player, myCard, true);
+                        }
+                        wholemoves = Referee.RemoveMovesPlayer(wholemoves, rival.ID, myCard, player);
+
+                        move = player.Computer.ChooseBestOptionProtectiveSuit(wholemoves);
+
+                        if (move != null)
+                        {
+                            PlayCardByMove(player, myCard, move, wholemoves, false);
+                        }
+                    }
+
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
