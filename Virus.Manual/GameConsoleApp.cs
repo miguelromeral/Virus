@@ -28,8 +28,9 @@ namespace Virus.ConsoleApp
             Console.ReadLine();
 
 
-            //Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Organ);
-            //Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.SecondOpinion);
+            Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            //Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
             //Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.OrganThief);
             //Players[1].Hand[1] = new Card(Card.CardColor.Yellow, Card.CardFace.Organ);
             //Players[1].Hand[2] = new Card(Card.CardColor.Yellow, Card.CardFace.Organ);
@@ -72,6 +73,7 @@ namespace Virus.ConsoleApp
                 else
                 {
                     PlayTurn(milis == 0, true);
+                    //PlayTurn(milis == 0, false);
                     if (milis != 0)
                     {
                         System.Threading.Thread.Sleep(milis);

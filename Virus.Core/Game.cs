@@ -285,6 +285,9 @@ namespace Virus.Core
             {
                 var p = new Player(this, (i == 0 && firstHuman)) { ID = i };
                 Players.Add(p);
+
+                System.Threading.Thread.Sleep(550);
+
                 WriteToLog("Player with ID " + i + " created. " + ((i == 0 && firstHuman) ? "Human" : "IA: " + p.AI));
             }
             WriteToLog("Dealing cards.", true);

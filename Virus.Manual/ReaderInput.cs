@@ -197,7 +197,8 @@ namespace Virus.Core
             }
             catch (Exception)
             {
-                throw new Exception("THE INPUT IS NOT VALID.");
+                //throw new Exception("THE INPUT IS NOT VALID.");
+                return RequestMovementChoosenMedicalError(user, moves, game);
             }
 
 
