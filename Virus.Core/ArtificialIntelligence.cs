@@ -216,7 +216,6 @@ namespace Virus.Core
                     //    ChooseMedium(aux);
                     //    break;
                 }
-                return null;
             }
             else
             {
@@ -406,39 +405,29 @@ namespace Virus.Core
             Game.PlayCardByMove(Me, card, bestmove, list);
         }
         
-
+        /// <summary>
+        /// Gets a list of every Game state with the moves passed.
+        /// </summary>
+        /// <param name="movesbycard">List of lists of moves.</param>
+        /// <returns>List of Scenarios</returns>
         public List<Scenario> AllScenariosByLists(List<List<string>> movesbycard)
         {
             List<Scenario> scenarios = new List<Scenario>();
+            // For every card in hand:
             for (int i = 0; i < Me.Hand.Count; i++)
             {
                 Card card = Me.Hand[i];
-                List<Game> scenByCard = new List<Game>();
                 var list = movesbycard[i];
+                // For every move in the list for this card.
                 for (int j = 0; j < movesbycard[i].Count; j++)
                 {
+                    // Create and plays the card asynchronously
                     Scenario scen = new Scenario(Game, Me, list[j], card, 1, list);
                     ThreadPool.QueueUserWorkItem(Scenario.PerformUserWorkItem, scen);
                     scenarios.Add(scen);
                 }
             }
             return scenarios;
-        }
-
-        public bool CanPlayOrganFromHand(List<List<string>> wholeMoves)
-        {
-            for(int i=0; i<Me.Hand.Count; i++)
-            {
-                Card c = Me.Hand[i];
-                if(c.Face == Card.CardFace.Organ)
-                {
-                    if(wholeMoves[i].Count > 0)
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
     }
 }

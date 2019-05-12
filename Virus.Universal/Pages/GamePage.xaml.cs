@@ -17,6 +17,7 @@ using Virus.Core;
 using Windows.UI.Xaml.Media.Imaging;
 using System.Reflection;
 using Virus.Universal.Classes;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -28,25 +29,26 @@ namespace Virus.Universal.Pages
     public sealed partial class GamePage : Page
     {
         private MainPage Main;
-        private Game Game;
+        private GameWPF GameWPF;
         private UserHandler Handler;
 
         public GamePage(MainPage m)
         {
             this.InitializeComponent();
-            Game = new Game(3, true);
-            DataContext = Game;
+            GameWPF = new GameWPF(3);
+            DataContext = GameWPF;
             Main = m;
             
-            Handler = new UserHandler(Game, Game.Players[0], this);
+            Handler = new UserHandler(GameWPF.Game, GameWPF.Game.Players[0], this);
 
-            foreach(var p in Game.Players)
+            foreach(var p in GameWPF.Game.Players)
             {
-                Binding myBinding = new Binding("MyDataProperty")
-                {
-                    Source = Game
-                };
-                BindingOperations.SetBinding(myText, TextBlock.TextProperty, myBinding);
+            //    Binding myBinding = new Binding()
+            //    {
+            //        Mode = BindingMode.OneWay,
+            //        Source = GameWPF.Game;
+            //    };
+
 
                 StackPanel sp = new StackPanel
                 {
@@ -55,13 +57,22 @@ namespace Virus.Universal.Pages
                 TextBlock tb = new TextBlock();
                 tb.Text = p.ToString();
 
+                
+
+                //BindingOperations.SetBinding(sp, TextBlock.TextProperty, myBinding);
+
                 sp.Children.Add(tb);
                 GameContent.Children.Add(sp);
             }
 
             Handler.InitializeUserPanels();
 
+            Task taskA = new Task(() => GameWPF.Start(2000));
+            // Start the task.
+            taskA.Start();
 
+
+            
             
             }
 

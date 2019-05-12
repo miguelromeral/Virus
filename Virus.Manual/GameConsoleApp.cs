@@ -28,16 +28,19 @@ namespace Virus.ConsoleApp
             Console.ReadLine();
 
 
-            //Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.EvolvedVirus);
-            //Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
-            //Players[2].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            //Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Organ);
+            //Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            //Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.OrganThief);
+            //Players[1].Hand[1] = new Card(Card.CardColor.Yellow, Card.CardFace.Organ);
+            //Players[1].Hand[2] = new Card(Card.CardColor.Yellow, Card.CardFace.Organ);
 
-            
+            //Players[1].AI = ArtificialIntelligence.AICategory.Easy;
+
             //Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
             ////Players[0].Body.Items[0].NewVirus(new Card(Card.CardColor.Red, Card.CardFace.Virus), this);
             //Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
             //Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            
+
 
 
             while (!GameOver)

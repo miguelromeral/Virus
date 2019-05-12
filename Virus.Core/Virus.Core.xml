@@ -4,6 +4,16 @@
         <name>Virus.Core</name>
     </assembly>
     <members>
+        <member name="T:Virus.Core.ArtificialIntelligence">
+            <summary>
+            Class that has the function of take the best choice in order to win the game.
+            </summary>
+        </member>
+        <member name="T:Virus.Core.ArtificialIntelligence.AICategory">
+            <summary>
+            Different AI levels of difficulty.
+            </summary>
+        </member>
         <member name="F:Virus.Core.ArtificialIntelligence.AICategory.Human">
             <summary>
             Human interaction
@@ -23,6 +33,106 @@
             <summary>
             Looks for the move with more points to him.
             </summary>
+        </member>
+        <member name="F:Virus.Core.ArtificialIntelligence.AICategory.Medium">
+            <summary>
+            Looks for being the leader. If its the leader, it'll choose the best move to become more leader if its possible.
+            If its not the leader, a follower, it'll try to be as close as it can.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.ArtificialIntelligence.AICategory.Hard">
+            <summary>
+            To Be Developed.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.ArtificialIntelligence.Game">
+            <summary>
+            Current game state.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.ArtificialIntelligence.Me">
+            <summary>
+            Player that this AI belongs to.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.ArtificialIntelligence.random">
+            <summary>
+            Random seed to get random results.
+            </summary>
+        </member>
+        <member name="M:Virus.Core.ArtificialIntelligence.#ctor(Virus.Core.Game,Virus.Core.Player)">
+            <summary>
+            Constructor of AI.
+            </summary>
+            <param name="g">Current game.</param>
+            <param name="p">Player that has this AI.</param>
+        </member>
+        <member name="M:Virus.Core.ArtificialIntelligence.RandomIA">
+            <summary>
+            Gets a random AI level except Human.
+            </summary>
+            <returns>Random AI level except Human.</returns>
+        </member>
+        <member name="M:Virus.Core.ArtificialIntelligence.PlayTurn">
+            <summary>
+            Do the move of this player.
+            </summary>
+        </member>
+        <member name="M:Virus.Core.ArtificialIntelligence.DefendFromCard(Virus.Core.Player,Virus.Core.Card,System.String)">
+            <summary>
+            Defend itself (or not) from a rival Card payed (Protective Suit functionality).
+            </summary>
+            <param name="rival">Player who has used this card against this player.</param>
+            <param name="c">Card which has been used in this move.</param>
+            <param name="move">Current move code.</param>
+            <returns>True if the player has used his Protective Suit to defend. False if not.</returns>
+        </member>
+        <member name="M:Virus.Core.ArtificialIntelligence.ShouldIDefend(Virus.Core.Player,Virus.Core.Card,System.String)">
+            <summary>
+            Check if it would be good to protect or not, looking at the possible scenario if not.
+            </summary>
+            <param name="rival">Player who has used this card.</param>
+            <param name="card">Card used.</param>
+            <param name="move">Move played.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Virus.Core.ArtificialIntelligence.ChooseBestOptionProtectiveSuit(System.Collections.Generic.List{System.String})">
+            <summary>
+            Choose the best possible move when a Protective Suit has been played.
+            </summary>
+            <param name="moves">All possible moves</param>
+            <returns>New move played.</returns>
+        </member>
+        <member name="M:Virus.Core.ArtificialIntelligence.PlayTurnAIFirst(System.Collections.Generic.List{System.Collections.Generic.List{System.String}})">
+            <summary>
+            Plays  the first of all possible moves.
+            </summary>
+            <param name="movesByCard">List of lists of moves.</param>
+        </member>
+        <member name="M:Virus.Core.ArtificialIntelligence.PlayTurnAIRandom(System.Collections.Generic.List{System.Collections.Generic.List{System.String}})">
+            <summary>
+            Play the turn with Random AI.
+            </summary>
+            <param name="movesByCard">List of lists of moves.</param>
+        </member>
+        <member name="M:Virus.Core.ArtificialIntelligence.PlayTurnAIEasy(System.Collections.Generic.List{System.Collections.Generic.List{System.String}})">
+            <summary>
+            Play the turn in Easy AI level.
+            </summary>
+            <param name="movesbyCard">List of lists of moves</param>
+        </member>
+        <member name="M:Virus.Core.ArtificialIntelligence.PlayTurnAIMedium(System.Collections.Generic.List{System.Collections.Generic.List{System.String}})">
+            <summary>
+            Play the turn in Medium AI level.
+            </summary>
+            <param name="movesbycard">List of lists of moves</param>
+        </member>
+        <member name="M:Virus.Core.ArtificialIntelligence.AllScenariosByLists(System.Collections.Generic.List{System.Collections.Generic.List{System.String}})">
+            <summary>
+            Gets a list of every Game state with the moves passed.
+            </summary>
+            <param name="movesbycard">List of lists of moves.</param>
+            <returns>List of Scenarios</returns>
         </member>
         <member name="T:Virus.Core.Body">
             <summary>
@@ -417,6 +527,11 @@
             Settings parameters of the game.
             </summary>
         </member>
+        <member name="P:Virus.Core.Game.IsInScenario">
+            <summary>
+            Specifies if the Game is the real (false) or it's in a scenario (true)
+            </summary>
+        </member>
         <member name="P:Virus.Core.Game.CurrentTurn">
             <summary>
             Index of current turn.
@@ -710,6 +825,63 @@
             <param name="color1">Color 1</param>
             <param name="color2">Color 2</param>
             <returns>True if they are equal or some of them is wildcard</returns>
+        </member>
+        <member name="T:Virus.Core.Scenario">
+            <summary>
+            Class that stores the game state when looking for the best possible move.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Scenario.Game">
+            <summary>
+            Game state with the move played.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Scenario.Player">
+            <summary>
+            Player who has moved latest.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Scenario.Move">
+            <summary>
+            Last move played in this game.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Scenario.AllMoves">
+            <summary>
+            List of all moves with this card.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Scenario.Card">
+            <summary>
+            Last card used.
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Scenario.Step">
+            <summary>
+            Number of step in the search. (TBD).
+            </summary>
+        </member>
+        <member name="F:Virus.Core.Scenario.eventWaitHandle">
+            <summary>
+            Sempahore that allows the AI to check this game state.
+            </summary>
+        </member>
+        <member name="M:Virus.Core.Scenario.#ctor(Virus.Core.Game,Virus.Core.Player,System.String,Virus.Core.Card,System.Int32,System.Collections.Generic.List{System.String})">
+            <summary>
+            Scenario's constructor.
+            </summary>
+            <param name="g">Original game. It'll make a copy.</param>
+            <param name="p">Player who will play.</param>
+            <param name="m">Move to be played.</param>
+            <param name="c">Card to be played.</param>
+            <param name="s">Int number of step.</param>
+            <param name="list">List of whole moves with this card.</param>
+        </member>
+        <member name="M:Virus.Core.Scenario.PerformUserWorkItem(System.Object)">
+            <summary>
+            Performs the movement in the scenario.
+            </summary>
+            <param name="args">The scenario initialized as object.</param>
         </member>
         <member name="T:Virus.Core.Scheduler">
             <summary>

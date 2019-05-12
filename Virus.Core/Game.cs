@@ -44,6 +44,10 @@ namespace Virus.Core
         /// </summary>
         public Settings Settings { get; set; }
         /// <summary>
+        /// Specifies if the Game is the real (false) or it's in a scenario (true)
+        /// </summary>
+        public bool IsInScenario { get; set; }
+        /// <summary>
         /// Index of current turn.
         /// </summary>
         public int CurrentTurn
@@ -859,22 +863,30 @@ namespace Virus.Core
 
         public bool ProtectiveSuitScenario(Player player, Card myCard, string move, List<string> wholemoves)
         {
-            Player rival = GetPlayerByMove(player, myCard, move);
-            if(rival == null)
+            if (!IsInScenario)
             {
-                List<Player> rivals = GetListPlayesInSpreadingMove(player, move);
-                foreach(var r in rivals)
+
+                Player rival = GetPlayerByMove(player, myCard, move);
+                if (rival == null)
                 {
-                    if(ProceedProtectiveSuit(player, r, myCard, move, wholemoves))
+                    List<Player> rivals = GetListPlayesInSpreadingMove(player, move);
+                    foreach (var r in rivals)
                     {
-                        return true;
+                        if (ProceedProtectiveSuit(player, r, myCard, move, wholemoves))
+                        {
+                            return true;
+                        }
                     }
+                    return false;
                 }
-                return false;
+                else
+                {
+                    return ProceedProtectiveSuit(player, rival, myCard, move, wholemoves);
+                }
             }
             else
             {
-                return ProceedProtectiveSuit(player, rival, myCard, move, wholemoves);
+                return false;
             }
         }
 
