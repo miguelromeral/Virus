@@ -90,9 +90,8 @@ namespace Virus.Core
             else
             {
                 Computer = new ArtificialIntelligence(game, this);
-                AI = Computer.RandomIA();
-                //AI = ArtificialIntelligence.AICategory.Medium;
-                //AI = ArtificialIntelligence.AICategory.First;
+                //AI = Computer.RandomIA();
+                AI = ArtificialIntelligence.AICategory.Hard;
             }
         }
         #endregion
@@ -161,7 +160,7 @@ namespace Virus.Core
             int i = 0;
             foreach(var c in Hand)
             {
-                if (c.Equals(card)){
+                if (c.Color == card.Color && c.Face == card.Face){
                     return i;
                 }
                 i++;

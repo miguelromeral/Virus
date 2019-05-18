@@ -11,6 +11,10 @@ namespace Virus.Core
     public class Scenario
     {
         /// <summary>
+        /// Original game state.
+        /// </summary>
+        public Scenario Root;
+        /// <summary>
         /// Game state with the move played.
         /// </summary>
         public Game Game;
@@ -48,7 +52,7 @@ namespace Virus.Core
         /// <param name="c">Card to be played.</param>
         /// <param name="s">Int number of step.</param>
         /// <param name="list">List of whole moves with this card.</param>
-        public Scenario(Game g, Player p, string m, Card c, int s, List<string> list)
+        public Scenario(Game g, Player p, string m, Card c, int s, List<string> list, Scenario r = null)
         {
             // Creates a instance copy.
             Game = Game.DeepClone(g);
@@ -60,6 +64,12 @@ namespace Virus.Core
             Card = c;
             Step = s;
             AllMoves = list;
+            Root = r;
+        }
+
+        public void SetRootGame()
+        {
+            Root = this;
         }
 
         /// <summary>

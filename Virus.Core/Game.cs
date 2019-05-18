@@ -77,25 +77,7 @@ namespace Virus.Core
         /// <summary>
         /// Total cards in the game.
         /// </summary>
-        public int TotalCardsInGame
-        {
-            get
-            {
-                int count = 0;
-                foreach (Player p in Players)
-                {
-                    count += p.Hand.Count;
-                    foreach (BodyItem item in p.Body.Items)
-                    {
-                        count++;
-                        count += item.Modifiers.Count;
-                    }
-                }
-                count += Deck.Count;
-                count += Discards.Count;
-                return count;
-            }
-        }
+        public List<Card> TotalCardsInGame { get; set; }
 #endregion
 
         #region INITIALIZERS
@@ -118,6 +100,11 @@ namespace Virus.Core
             PlayerInOvertime = null;
 
             Deck = Shuffle(InitializeCards());
+            TotalCardsInGame = new List<Card>();
+            foreach(var c in Deck)
+            {
+                TotalCardsInGame.Add(c);
+            }
             WriteToLog(Deck.Count+" cards shuffled.", true);
             Discards = new List<Card>();
             WriteToLog("Discard stack created.");
@@ -334,7 +321,7 @@ namespace Virus.Core
         /// </summary>
         /// <param name="me">Player who is drawing a new card</param>
         /// <returns>Card recovered from the deck</returns>
-        public Card DrawNewCard(Player me)
+        public Card DrawNewCard(Player me, bool inscenario = false)
         {
             Card newCard = null;
             try
@@ -347,7 +334,15 @@ namespace Virus.Core
                     Deck = Shuffle(Discards);
                     Discards = new List<Card>();
                 }
-                newCard = Deck[0];
+
+                if (inscenario)
+                {
+                    newCard = TotalCardsInGame[r.Next(0, TotalCardsInGame.Count)];
+                }
+                else
+                {
+                    newCard = Deck[0];
+                }
                 WriteToLog(me.ShortDescription + " draws a new card: " + newCard);
                 Deck.RemoveAt(0);
             }
@@ -359,6 +354,21 @@ namespace Virus.Core
             return newCard;
         }
 
+
+        public List<List<string>> GetListOfMovesWholeHand(Player p)
+        {
+            List<List<string>> wholeMoves = new List<List<string>>();
+
+            foreach(Card c in p.Hand)
+            {
+                List<string> list = Referee.GetListMovements(p, c);
+                wholeMoves.Add(list);
+            }
+
+            return wholeMoves;
+        }
+
+
         /// <summary>
         /// Start the current game.
         /// </summary>
@@ -366,6 +376,28 @@ namespace Virus.Core
         public void Start(int milis = 0) {
             Console.WriteLine("Press any key to begin the Virus!");
             Console.ReadLine();
+
+
+            Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Overtime);
+            Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            Players[0].Hand[2] = new Card(Card.CardColor.Red, Card.CardFace.Organ);
+
+
+
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+
+            //Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Medicine);
+            //Players[0].Hand[1] = new Card(Card.CardColor.Blue, Card.CardFace.EvolvedMedicine);
+            //Players[0].Hand[2] = new Card(Card.CardColor.Wildcard, Card.CardFace.EvolvedMedicine);
+
+            //Players[1].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Medicine);
+            //Players[1].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.Overtime);
+            //Players[1].Hand[2] = new Card(Card.CardColor.Blue, Card.CardFace.Medicine);
+
+
+
+
 
 
             //Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Spreading);
@@ -382,7 +414,7 @@ namespace Virus.Core
             //Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
             //Players[2].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
 
-            
+
 
             while (!GameOver)
             {
@@ -413,7 +445,7 @@ namespace Virus.Core
             res += "+------------+------------+----------------+-------------------------------+" + Environment.NewLine;
 
             res += String.Format("| #Turn: {0,3} | #Deck: {1,3} | #Discards: {2,3} | #Total Cards: {3,3}             |",
-                Turn, Deck.Count, Discards.Count, TotalCardsInGame) + Environment.NewLine;
+                Turn, Deck.Count, Discards.Count, TotalCardsInGame.Count) + Environment.NewLine;
             res += "+------------+------------+----------------+-------------------------------+" + Environment.NewLine;
 
 
@@ -476,7 +508,7 @@ namespace Virus.Core
             Console.Write("+------------+------------+----------------+-------------------------------+" + Environment.NewLine);
 
             Console.Write(String.Format("| #Turn: {0,3} | #Deck: {1,3} | #Discards: {2,3} | #Total Cards: {3,3}             |",
-                Turn, Deck.Count, Discards.Count, TotalCardsInGame) + Environment.NewLine);
+                Turn, Deck.Count, Discards.Count, TotalCardsInGame.Count) + Environment.NewLine);
             Console.Write("+------------+------------+----------------+-------------------------------+" + Environment.NewLine);
 
 
@@ -596,11 +628,14 @@ namespace Virus.Core
         /// Draws as many cards needed until fill the player hand.
         /// </summary>
         /// <param name="player"></param>
-        public void DrawCardsToFill(Player player)
+        public void DrawCardsToFill(Player player, int max = 0, bool insecenario = false)
         {
-            for(int i=player.Hand.Count; i< Settings.NumberCardInHand; i++)
+            if (max == 0)
+                max = Settings.NumberCardInHand;
+
+            for (int i = player.Hand.Count; i < max; i++)
             {
-                player.Hand.Add(DrawNewCard(player));
+                player.Hand.Add(DrawNewCard(player, insecenario));
             }
         }
         

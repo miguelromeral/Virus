@@ -577,7 +577,7 @@
             <param name="inputList">List of cards to randomize</param>
             <returns>List of cards shuffled</returns>
         </member>
-        <member name="M:Virus.Core.Game.DrawNewCard(Virus.Core.Player)">
+        <member name="M:Virus.Core.Game.DrawNewCard(Virus.Core.Player,System.Boolean)">
             <summary>
             Gets a new card from the deck stack and removes it.
             </summary>
@@ -603,7 +603,7 @@
             <param name="wait">True if the user will have to press a key to continue with the move.</param>
             <param name="printHand">True if print the player hand.</param>
         </member>
-        <member name="M:Virus.Core.Game.DrawCardsToFill(Virus.Core.Player)">
+        <member name="M:Virus.Core.Game.DrawCardsToFill(Virus.Core.Player,System.Int32,System.Boolean)">
             <summary>
             Draws as many cards needed until fill the player hand.
             </summary>
@@ -831,6 +831,11 @@
             Class that stores the game state when looking for the best possible move.
             </summary>
         </member>
+        <member name="F:Virus.Core.Scenario.Root">
+            <summary>
+            Original game state.
+            </summary>
+        </member>
         <member name="F:Virus.Core.Scenario.Game">
             <summary>
             Game state with the move played.
@@ -866,7 +871,7 @@
             Sempahore that allows the AI to check this game state.
             </summary>
         </member>
-        <member name="M:Virus.Core.Scenario.#ctor(Virus.Core.Game,Virus.Core.Player,System.String,Virus.Core.Card,System.Int32,System.Collections.Generic.List{System.String})">
+        <member name="M:Virus.Core.Scenario.#ctor(Virus.Core.Game,Virus.Core.Player,System.String,Virus.Core.Card,System.Int32,System.Collections.Generic.List{System.String},Virus.Core.Scenario)">
             <summary>
             Scenario's constructor.
             </summary>

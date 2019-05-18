@@ -79,6 +79,7 @@ namespace Virus.Core
             return (AICategory) random.Next(1, Enum.GetValues(typeof(AICategory)).Length);
         }
 
+        
         /// <summary>
         /// Do the move of this player.
         /// </summary>
@@ -86,14 +87,9 @@ namespace Virus.Core
         {
             // List of every possible move with each card.
             // Each list (of lists) contains the list of possible moves for the Card with index X.
-            List<List<string>> movesByCard = new List<List<string>>();
+            List<List<string>> movesByCard = Game.GetListOfMovesWholeHand(Me);
 
-            // Get all availables moves by card.
-            for(int i=0; i< Me.Hand.Count; i++)
-            {
-                movesByCard.Add(Game.Referee.GetListMovements(Me, Me.Hand[i]));
-            }
-
+            
             // It'll do the appropiate move in function its AI level.
             switch (Me.AI)
             {
@@ -107,9 +103,13 @@ namespace Virus.Core
                     PlayTurnAIEasy(movesByCard);
                     break;
                 case AICategory.Medium:
-                case AICategory.Hard:
-                default:
                     PlayTurnAIMedium(movesByCard);
+                    break;
+                case AICategory.Hard:
+                    PlayTurnAIHard(movesByCard);
+                    break;
+                default:
+                    PlayTurnAIRandom(movesByCard);
                     break;
             }
         }
@@ -345,6 +345,7 @@ namespace Virus.Core
             // makes us more closer than possible.
             foreach (Scenario scen in scenarios)
             {
+                scen.eventWaitHandle.WaitOne();
                 aux = scen.Game;
                 var qualy = aux.TopPlayers();
                 Player top = qualy[0];
@@ -404,7 +405,148 @@ namespace Virus.Core
             // if there is a best move, play it.
             Game.PlayCardByMove(Me, card, bestmove, list);
         }
-        
+
+
+
+        public void PlayTurnAIHard(List<List<string>> movesbycard)
+        {
+            // List of scenarios with every card played.
+            Scenario thebest = getTheBestPossibleScenario(Game, movesbycard, 1, Me.Hand.Count, true);
+
+            if(thebest == null)
+            {
+                Game.DiscardAllHand(Me);
+                return;
+            }
+
+            Game.PlayCardByMove(Me, thebest.Card, thebest.Move, thebest.AllMoves);
+        }
+
+
+        public Scenario getTheBestPossibleScenario(Game original, List<List<string>> movesbycard, int steps, int cardsinhand, bool root = false, Scenario previous = null)
+        {
+            Scenario[] bestByCard = new Scenario[cardsinhand];
+
+            for (int i = 0; i < cardsinhand; i++)
+            {
+                Player otherme = original.GetPlayerByID(Me.ID);
+                bestByCard[i] = getTheBestPossibleScenarioByCard(original, movesbycard[i], otherme.Hand[i], steps, cardsinhand, root, previous);
+            }
+
+            Scenario best = bestByCard[0];
+
+            for (int i = 1; i < cardsinhand; i++)
+            {
+                Scenario newone = bestByCard[i];
+                if (best == null)
+                {
+                    best = newone;
+                }
+                else
+                {
+                    if (newone != null)
+                    {
+
+
+                        // Deploy it with more enthusiasm
+                        if (newone.Player.Body.Points > best.Player.Body.Points)
+                        {
+                            best = newone;
+                        }
+
+
+
+                    }
+                }
+            }
+
+            if (best == null)
+                return null;
+
+            if (root)
+            {
+                return best.Root;
+            }
+            return best;
+        }
+
+
+        public Scenario getTheBestPossibleScenarioByCard(Game original, List<string> moves, Card c, int steps, int cardsinhand, bool root = false, Scenario previous = null)
+        {
+            List<Scenario> bestInHand = new List<Scenario>();
+
+            for (int i = 0; i < moves.Count; i++)
+            {
+                Scenario newone = new Scenario(original, Me, moves[i], c, steps, moves);
+
+                if (root)
+                    newone.SetRootGame();
+                else
+                    newone.Root = previous;
+
+                Player otherme = newone.Game.GetPlayerByID(Me.ID);
+                c = otherme.Hand[otherme.GetIndexOfCardInHand(c)];
+                // Substitute this with the async method:
+                newone.Game.PlayCardByMove(newone.Game.GetPlayerByID(Me.ID), c, newone.Move, null);
+                //---------------------------
+
+                newone.Game.DrawCardsToFill(newone.Game.GetPlayerByID(Me.ID), cardsinhand, true);
+
+                if (steps == 0)
+                {
+                    bestInHand.Add(newone);
+                }
+                else
+                {
+                    bestInHand.Add(getTheBestPossibleScenario(newone.Game, newone.Game.GetListOfMovesWholeHand(newone.Game.GetPlayerByID(Me.ID)), steps - 1, cardsinhand, false, newone));
+                }
+
+            }
+
+            if (bestInHand.Count == 0)
+                if (root)
+                {
+                    return null;
+                }
+                else
+                {
+                    return (previous == null ? null : previous.Root);
+                }
+
+            Scenario best = bestInHand[0];
+
+            for (int i = 1; i < bestInHand.Count; i++)
+            {
+                Scenario newone = bestInHand[i];
+                if (best == null)
+                {
+                    best = newone;
+                }
+                else
+                {
+                    if (newone != null)
+                    {
+
+
+                        // Deploy it with more enthusiasm
+                        if (newone.Player.Body.Points > best.Player.Body.Points)
+                        {
+                            best = newone;
+                        }
+
+
+
+                    }
+                }
+            }
+
+            return best;
+
+        }
+
+
+
+
         /// <summary>
         /// Gets a list of every Game state with the moves passed.
         /// </summary>
@@ -422,7 +564,7 @@ namespace Virus.Core
                 for (int j = 0; j < movesbycard[i].Count; j++)
                 {
                     // Create and plays the card asynchronously
-                    Scenario scen = new Scenario(Game, Me, list[j], card, 1, list);
+                    Scenario scen = new Scenario(Game, Me, list[j], card, 0, list);
                     ThreadPool.QueueUserWorkItem(Scenario.PerformUserWorkItem, scen);
                     scenarios.Add(scen);
                 }
