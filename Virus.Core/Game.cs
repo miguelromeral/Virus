@@ -378,9 +378,32 @@ namespace Virus.Core
             Console.ReadLine();
 
 
-            Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Overtime);
-            Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
-            Players[0].Hand[2] = new Card(Card.CardColor.Red, Card.CardFace.Organ);
+            Players[0].Hand[0] = new Card(Card.CardColor.Wildcard, Card.CardFace.EvolvedMedicine);
+            Players[0].Hand[1] = new Card(Card.CardColor.Yellow, Card.CardFace.Organ);
+            Card c = new Card(Card.CardColor.Yellow, Card.CardFace.Organ);
+            Players[0].Hand[2] = c;
+            Players[0].Hand.Remove(c);
+
+            Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            Players[0].Body.SetOrgan(new Card(Card.CardColor.Bionic, Card.CardFace.Organ));
+
+            Players[0].Body.Items[0].NewEvolvedMedicine(this, 
+                new Card(Card.CardColor.Red, Card.CardFace.EvolvedMedicine));
+
+            Players[1].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Organ);
+            Players[1].Hand[1] = new Card(Card.CardColor.Red, Card.CardFace.Medicine);
+            Players[1].Hand[2] = new Card(Card.CardColor.Purple, Card.CardFace.SecondOpinion);
+
+
+
+
+
+
+            //Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Overtime);
+            //Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            //Players[0].Hand[2] = new Card(Card.CardColor.Red, Card.CardFace.Organ);
+
+
 
 
 

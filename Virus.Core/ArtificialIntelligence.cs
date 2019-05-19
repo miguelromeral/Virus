@@ -411,7 +411,7 @@ namespace Virus.Core
         public void PlayTurnAIHard(List<List<string>> movesbycard)
         {
             // List of scenarios with every card played.
-            Scenario thebest = getTheBestPossibleScenario(Game, movesbycard, 1, Me.Hand.Count, true);
+            Scenario thebest = getTheBestPossibleScenario(Game, movesbycard, 2, Me.Hand.Count, true);
 
             if(thebest == null)
             {
@@ -419,18 +419,37 @@ namespace Virus.Core
                 return;
             }
 
+            Console.WriteLine("----------------------------------------------------");
+
             Game.PlayCardByMove(Me, thebest.Card, thebest.Move, thebest.AllMoves);
         }
 
 
         public Scenario getTheBestPossibleScenario(Game original, List<List<string>> movesbycard, int steps, int cardsinhand, bool root = false, Scenario previous = null)
         {
+            Console.WriteLine("Entrando en Paso {0}", steps);
+            
             Scenario[] bestByCard = new Scenario[cardsinhand];
 
             for (int i = 0; i < cardsinhand; i++)
             {
                 Player otherme = original.GetPlayerByID(Me.ID);
-                bestByCard[i] = getTheBestPossibleScenarioByCard(original, movesbycard[i], otherme.Hand[i], steps, cardsinhand, root, previous);
+                Card c = otherme.Hand[i];
+
+                Console.WriteLine("Paso {0}, Carta #{1} ({2})", steps, i, otherme.Hand[i]);
+
+                if(c.Face == Card.CardFace.ProtectiveSuit ||
+                    c.Face == Card.CardFace.SecondOpinion)
+                {
+                    bestByCard[i] = null;
+
+                }
+                else
+                {
+                    bestByCard[i] = getTheBestPossibleScenarioByCard(original, movesbycard[i], c, steps, cardsinhand, root, previous);
+
+                }
+
             }
 
             Scenario best = bestByCard[0];
@@ -477,6 +496,8 @@ namespace Virus.Core
 
             for (int i = 0; i < moves.Count; i++)
             {
+                Console.WriteLine("S:{0}, C:{1}, M:{2}", steps, c, moves[i]);
+
                 Scenario newone = new Scenario(original, Me, moves[i], c, steps, moves);
 
                 if (root)
@@ -539,6 +560,9 @@ namespace Virus.Core
                     }
                 }
             }
+
+            Console.WriteLine("Selected - S:{0}, C:{1} --> M:{2}", steps, c, best.Move);
+
 
             return best;
 
