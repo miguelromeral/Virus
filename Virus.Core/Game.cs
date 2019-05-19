@@ -340,6 +340,7 @@ namespace Virus.Core
 
                 if (inscenario)
                 {
+                    //newCard = new Card(Card.CardColor.Blue, Card.CardFace.Virus);
                     newCard = TotalCardsInGame[r.Next(0, TotalCardsInGame.Count)];
                 }
                 else
@@ -380,22 +381,28 @@ namespace Virus.Core
             Console.WriteLine("Press any key to begin the Virus!");
             Console.ReadLine();
 
+            #region TESTING
+            Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Organ);
+            Players[0].Hand[1] = new Card(Card.CardColor.Blue, Card.CardFace.Organ);
+            Players[0].Hand[2] = new Card(Card.CardColor.Yellow, Card.CardFace.Virus);
 
-            Players[0].Hand[0] = new Card(Card.CardColor.Wildcard, Card.CardFace.EvolvedMedicine);
-            Players[0].Hand[1] = new Card(Card.CardColor.Yellow, Card.CardFace.Organ);
-            Card c = new Card(Card.CardColor.Yellow, Card.CardFace.Organ);
-            Players[0].Hand[2] = c;
-            Players[0].Hand.Remove(c);
 
-            Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            Players[0].Body.SetOrgan(new Card(Card.CardColor.Bionic, Card.CardFace.Organ));
 
-            Players[0].Body.Items[0].NewEvolvedMedicine(this, 
-                new Card(Card.CardColor.Red, Card.CardFace.EvolvedMedicine));
+            //Players[0].Hand[0] = new Card(Card.CardColor.Wildcard, Card.CardFace.EvolvedMedicine);
+            //Players[0].Hand[1] = new Card(Card.CardColor.Yellow, Card.CardFace.Organ);
+            //Card c = new Card(Card.CardColor.Yellow, Card.CardFace.Organ);
+            //Players[0].Hand[2] = c;
+            //Players[0].Hand.Remove(c);
 
-            Players[1].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Organ);
-            Players[1].Hand[1] = new Card(Card.CardColor.Red, Card.CardFace.Medicine);
-            Players[1].Hand[2] = new Card(Card.CardColor.Purple, Card.CardFace.SecondOpinion);
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Bionic, Card.CardFace.Organ));
+
+            //Players[0].Body.Items[0].NewEvolvedMedicine(this, 
+            //    new Card(Card.CardColor.Red, Card.CardFace.EvolvedMedicine));
+
+            //Players[1].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Organ);
+            //Players[1].Hand[1] = new Card(Card.CardColor.Red, Card.CardFace.Medicine);
+            //Players[1].Hand[2] = new Card(Card.CardColor.Purple, Card.CardFace.SecondOpinion);
 
 
 
@@ -439,7 +446,7 @@ namespace Virus.Core
 
             //Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
             //Players[2].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
-
+            #endregion
 
 
             while (!GameOver)
@@ -638,11 +645,11 @@ namespace Virus.Core
                 // Once the player has used (or discarded) cards, fill the hand to the number.
                 DrawCardsToFill(p);
                 Turn++;
-                CleanFlagsProtectiveSuite();
+                ClearFlagsProtectiveSuite();
             }
         }
 
-        private void CleanFlagsProtectiveSuite()
+        private void ClearFlagsProtectiveSuite()
         {
             foreach(var p in Players)
             {

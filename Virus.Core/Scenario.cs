@@ -13,7 +13,7 @@ namespace Virus.Core
         /// <summary>
         /// Original game state.
         /// </summary>
-        public Scenario Root;
+        public Scenario Previous;
         /// <summary>
         /// Game state with the move played.
         /// </summary>
@@ -64,12 +64,12 @@ namespace Virus.Core
             Card = c;
             Step = s;
             AllMoves = list;
-            Root = r;
+            Previous = r;
         }
 
         public void SetRootGame()
         {
-            Root = this;
+            Previous = this;
         }
 
         /// <summary>
@@ -87,6 +87,18 @@ namespace Virus.Core
             }
             scen.Game.PlayCardByMove(p, scen.Card, scen.Move, null);
             scen.eventWaitHandle.Set();
+        }
+
+        public Scenario GetRoot()
+        {
+            if(Previous == null)
+            {
+                return this;
+            }
+            else
+            {
+                return Previous.GetRoot();
+            }
         }
         
     }

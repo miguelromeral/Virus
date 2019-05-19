@@ -547,7 +547,7 @@
             Total cards in the game.
             </summary>
         </member>
-        <member name="M:Virus.Core.Game.#ctor(System.Int32,System.Boolean)">
+        <member name="M:Virus.Core.Game.#ctor(System.Int32,System.Int32,System.Boolean)">
             <summary>
             Game constructor. It inits the current game and its parameters and config.
             </summary>
@@ -584,7 +584,7 @@
             <param name="me">Player who is drawing a new card</param>
             <returns>Card recovered from the deck</returns>
         </member>
-        <member name="M:Virus.Core.Game.Start(System.Int32)">
+        <member name="M:Virus.Core.Game.Start">
             <summary>
             Start the current game.
             </summary>
@@ -831,7 +831,7 @@
             Class that stores the game state when looking for the best possible move.
             </summary>
         </member>
-        <member name="F:Virus.Core.Scenario.Root">
+        <member name="F:Virus.Core.Scenario.Previous">
             <summary>
             Original game state.
             </summary>

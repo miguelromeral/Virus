@@ -23,7 +23,7 @@ namespace Virus.ConsoleApp
         #endregion
 
 
-        public void Play(int milis)
+        public void Play()
         {
             Console.WriteLine("Press any key to begin the Virus!");
             Console.ReadLine();
@@ -79,17 +79,12 @@ namespace Virus.ConsoleApp
                 // IA Turn
                 else
                 {
-                    PlayTurn(milis == 0, true);
+                    PlayTurn(WaitingTime == 0, true);
                     //PlayTurn(milis == 0, false);
-                    if (milis != 0)
+                    if (WaitingTime != 0)
                     {
-                        System.Threading.Thread.Sleep(milis);
+                        System.Threading.Thread.Sleep(WaitingTime);
                     }
-                    //else
-                    //{
-                    //    Console.WriteLine("Press any key to begin the Virus!");
-                    //    Console.ReadLine();
-                    //}
                 }
             }
             Console.WriteLine();

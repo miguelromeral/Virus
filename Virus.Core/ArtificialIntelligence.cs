@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -106,8 +107,8 @@ namespace Virus.Core
                     PlayTurnAIMedium(movesByCard);
                     break;
                 case AICategory.Hard:
-                    //PlayTurnAIHard(movesByCard);
-                    PlayTurnAIMedium(movesByCard);
+                    PlayTurnAIHard(movesByCard);
+                    //PlayTurnAIMedium(movesByCard);
                     break;
                 default:
                     PlayTurnAIRandom(movesByCard);
@@ -411,24 +412,30 @@ namespace Virus.Core
 
         public void PlayTurnAIHard(List<List<string>> movesbycard)
         {
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
             // List of scenarios with every card played.
-            Scenario thebest = getTheBestPossibleScenario(Game, movesbycard, 2, Me.Hand.Count, true);
+            Scenario thebest = getTheBestPossibleScenario(Game, movesbycard, 2, Me.Hand.Count, null);
 
             if(thebest == null)
             {
                 Game.DiscardAllHand(Me);
                 return;
             }
+            Scenario root = thebest.GetRoot();
 
-            Console.WriteLine("----------------------------------------------------");
+            timer.Stop();
+            Console.WriteLine("Time elapsed in choice: {0} ms", timer.ElapsedMilliseconds);
 
-            Game.PlayCardByMove(Me, thebest.Card, thebest.Move, thebest.AllMoves);
+            Game.PlayCardByMove(Me, root.Card, root.Move, root.AllMoves);
         }
 
+        
 
-        public Scenario getTheBestPossibleScenario(Game original, List<List<string>> movesbycard, int steps, int cardsinhand, bool root = false, Scenario previous = null)
+        public Scenario getTheBestPossibleScenario(Game original, List<List<string>> movesbycard, int steps, int cardsinhand, Scenario previous = null)
         {
-            Console.WriteLine("Entrando en Paso {0}", steps);
+            //Console.WriteLine("Entrando en Paso {0}", steps);
             
             Scenario[] bestByCard = new Scenario[cardsinhand];
 
@@ -437,20 +444,9 @@ namespace Virus.Core
                 Player otherme = original.GetPlayerByID(Me.ID);
                 Card c = otherme.Hand[i];
 
-                Console.WriteLine("Paso {0}, Carta #{1} ({2})", steps, i, otherme.Hand[i]);
-
-                if(c.Face == Card.CardFace.ProtectiveSuit ||
-                    c.Face == Card.CardFace.SecondOpinion)
-                {
-                    bestByCard[i] = null;
-
-                }
-                else
-                {
-                    bestByCard[i] = getTheBestPossibleScenarioByCard(original, movesbycard[i], c, steps, cardsinhand, root, previous);
-
-                }
-
+                //Console.WriteLine("Paso {0}, Carta #{1} ({2})", steps, i, otherme.Hand[i]);
+                
+                bestByCard[i] = getTheBestPossibleScenarioByCard(original, movesbycard[i], c, steps, cardsinhand, previous);
             }
 
             Scenario best = bestByCard[0];
@@ -482,30 +478,22 @@ namespace Virus.Core
 
             if (best == null)
                 return null;
-
-            if (root)
-            {
-                return best.Root;
-            }
+            
             return best;
         }
 
 
-        public Scenario getTheBestPossibleScenarioByCard(Game original, List<string> moves, Card c, int steps, int cardsinhand, bool root = false, Scenario previous = null)
+        public Scenario getTheBestPossibleScenarioByCard(Game original, List<string> moves, Card c, int steps, int cardsinhand, Scenario first = null)
         {
             List<Scenario> bestInHand = new List<Scenario>();
 
             for (int i = 0; i < moves.Count; i++)
             {
-                Console.WriteLine("S:{0}, C:{1}, M:{2}", steps, c, moves[i]);
+                //Console.WriteLine("S:{0}, C:{1}, M:{2}", steps, c, moves[i]);
 
-                Scenario newone = new Scenario(original, Me, moves[i], c, steps, moves);
-
-                if (root)
-                    newone.SetRootGame();
-                else
-                    newone.Root = previous;
-
+                Scenario newone = new Scenario(original, Me, moves[i], c, steps, moves, first);
+                
+                
                 Player otherme = newone.Game.GetPlayerByID(Me.ID);
                 c = otherme.Hand[otherme.GetIndexOfCardInHand(c)];
                 // Substitute this with the async method:
@@ -520,20 +508,14 @@ namespace Virus.Core
                 }
                 else
                 {
-                    bestInHand.Add(getTheBestPossibleScenario(newone.Game, newone.Game.GetListOfMovesWholeHand(newone.Game.GetPlayerByID(Me.ID)), steps - 1, cardsinhand, false, newone));
+                    bestInHand.Add(getTheBestPossibleScenario(newone.Game, newone.Game.GetListOfMovesWholeHand(otherme), steps - 1, otherme.Hand.Count, newone));
                 }
 
             }
 
             if (bestInHand.Count == 0)
-                if (root)
-                {
-                    return null;
-                }
-                else
-                {
-                    return (previous == null ? null : previous.Root);
-                }
+                return first;
+                //return null;
 
             Scenario best = bestInHand[0];
 
@@ -555,14 +537,11 @@ namespace Virus.Core
                         {
                             best = newone;
                         }
-
-
-
                     }
                 }
             }
 
-            Console.WriteLine("Selected - S:{0}, C:{1} --> M:{2}", steps, c, best.Move);
+            //Console.WriteLine("Selected - S:{0}, C:{1} --> M:{2}", steps, c, best.Move);
 
 
             return best;
