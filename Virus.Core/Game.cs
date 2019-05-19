@@ -78,6 +78,8 @@ namespace Virus.Core
         /// Total cards in the game.
         /// </summary>
         public List<Card> TotalCardsInGame { get; set; }
+
+        public int WaitingTime { get; set; }
 #endregion
 
         #region INITIALIZERS
@@ -86,7 +88,7 @@ namespace Virus.Core
         /// </summary>
         /// <param name="numPlayers">Number of players in the game</param>
         /// <param name="firstHuman">First player is a human</param>
-        public Game(int numPlayers, bool firstHuman = false)
+        public Game(int numPlayers, int waitingtime, bool firstHuman = false)
         {
             Logger = new Logger();
             WriteToLog("We're getting ready Virus!", true);
@@ -105,6 +107,7 @@ namespace Virus.Core
             {
                 TotalCardsInGame.Add(c);
             }
+            WaitingTime = waitingtime;
             WriteToLog(Deck.Count+" cards shuffled.", true);
             Discards = new List<Card>();
             WriteToLog("Discard stack created.");
@@ -373,7 +376,7 @@ namespace Virus.Core
         /// Start the current game.
         /// </summary>
         /// <param name="milis">Number of miliseconds to wait for the next move automatically. If its 0, you'll have to press a key</param>
-        public void Start(int milis = 0) {
+        public void Start() {
             Console.WriteLine("Press any key to begin the Virus!");
             Console.ReadLine();
 
@@ -442,10 +445,10 @@ namespace Virus.Core
             while (!GameOver)
             {
                 //Console.Clear();
-                PlayTurn(milis == 0, true);
-                if(milis != 0)
+                PlayTurn(WaitingTime == 0, true);
+                if(WaitingTime != 0)
                 {
-                    System.Threading.Thread.Sleep(milis);
+                    System.Threading.Thread.Sleep(WaitingTime);
                 }
             }
 
@@ -811,7 +814,11 @@ namespace Virus.Core
 
                     WriteToLog(me.ShortDescription + " has switched his hand with the " + toswitch.ShortDescription + "'s one.");
 
-                    Turn--;
+                    // Avoids go to the previous turn when a Player in overtime plays this card.
+                    if (PlayerInOvertime == null)
+                    {
+                        Turn--;
+                    }
 
                     WriteToLog(me.ShortDescription + " can play again with his new hand.");
                 }
@@ -958,6 +965,14 @@ namespace Virus.Core
             {
 
                 WriteToLog(rival.ShortDescription + " has protected with a Protective Suit.", true);
+                if (WaitingTime != 0)
+                {
+                    System.Threading.Thread.Sleep(WaitingTime);
+                }
+                else
+                {
+                    Console.ReadKey();
+                }
 
                 if (wholemoves == null)
                 {

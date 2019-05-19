@@ -90,8 +90,8 @@ namespace Virus.Core
             else
             {
                 Computer = new ArtificialIntelligence(game, this);
-                //AI = Computer.RandomIA();
-                AI = ArtificialIntelligence.AICategory.Hard;
+                AI = Computer.RandomIA();
+                //AI = ArtificialIntelligence.AICategory.Hard;
             }
         }
         #endregion

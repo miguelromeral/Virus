@@ -106,7 +106,8 @@ namespace Virus.Core
                     PlayTurnAIMedium(movesByCard);
                     break;
                 case AICategory.Hard:
-                    PlayTurnAIHard(movesByCard);
+                    //PlayTurnAIHard(movesByCard);
+                    PlayTurnAIMedium(movesByCard);
                     break;
                 default:
                     PlayTurnAIRandom(movesByCard);

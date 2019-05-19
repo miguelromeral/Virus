@@ -15,7 +15,8 @@ namespace Virus.ConsoleApp
         #region Constructor
         public GameConsoleApp(
             int numPlayers,
-            bool firstHuman = false) : base(numPlayers, firstHuman)
+            int wa,
+            bool firstHuman = false) : base(numPlayers, wa, firstHuman)
         {
             reader = new ReaderInput(this);
         }
@@ -28,9 +29,14 @@ namespace Virus.ConsoleApp
             Console.ReadLine();
 
 
-            Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Overtime);
-            Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
-            Players[0].Hand[2] = new Card(Card.CardColor.Red, Card.CardFace.Organ);
+            //Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Overtime);
+            //Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            //Players[0].Hand[2] = new Card(Card.CardColor.Red, Card.CardFace.Organ);
+
+
+
+
+
             //Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
             //Players[1].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.OrganThief);
             //Players[1].Hand[1] = new Card(Card.CardColor.Yellow, Card.CardFace.Organ);
@@ -307,6 +313,8 @@ namespace Virus.ConsoleApp
                 {
 
                     WriteToLog(rival.ShortDescription + " has protected with a Protective Suit.", true);
+
+
 
                     if (wholemoves == null)
                     {
