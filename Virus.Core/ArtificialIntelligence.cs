@@ -453,27 +453,7 @@ namespace Virus.Core
 
             for (int i = 1; i < cardsinhand; i++)
             {
-                Scenario newone = bestByCard[i];
-                if (best == null)
-                {
-                    best = newone;
-                }
-                else
-                {
-                    if (newone != null)
-                    {
-
-
-                        // Deploy it with more enthusiasm
-                        if (newone.Player.Body.Points > best.Player.Body.Points)
-                        {
-                            best = newone;
-                        }
-
-
-
-                    }
-                }
+                Scenario.GetBetter(best, bestByCard[i]);
             }
 
             if (best == null)
@@ -500,6 +480,10 @@ namespace Virus.Core
                 newone.Game.PlayCardByMove(newone.Game.GetPlayerByID(Me.ID), c, newone.Move, null);
                 //---------------------------
 
+
+                if (newone.AmITheWinner)
+                    return newone;
+
                 newone.Game.DrawCardsToFill(newone.Game.GetPlayerByID(Me.ID), cardsinhand, true);
 
                 if (steps == 0)
@@ -521,24 +505,7 @@ namespace Virus.Core
 
             for (int i = 1; i < bestInHand.Count; i++)
             {
-                Scenario newone = bestInHand[i];
-                if (best == null)
-                {
-                    best = newone;
-                }
-                else
-                {
-                    if (newone != null)
-                    {
-
-
-                        // Deploy it with more enthusiasm
-                        if (newone.Player.Body.Points > best.Player.Body.Points)
-                        {
-                            best = newone;
-                        }
-                    }
-                }
+                Scenario.GetBetter(best, bestInHand[i]);
             }
 
             //Console.WriteLine("Selected - S:{0}, C:{1} --> M:{2}", steps, c, best.Move);
@@ -547,8 +514,7 @@ namespace Virus.Core
             return best;
 
         }
-
-
+        
 
 
         /// <summary>

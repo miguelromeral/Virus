@@ -54,6 +54,12 @@ namespace Virus.Core
         {
             get { return (Turn - 1) % Players.Count; }
         }
+
+        public int PreviousTurn
+        {
+            get { return (CurrentTurn == 0 ? Players.Count - 1: CurrentTurn - 1 ); }
+        }
+        
         /// <summary>
         /// Check if the game is over (any user have the healthy organs required).
         /// </summary>
@@ -372,6 +378,13 @@ namespace Virus.Core
             return wholeMoves;
         }
 
+        public bool AmITheWinner(int id)
+        {
+            if (GetPlayerByID(id).HealthyOrgans == Settings.NumberToWin)
+                return true;
+            return false;
+        }
+
 
         /// <summary>
         /// Start the current game.
@@ -382,9 +395,9 @@ namespace Virus.Core
             Console.ReadLine();
 
             #region TESTING
-            Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Organ);
-            Players[0].Hand[1] = new Card(Card.CardColor.Blue, Card.CardFace.Organ);
-            Players[0].Hand[2] = new Card(Card.CardColor.Yellow, Card.CardFace.Virus);
+            //Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Organ);
+            //Players[0].Hand[1] = new Card(Card.CardColor.Blue, Card.CardFace.Organ);
+            //Players[0].Hand[2] = new Card(Card.CardColor.Yellow, Card.CardFace.Virus);
 
 
 
@@ -499,7 +512,7 @@ namespace Virus.Core
 
                     if(item.Status == BodyItem.State.Immunized)
                     {
-                        res += "(+) ";
+                        res += "[+] ";
                     }
                     else
                     {
@@ -568,7 +581,7 @@ namespace Virus.Core
 
                     if (item.Status == BodyItem.State.Immunized)
                     {
-                        Console.Write("(+) ");
+                        Console.Write("[+] ");
                     }
                     else
                     {

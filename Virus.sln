@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Virus.Universal", "Virus.Universal\Virus.Universal.csproj", "{DF61538D-874A-4AE6-A2A5-CB34E09287D1}"
 	ProjectSection(ProjectDependencies) = postProject
 		{423A4A3A-3773-4E35-8C64-073B93BC7E02} = {423A4A3A-3773-4E35-8C64-073B93BC7E02}
+		{9B29B176-BE5B-45FB-9B45-0798C48CBBE6} = {9B29B176-BE5B-45FB-9B45-0798C48CBBE6}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Virus.Manual", "Virus.Manual\Virus.Manual.csproj", "{32353D41-7B5B-4ACD-86AE-7454C108F1EF}"
@@ -18,6 +19,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Virus.Core", "Virus.Core\Virus.Core.csproj", "{423A4A3A-3773-4E35-8C64-073B93BC7E02}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Virus.Forms", "Virus.Forms\Virus.Forms.csproj", "{9B29B176-BE5B-45FB-9B45-0798C48CBBE6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{423A4A3A-3773-4E35-8C64-073B93BC7E02} = {423A4A3A-3773-4E35-8C64-073B93BC7E02}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

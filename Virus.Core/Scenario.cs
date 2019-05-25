@@ -42,6 +42,14 @@ namespace Virus.Core
         /// Sempahore that allows the AI to check this game state.
         /// </summary>
         public EventWaitHandle eventWaitHandle;
+        public bool AmITheWinner {
+            get {
+                if (Game == null)
+                    return false;
+                return Game.AmITheWinner(Player.ID);
+            }
+        }
+        public int Points { get { return Player.Body.Points + (AmITheWinner ? 99999 : 0); } }
 
         /// <summary>
         /// Scenario's constructor.
@@ -101,5 +109,55 @@ namespace Virus.Core
             }
         }
         
+
+        public static Scenario GetBetter(Scenario one, Scenario two)
+        {
+            if (one == null)
+                return two;
+            if (two == null)
+                return one;
+
+            // Compare steps. If less steps, it means less moves to become the winner.
+            // Note: the steps go in descendent order, so 3 as step is better than 0.
+            if (one.Step > two.Step)
+                return one;
+            if (one.Step < two.Step)
+                return two;
+            // Same number of steps
+
+
+            Player po = one.Player;
+            Player pt = two.Player;
+            var topone = one.Game.TopPlayers();
+            var toptwo = two.Game.TopPlayers();
+
+            int posone = topone.IndexOf(one.Game.GetPlayerByID(po.ID));
+            int postwo = topone.IndexOf(two.Game.GetPlayerByID(pt.ID));
+
+
+
+
+            // Now, check the healthy organs
+
+            if (po.HealthyOrgans > pt.HealthyOrgans)
+                return one;
+            if (po.HealthyOrgans < pt.HealthyOrgans)
+                return two;
+            // Also same number of healthy organs
+
+            // Now, check the points of its body.
+            Body bo = po.Body;
+            Body bt = pt.Body;
+
+            if (bo.Points > bt.Points)
+                return one;
+            if (bo.Points < bt.Points)
+                return two;
+            // Same number of points.
+
+            // MAKE IN THE FUTURE  MORE OPTIONS
+            return one;
+        }
+
     }
 }

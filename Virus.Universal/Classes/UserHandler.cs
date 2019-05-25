@@ -86,6 +86,10 @@ namespace Virus.Universal.Classes
 
         }
 
+
+
+
+
         public void Card_Clicked(object sender, RoutedEventArgs e)
         {
             ((Button)sender).Content = "Clicked!";
