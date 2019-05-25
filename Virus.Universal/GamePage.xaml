@@ -8,6 +8,14 @@
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <StackPanel x:Name='GameData'
+                    Orientation='Horizontal'
+                    x:FieldModifier='public'>
+
+            <TextBlock x:Name='tb_Turns' />
+
+        </StackPanel>
+        
         <StackPanel x:Name='GameContent'
                     HorizontalAlignment='Center'
                     Orientation='Vertical'

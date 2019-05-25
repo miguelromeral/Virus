@@ -29,7 +29,7 @@ namespace Virus.Universal.Pages
     public sealed partial class GamePage : Page
     {
         private MainPage Main;
-        private Game Game;
+        private UGame Game;
         private UserHandler Handler;
         public List<Panel> PlayerPanels;
         public Dictionary<int, List<Panel>> BIPanels;
@@ -39,8 +39,9 @@ namespace Virus.Universal.Pages
             this.InitializeComponent();
             Main = m;
             
+
             PlayerPanels = new List<Panel>();
-            Game = new Game(3, 0, true);
+            Game = new UGame(3, 0, true);
             BIPanels = new Dictionary<int, List<Panel>>();
             
             Handler = new UserHandler(Game, Game.Players[0], this);
@@ -97,6 +98,7 @@ namespace Virus.Universal.Pages
             b.Click += Button_Click;
 
             GameContent.Children.Add(b);
+            UpdateGamePanel();
         }
 
         private Panel GetPanelByPlayerPosition(int id, int item)
@@ -129,7 +131,7 @@ namespace Virus.Universal.Pages
 
                 Image im = new Image()
                 {
-                    Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory()+"/Images/corazn_500.jpg", UriKind.Absolute)),
+                    Source = new BitmapImage(new Uri(GetImageFromCard(item.Organ), UriKind.Absolute)),
                     Height = 100,
                     Width = 200
                 };
@@ -137,6 +139,43 @@ namespace Virus.Universal.Pages
                 panel.Children.Add(im);
 
             }
+        }
+
+        private string GetImageFromCard(Card c)
+        {
+            string path = Directory.GetCurrentDirectory() + "/Images/";
+            switch (c.Face)
+            {
+                case Card.CardFace.Organ:
+
+                    switch (c.Color)
+                    {
+                        case Card.CardColor.Red:
+                            path += "organ_red.jpg";
+                            break;
+                        case Card.CardColor.Blue:
+                            path += "organ_blue.jpg";
+                            break;
+                        case Card.CardColor.Yellow:
+                            path += "organ_yellow.jpg";
+                            break;
+                        case Card.CardColor.Green:
+                            path += "organ_green.jpg";
+                            break;
+                        case Card.CardColor.Wildcard:
+                            path += "organ_wild.jpg";
+                            break;
+                        case Card.CardColor.Bionic:
+                        default:
+                            path += "none.jpg";
+                            break;
+                    }
+                    break;
+                default:
+                    path += "none.jpg";
+                    break;
+            }
+            return path;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -148,8 +187,13 @@ namespace Virus.Universal.Pages
             Player p = Game.Players[Game.PreviousTurn];
 
             UpdatePlayerPanel(p.ID);
+            UpdateGamePanel();
         }
 
 
+        private void UpdateGamePanel()
+        {
+            tb_Turns.Text = "Turn #"+Game.Turn;
+        }
     }
 }
