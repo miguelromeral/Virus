@@ -25,39 +25,8 @@ namespace Virus.Forms
         private void InitGame()
         {
             Game = new Game(3, 5000, true);
-            
-            foreach (var p in Game.Players)
-            {
-                FlowLayoutPanel flp = new FlowLayoutPanel()
-                {
-                    Name = "panel_user_" + p.ID,
-                    FlowDirection = FlowDirection.LeftToRight,
-                    AutoScroll = true
-                };
-                PlayerPanels.Add(flp);
 
-                Label tb = new Label()
-                {
-                    Text = p.ShortDescription
-                };
-
-                PlayerPanels.Add(flp);
-
-                List<Panel> bil = new List<Panel>();
-                for (int i = 0; i < Game.Settings.NumberToWin; i++)
-                {
-                    FlowLayoutPanel pi = new FlowLayoutPanel();
-                    pi.BorderStyle = BorderStyle.FixedSingle;
-                    pi.BackColor = Color.AliceBlue;
-                    flp.Controls.Add(pi);
-                    bil.Add(pi);
-                }
-                BodyItemPanels.Add(p.ID, bil);
-                MainLayout.Controls.Add(tb);
-                MainLayout.Controls.Add(flp);
-
-
-            }
+            InitPanels();
             UpdateUserHand();
         }
 
@@ -66,20 +35,88 @@ namespace Virus.Forms
 
         private List<Panel> PlayerPanels = new List<Panel>();
 
+        private List<Panel> UserHandPanels = new List<Panel>();
+        private List<CCheckBox> UserHandCards = new List<CCheckBox>();
+
+
+
+        private void InitPanels()
+        {
+            foreach (var p in Game.Players)
+            {
+                Label label = new Label()
+                {
+                    Text = p.ShortDescription
+                };
+                
+                FlowLayoutPanel pBody = new FlowLayoutPanel()
+                {
+                    Name = "panel_user_" + p.ID,
+                    FlowDirection = FlowDirection.LeftToRight,
+                    BorderStyle = BorderStyle.FixedSingle,
+                    AutoScroll = false,
+                    AutoSize = true,
+                    AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                };
+                PlayerPanels.Add(pBody);
+
+                List<Panel> bil = new List<Panel>();
+                for (int i = 0; i < Game.Settings.NumberToWin; i++)
+                {
+                    FlowLayoutPanel pItem = new FlowLayoutPanel() {
+                        FlowDirection = FlowDirection.LeftToRight,
+                        AutoScroll = false,
+                        AutoSize = true,
+                        AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                    };
+                    bil.Add(pItem);
+                    
+                    pBody.Controls.Add(pItem);
+                }
+                BodyItemPanels.Add(p.ID, bil);
+
+                MainLayout.Controls.Add(label);
+                MainLayout.Controls.Add(pBody);
+            }
+            for(int i=0; i<Game.Settings.NumberCardInHand; i++)
+            {
+                FlowLayoutPanel pHand = new FlowLayoutPanel()
+                {
+                    FlowDirection = FlowDirection.LeftToRight,
+                    AutoScroll = true,
+                    AutoSize = true,
+                    AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                };
+                UserHandPanels.Add(pHand);
+                pUserHand.Controls.Add(pHand);
+            }
+        }
 
         private void UpdateUserHand()
         {
+            UserHandCards.Clear();
             foreach (var p in Game.Players)
             {
                 if (p.AI != ArtificialIntelligence.AICategory.Human)
                     break;
 
-                foreach (Card c in p.Hand)
+                int i;
+                Panel pc;
+                for (i=0; i<p.Hand.Count; i++)
                 {
-                    FlowLayoutPanel pc = new FlowLayoutPanel();
-                    
-                    pc.Controls.Add(CreateButtonCheckBoxCard(c, 75, 100));
-                    pUserHand.Controls.Add(pc);
+                    Card c = p.Hand[i];
+                    pc = UserHandPanels[i];
+
+                    var cb = CreateButtonCheckBoxCard(c, 75, 100, p.ID, i);
+                    UserHandCards.Add(cb);
+                    pc.Controls.Clear();
+                    pc.Controls.Add(cb);
+                }
+                while (i < Game.Settings.NumberCardInHand)
+                {
+                    pc = UserHandPanels[i];
+                    pc.Controls.Clear();
+                    i++;
                 }
             }
         }
@@ -88,8 +125,7 @@ namespace Virus.Forms
         private void button1_Click(object sender, EventArgs e)
         {
             Game.PlayTurn();
-            UpdateAllPlayerPanels();
-            UpdateGamePanel();
+            UpdateGUI();
         }
 
         private void UpdateAllPlayerPanels()
@@ -98,12 +134,69 @@ namespace Virus.Forms
                 UpdatePlayerPanel(p.ID);
         }
 
-        private CheckBox CreateButtonCheckBoxCard(Card c, int width, int height)
+        private Panel GetBodyItemPanel(int id, int item)
+        {
+            List<Panel> list = null;
+            BodyItemPanels.TryGetValue(id, out list);
+            if(list == null)
+            {
+                return null;
+            }
+
+            return list[item];
+        }
+
+        private void UpdatePlayerPanel(int id)
+        {
+            Player p = Game.Players[id];
+            Panel pItem;
+            int i = 0;
+            for (i = 0; i < p.Body.Items.Count; i++)
+            {
+                pItem = GetBodyItemPanel(id, i);
+
+                pItem.Controls.Clear();
+
+                BodyItem item = p.Body.Items[i];
+
+                pItem.Controls.Add(CreateButtonCheckBoxCard(item.Organ, 75, 100, id, i));
+
+                for (int j = 0; j < item.Modifiers.Count; j++)
+                {
+                    pItem.Controls.Add(CreateButtonCheckBoxCard(item.Modifiers[j], 25, 37, id, i));
+                }
+
+            }
+            while (i < Game.Settings.NumberToWin)
+            {
+                pItem = GetBodyItemPanel(id, i);
+                pItem.Controls.Clear();
+                i++;
+            }
+        }
+
+        private void UpdateGamePanel()
+        {
+            lTurns.Text = "Turn #" + Game.Turn;
+            tbGame.Text = Game.ToString();
+        }
+
+        private void UpdateGUI()
+        {
+            UpdateAllPlayerPanels();
+            UpdateGamePanel();
+            UpdateUserHand();
+        }
+
+        private CCheckBox CreateButtonCheckBoxCard(Card c, int width, int height, int playerid, int index)
         {
             Image myimage = new Bitmap(GetImageFromCard(c));
-            CheckBox b = new CheckBox()
+            CCheckBox b = new CCheckBox()
             {
                 //Text = c.ToString(),
+                Card = c,
+                PlayerId = playerid,
+                Index = index,
                 BackgroundImage = myimage,
                 Width = width,
                 Height = height,
@@ -113,38 +206,6 @@ namespace Virus.Forms
             b.BackgroundImage = new Bitmap(b.BackgroundImage, b.Width, b.Height);
             return b;
         }
-
-        private void UpdatePlayerPanel(int id)
-        {
-            Player p = Game.Players[id];
-
-            for (int i = 0; i < p.Body.Items.Count; i++)
-            {
-                Panel panel = PlayerPanels[id];
-
-                if (panel == null)
-                    break;
-
-                BodyItem item = p.Body.Items[i];
-
-                panel.Controls.Clear();
-                
-
-                panel.Controls.Add(CreateButtonCheckBoxCard(item.Organ, 50, 100));
-
-                for (int j = 0; j < item.Modifiers.Count; j++)
-                {
-                    panel.Controls.Add(CreateButtonCheckBoxCard(item.Modifiers[j], 25, 37));
-                }
-
-            }
-        }
-
-        private void UpdateGamePanel()
-        {
-            lTurns.Text = "Turn #" + Game.Turn;
-        }
-
 
         public Image GetImageFromCard(Card c)
         {
@@ -239,5 +300,28 @@ namespace Virus.Forms
             return path;
         }
 
+        private void bDiscard_Click(object sender, EventArgs e)
+        {
+            bool discarded = false;
+            Player p = null;
+            foreach(var cb in UserHandCards)
+            {
+                if (cb.Checked)
+                {
+                    if (p == null)
+                        p = Game.GetPlayerByID(cb.PlayerId);
+
+                    Game.DiscardFromHand(p, cb.Card);
+                    discarded = true;
+                }
+            }
+            if (discarded)
+            {
+                Game.DrawCardsToFill(p);
+                Game.Turn++;
+            }
+            UpdateGUI();
+
+        }
     }
 }

@@ -42,11 +42,15 @@ namespace Virus.Forms
             this.pUserHand = new System.Windows.Forms.FlowLayoutPanel();
             this.button1 = new System.Windows.Forms.Button();
             this.lTurns = new System.Windows.Forms.Label();
+            this.tbGame = new System.Windows.Forms.TextBox();
+            this.bDiscard = new System.Windows.Forms.Button();
+            this.pUserHand.SuspendLayout();
             this.SuspendLayout();
             // 
             // MainLayout
             // 
             this.MainLayout.AutoScroll = true;
+            this.MainLayout.AutoSize = true;
             this.MainLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.MainLayout.Location = new System.Drawing.Point(13, 13);
             this.MainLayout.Name = "MainLayout";
@@ -55,6 +59,10 @@ namespace Virus.Forms
             // 
             // pUserHand
             // 
+            this.pUserHand.AutoScroll = true;
+            this.pUserHand.AutoSize = true;
+            this.pUserHand.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pUserHand.Controls.Add(this.bDiscard);
             this.pUserHand.Location = new System.Drawing.Point(637, 393);
             this.pUserHand.Name = "pUserHand";
             this.pUserHand.Size = new System.Drawing.Size(695, 259);
@@ -79,17 +87,38 @@ namespace Virus.Forms
             this.lTurns.TabIndex = 3;
             this.lTurns.Text = "label1";
             // 
+            // tbGame
+            // 
+            this.tbGame.Location = new System.Drawing.Point(637, 73);
+            this.tbGame.Multiline = true;
+            this.tbGame.Name = "tbGame";
+            this.tbGame.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.tbGame.Size = new System.Drawing.Size(695, 314);
+            this.tbGame.TabIndex = 4;
+            // 
+            // bDiscard
+            // 
+            this.bDiscard.Location = new System.Drawing.Point(3, 3);
+            this.bDiscard.Name = "bDiscard";
+            this.bDiscard.Size = new System.Drawing.Size(189, 36);
+            this.bDiscard.TabIndex = 0;
+            this.bDiscard.Text = "Discard selected";
+            this.bDiscard.UseVisualStyleBackColor = true;
+            this.bDiscard.Click += new System.EventHandler(this.bDiscard_Click);
+            // 
             // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1344, 664);
+            this.Controls.Add(this.tbGame);
             this.Controls.Add(this.lTurns);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.pUserHand);
             this.Controls.Add(this.MainLayout);
             this.Name = "GameForm";
             this.Text = "GameForm";
+            this.pUserHand.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -103,5 +132,7 @@ namespace Virus.Forms
 
         private Button button1;
         private Label lTurns;
+        private TextBox tbGame;
+        private Button bDiscard;
     }
 }
