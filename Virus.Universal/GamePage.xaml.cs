@@ -131,51 +131,26 @@ namespace Virus.Universal.Pages
 
                 Image im = new Image()
                 {
-                    Source = new BitmapImage(new Uri(GetImageFromCard(item.Organ), UriKind.Absolute)),
+                    Source = new BitmapImage(new Uri(GUITools.GetImageFromCard(item.Organ))),
                     Height = 100,
                     Width = 200
                 };
 
                 panel.Children.Add(im);
 
-            }
-        }
+                for (int j=0; j<item.Modifiers.Count; j++){
+                    Card c = item.Modifiers[j];
 
-        private string GetImageFromCard(Card c)
-        {
-            string path = Directory.GetCurrentDirectory() + "/Images/";
-            switch (c.Face)
-            {
-                case Card.CardFace.Organ:
-
-                    switch (c.Color)
+                    Image imm = new Image()
                     {
-                        case Card.CardColor.Red:
-                            path += "organ_red.jpg";
-                            break;
-                        case Card.CardColor.Blue:
-                            path += "organ_blue.jpg";
-                            break;
-                        case Card.CardColor.Yellow:
-                            path += "organ_yellow.jpg";
-                            break;
-                        case Card.CardColor.Green:
-                            path += "organ_green.jpg";
-                            break;
-                        case Card.CardColor.Wildcard:
-                            path += "organ_wild.jpg";
-                            break;
-                        case Card.CardColor.Bionic:
-                        default:
-                            path += "none.jpg";
-                            break;
-                    }
-                    break;
-                default:
-                    path += "none.jpg";
-                    break;
+                        Height = 50,
+                        Width = 75
+                    };
+                    imm.Source = new BitmapImage(new Uri(GUITools.GetImageFromCard(c)));
+                    panel.Children.Add(imm);
+                }
+
             }
-            return path;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -184,9 +159,10 @@ namespace Virus.Universal.Pages
             //    Game.Turn++;
 
             Game.PlayTurn();
-            Player p = Game.Players[Game.PreviousTurn];
 
-            UpdatePlayerPanel(p.ID);
+            foreach(var p in Game.Players)
+                UpdatePlayerPanel(p.ID);
+
             UpdateGamePanel();
         }
 
@@ -195,5 +171,9 @@ namespace Virus.Universal.Pages
         {
             tb_Turns.Text = "Turn #"+Game.Turn;
         }
+
+
+
+        
     }
 }

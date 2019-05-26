@@ -7,6 +7,7 @@ using Virus.Core;
 using Virus.Universal.Pages;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Virus.Universal.Classes
 {
@@ -15,6 +16,7 @@ namespace Virus.Universal.Classes
         public Game Game;
         public Player Me;
         public GamePage Page;
+        public List<Panel> PanelCards;
         public Dictionary<int, Button> Buttons;
         public Dictionary<int, CheckBox> Checkers;
 
@@ -23,6 +25,7 @@ namespace Virus.Universal.Classes
             Game = g;
             Me = m;
             Page = p;
+            PanelCards = new List<Panel>();
         }
 
         public void InitializeUserPanels()
@@ -40,39 +43,11 @@ namespace Virus.Universal.Classes
                 {
                     Orientation = Orientation.Vertical
                 };
-
-                //var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-                //var logoimage = Path.Combine(outPutDirectory, "Image\\Botiqun_500.jpg");
-
-                //Image ci = new Image()
-                //{
-                //    Source = new BitmapImage(new Uri(logoimage))
-                //};
-
-                Card c = Game.Players[0].Hand[i];
-                Button b = new Button()
-                {
-                    Name = "hand_" + i,
-                    Content = c.ToString(),
-                    Margin = new Thickness(20)
-                };
-                //b.Style = Resources["CardButton"] as Style;
-                b.Click += Card_Clicked;
-
-                Buttons.Add(i, b);
-
-                CheckBox cb = new CheckBox()
-                {
-                    Name = "check_" + i
-                };
-
-                Checkers.Add(i, cb);
-
-                //spCard.Children.Add(ci);
-                spCard.Children.Add(b);
-                spCard.Children.Add(cb);
+                PanelCards.Add(spCard);
                 panelHands.Children.Add(spCard);
             }
+
+            UpdateUserCardPanels();
 
             Button bd = new Button()
             {
@@ -88,6 +63,49 @@ namespace Virus.Universal.Classes
 
 
 
+        public void UpdateUserCardPanels()
+        {
+            for (int i = 0; i < Me.Hand.Count; i++)
+            {
+                Panel p = PanelCards[i];
+                p.Children.Clear();
+                
+
+                Card c = Me.Hand[i];
+
+                Image im = new Image()
+                {
+                    Source = new BitmapImage(new Uri(GUITools.GetImageFromCard(c))),
+                    Height = 75,
+                    Width = 100
+                };
+
+                Button b = new Button()
+                {
+                    Name = "hand_" + i,
+                    Content = c.ToString(),
+                    Margin = new Thickness(20)
+                };
+                //b.Style = Resources["CardButton"] as Style;
+                //b.Click += Card_Clicked;
+
+
+
+                Buttons.Add(i, b);
+
+                CheckBox cb = new CheckBox()
+                {
+                    Name = "check_" + i
+                };
+
+                Checkers.Add(i, cb);
+
+                //spCard.Children.Add(ci);
+                p.Children.Add(im);
+                p.Children.Add(b);
+                p.Children.Add(cb);
+            }
+        }
 
 
         public void Card_Clicked(object sender, RoutedEventArgs e)
