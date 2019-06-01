@@ -69,6 +69,7 @@ namespace Virus.Forms
             this.pUserHand.AutoSize = true;
             this.pUserHand.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pUserHand.Controls.Add(this.bDiscard);
+            this.pUserHand.Controls.Add(this.button1);
             this.pUserHand.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pUserHand.Location = new System.Drawing.Point(449, 335);
             this.pUserHand.Name = "pUserHand";
@@ -87,7 +88,7 @@ namespace Virus.Forms
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(894, 335);
+            this.button1.Location = new System.Drawing.Point(198, 3);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(163, 40);
             this.button1.TabIndex = 2;
@@ -131,7 +132,6 @@ namespace Virus.Forms
             this.tableLayoutPanel1.Controls.Add(this.tbGame, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.MainLayout, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.pUserHand, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.button1, 2, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.MinimumSize = new System.Drawing.Size(100, 50);
@@ -153,8 +153,9 @@ namespace Virus.Forms
             this.tbLog.Multiline = true;
             this.tbLog.Name = "tbLog";
             this.tbLog.ReadOnly = true;
+            this.tableLayoutPanel1.SetRowSpan(this.tbLog, 2);
             this.tbLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbLog.Size = new System.Drawing.Size(440, 324);
+            this.tbLog.Size = new System.Drawing.Size(440, 656);
             this.tbLog.TabIndex = 5;
             // 
             // GameForm
@@ -191,6 +192,6 @@ namespace Virus.Forms
         private TextBox tbGame;
         private Button bDiscard;
         private TableLayoutPanel tableLayoutPanel1;
-        private TextBox tbLog;
+        protected TextBox tbLog;
     }
 }

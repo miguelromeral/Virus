@@ -1273,7 +1273,7 @@ namespace Virus.Core
                 case Card.CardFace.EvolvedVirus:
                 case Card.CardFace.Virus:
                     index = Convert.ToInt32(move.ToCharArray()[2]);
-                    res = Me.Body.Items[0].Organ.ToString();
+                    res = "your "+Me.Body.Items[0].Organ.ToString();
                     break;
                 case Card.CardFace.SecondOpinion:
                 case Card.CardFace.LatexGlove:

@@ -11,13 +11,13 @@ namespace Virus.Forms
     [Serializable]
     public class CGame : Game
     {
-        public CGame(int numPlayers, int waitingtime, TextBox log, bool firstHuman = false)
-            : base(numPlayers, waitingtime, firstHuman, new CLogger(log))
+        public CGame(int numPlayers, int waitingtime, Logger log, bool firstHuman = false)
+            : base(numPlayers, waitingtime, firstHuman, log)
         {
-            Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
-            Players[0].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
-            Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
+            //Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
             //Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
             //Players[0].Hand[2] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
 
@@ -114,9 +114,7 @@ namespace Virus.Forms
                     play = (MessageBox.Show(warning, "Protective Suit chance",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                         MessageBoxDefaultButton.Button1) == System.Windows.Forms.DialogResult.Yes);
-
-
-
+                    
                     if (play)
                     {
                         int index = -1;

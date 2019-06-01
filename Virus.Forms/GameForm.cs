@@ -15,16 +15,18 @@ namespace Virus.Forms
     public partial class GameForm : Form
     {
         public CGame Game;
+        public CLogger Logger;
 
         public GameForm()
         {
             InitializeComponent();
+            Logger = new CLogger(tbLog);
             InitGame();
         }
 
         private void InitGame()
         {
-            Game = new CGame(3, 5000, tbLog, true);
+            Game = new CGame(3, 5000, Logger, true);
 
             InitPanels();
             UpdateUserHand();
