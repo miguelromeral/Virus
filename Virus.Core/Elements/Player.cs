@@ -28,11 +28,7 @@ namespace Virus.Core
         /// <summary>
         /// Nickname of the player.
         /// </summary>
-        public string ShortDescription
-        {
-            // For the moment, it's only the ID.
-            get { return "Player " + ID; }
-        }
+        public string Nickname { get; set; }
 
         /// <summary>
         /// ID corresponding to the current player.
@@ -78,9 +74,10 @@ namespace Virus.Core
         /// </summary>
         /// <param name="game">Game</param>
         /// <param name="human">Indicates if the player will be a human (true) or PC (false)</param>
-        public Player(Game game, bool human = false)
+        public Player(Game game, string nick, bool human = false)
         {
-            Console.WriteLine("Creating new player.");
+            Console.WriteLine("Creating new player: "+nick);
+            Nickname = nick;
             Body = new Body();
             Computer = new ArtificialIntelligence(game, this);
             if (human)
@@ -114,7 +111,7 @@ namespace Virus.Core
         {
             string printed = String.Empty;
             
-            printed += String.Format("[{0,20} | IA: {1,10}]" + Environment.NewLine, ShortDescription, AI.ToString());
+            printed += String.Format("[{0,20} | IA: {1,10}]" + Environment.NewLine, Nickname, AI.ToString());
             printed += Body + Environment.NewLine;
             
             return printed;

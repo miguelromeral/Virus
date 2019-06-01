@@ -62,7 +62,7 @@ namespace Virus.Universal.Pages
                 };
                 TextBlock tb = new TextBlock()
                 {
-                    Text = p.ShortDescription
+                    Text = p.Nickname
                 };
 
 

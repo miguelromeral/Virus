@@ -11,7 +11,7 @@ namespace Virus.ConsoleApp
     {
         static void Main(string[] args)
         {
-            GameConsoleApp game = new GameConsoleApp(6, 2000, firstHuman:true);
+            GameConsoleApp game = new GameConsoleApp(2000, firstHuman:true);
             game.Play();
             Console.WriteLine("Press any key to exit");
             Console.ReadLine();

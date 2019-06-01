@@ -15,18 +15,16 @@ namespace Virus.Forms
     public partial class GameForm : Form
     {
         public CGame Game;
-        public CLogger Logger;
 
         public GameForm()
         {
             InitializeComponent();
-            Logger = new CLogger(tbLog);
             InitGame();
         }
 
         private void InitGame()
         {
-            Game = new CGame(3, 5000, Logger, true);
+            Game = new CGame(3, 5000, tbLog, true);
 
             InitPanels();
             UpdateUserHand();
@@ -44,11 +42,27 @@ namespace Virus.Forms
 
         private void InitPanels()
         {
+            MainLayout.ColumnCount = Game.Settings.NumberToWin;
+            MainLayout.ColumnStyles.Clear();
+            for(int i=0; i<Game.Settings.NumberToWin; i++)
+            {
+                MainLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, (float)(1/Game.Settings.NumberToWin)));
+                //MainLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100));
+
+            }
+            MainLayout.RowCount = Game.Players.Count * 2;
+            MainLayout.RowStyles.Clear();
+            for(int i=0; i<Game.Players.Count; i++)
+            {
+                MainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50));
+                MainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 200));
+            }
+            int count = 0;
             foreach (var p in Game.Players)
             {
                 Label label = new Label()
                 {
-                    Text = p.ShortDescription
+                    Text = p.Nickname
                 };
                 
                 FlowLayoutPanel pBody = new FlowLayoutPanel()
@@ -72,13 +86,14 @@ namespace Virus.Forms
                         AutoSizeMode = AutoSizeMode.GrowAndShrink,
                     };
                     bil.Add(pItem);
-                    
-                    pBody.Controls.Add(pItem);
+
+                    MainLayout.Controls.Add(pItem, i, count + 1);
                 }
                 BodyItemPanels.Add(p.ID, bil);
 
-                MainLayout.Controls.Add(label);
-                MainLayout.Controls.Add(pBody);
+                MainLayout.Controls.Add(label, 0, count);
+                //MainLayout.Controls.Add(pBody);
+                count += 2;
             }
             for(int i=0; i<Game.Settings.NumberCardInHand; i++)
             {

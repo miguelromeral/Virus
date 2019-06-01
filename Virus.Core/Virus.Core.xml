@@ -430,7 +430,7 @@
             Artificial Intelligence entity (or "mind") that indicates how to play.
             </summary>
         </member>
-        <member name="P:Virus.Core.Player.ShortDescription">
+        <member name="P:Virus.Core.Player.Nickname">
             <summary>
             Nickname of the player.
             </summary>
@@ -455,7 +455,7 @@
             Count of how many healthy organs has this user.
             </summary>
         </member>
-        <member name="M:Virus.Core.Player.#ctor(Virus.Core.Game,System.Boolean)">
+        <member name="M:Virus.Core.Player.#ctor(Virus.Core.Game,System.String,System.Boolean)">
             <summary>
             Player constructor.
             </summary>
@@ -547,7 +547,7 @@
             Total cards in the game.
             </summary>
         </member>
-        <member name="M:Virus.Core.Game.#ctor(System.Int32,System.Int32,System.Boolean,Virus.Core.Logger)">
+        <member name="M:Virus.Core.Game.#ctor(System.Int32,System.Boolean,Virus.Core.Logger)">
             <summary>
             Game constructor. It inits the current game and its parameters and config.
             </summary>
@@ -560,7 +560,7 @@
             </summary>
             <returns>List of cards created</returns>
         </member>
-        <member name="M:Virus.Core.Game.InitializePlayers(System.Int32,System.Boolean)">
+        <member name="M:Virus.Core.Game.InitializePlayers(System.Collections.Generic.List{System.String},System.Boolean)">
             <summary>
             Inits all the players and set the main values.
             </summary>

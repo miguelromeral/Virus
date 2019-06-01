@@ -11,8 +11,8 @@ namespace Virus.Forms
     [Serializable]
     public class CGame : Game
     {
-        public CGame(int numPlayers, int waitingtime, Logger log, bool firstHuman = false)
-            : base(numPlayers, waitingtime, firstHuman, log)
+        public CGame(int numPlayers, int waitingtime, TextBox log, bool firstHuman = false)
+            : base(waitingtime, firstHuman, new CLogger(log))
         {
             //Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
             //Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
@@ -109,7 +109,7 @@ namespace Virus.Forms
                 {
                     string warning = String.Format(
                         "{0} is trying to play a {1} against {2}. Do you want to protect?",
-                        player.ShortDescription, myCard.ToString(), GetMyCardAffectedFromMove(rival, myCard, move));
+                        player.Nickname, myCard.ToString(), GetMyCardAffectedFromMove(rival, myCard, move));
                     
                     play = (MessageBox.Show(warning, "Protective Suit chance",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Question,
@@ -137,7 +137,7 @@ namespace Virus.Forms
                 if (play)
                 {
 
-                    WriteToLog(rival.ShortDescription + " has protected with a Protective Suit.", true);
+                    WriteToLog(rival.Nickname + " has protected with a Protective Suit.", true);
 
 
 

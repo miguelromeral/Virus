@@ -94,7 +94,7 @@ namespace Virus.Core
         /// </summary>
         /// <param name="numPlayers">Number of players in the game</param>
         /// <param name="firstHuman">First player is a human</param>
-        public Game(int numPlayers, int waitingtime, bool firstHuman = false, Logger l = null)
+        public Game(int waitingtime, bool firstHuman = false, Logger l = null)
         {
             Logger = (l == null ? new Logger() : l);
 
@@ -118,7 +118,7 @@ namespace Virus.Core
             WriteToLog(Deck.Count+" cards shuffled.", true);
             Discards = new List<Card>();
             WriteToLog("Discard stack created.");
-            InitializePlayers(numPlayers, firstHuman);
+            InitializePlayers(Settings.PlayersNames, firstHuman);
         }
         
         /// <summary>
@@ -274,13 +274,13 @@ namespace Virus.Core
         /// <param name="numPlayers">Number of players in the game.</param>
         /// <param name="firstHuman">First player is human</param>
         /// <returns></returns>
-        private bool InitializePlayers(int numPlayers, bool firstHuman = false)
+        private bool InitializePlayers(List<string> PlayersNames, bool firstHuman = false)
         {
             WriteToLog("Creating players.", true);
             Players = new List<Player>();
-            for (int i = 0; i < numPlayers; i++)
+            for (int i = 0; i < PlayersNames.Count; i++)
             {
-                var p = new Player(this, (i == 0 && firstHuman)) { ID = i };
+                var p = new Player(this, PlayersNames[i] , (i == 0 && firstHuman)) { ID = i };
                 Players.Add(p);
 
                 System.Threading.Thread.Sleep(550);
@@ -288,7 +288,7 @@ namespace Virus.Core
                 WriteToLog("Player with ID " + i + " created. " + ((i == 0 && firstHuman) ? "Human" : "IA: " + p.AI));
             }
             WriteToLog("Dealing cards.", true);
-            for (int i = 0; i < numPlayers; i++)
+            for (int i = 0; i < PlayersNames.Count; i++)
             {
                 List<Card> hand = new List<Card>();
                 for (int j = 0; j < Settings.NumberCardInHand; j++)
@@ -354,7 +354,7 @@ namespace Virus.Core
                 {
                     newCard = Deck[0];
                 }
-                WriteToLog(me.ShortDescription + " draws a new card: " + newCard);
+                WriteToLog(me.Nickname + " draws a new card: " + newCard);
                 Deck.RemoveAt(0);
             }
             catch (Exception)
@@ -502,7 +502,7 @@ namespace Virus.Core
 
                 res += String.Format("| {0,10} | {1,20} | AI: {2,11} | Body Pts: <{3,6}> |",
                     (CurrentTurn == x ? "<My Turn>" : ""),
-                    p.ShortDescription,
+                    p.Nickname,
                     p.AI.ToString(),
                     p.Body.Points) + Environment.NewLine;
 
@@ -569,7 +569,7 @@ namespace Virus.Core
 
                 Console.Write(String.Format("| {0,10} | {1,20} | AI: {2,11} | Body Pts: <{3,6}> |",
                     (CurrentTurn == x ? "<My Turn>"  : ""),
-                    p.ShortDescription,
+                    p.Nickname,
                     p.AI.ToString(),
                     p.Body.Points) + Environment.NewLine);
 
@@ -633,7 +633,7 @@ namespace Virus.Core
                 p.PrintMyOptions();
             }
             Console.WriteLine();
-            WriteToLog("Turn #" + Turn + " (" + p.ShortDescription + ").");
+            WriteToLog("Turn #" + Turn + " (" + p.Nickname + ").");
             if (wait)
             {
                 Console.WriteLine("Press any key to continue.");
@@ -711,7 +711,7 @@ namespace Virus.Core
             bone.Modifiers.Remove(virus);
             btwo.NewVirus(virus, this);
 
-            WriteToLog(one.ShortDescription+" has spread his "+virus+" from his "+bone+" to "+two.ShortDescription+"'s "+btwo);
+            WriteToLog(one.Nickname+" has spread his "+virus+" from his "+bone+" to "+two.Nickname+"'s "+btwo);
 
             return null;
         }
@@ -742,7 +742,7 @@ namespace Virus.Core
                     Players[p1].Body.Items[o1] = btwo;
                     Players[p2].Body.Items[o2] = bone;
 
-                    WriteToLog(one.ShortDescription + " has transplantated his " + bone + " by the " + two.ShortDescription + "'s organ " + btwo);
+                    WriteToLog(one.Nickname + " has transplantated his " + bone + " by the " + two.Nickname + "'s organ " + btwo);
                 }
             }
             catch (Exception)
@@ -767,7 +767,7 @@ namespace Virus.Core
 
                     me.Body.Items.Add(stolen);
 
-                    WriteToLog(me.ShortDescription + " has stolen the " + rival.ShortDescription + "'s organ " + stolen);
+                    WriteToLog(me.Nickname + " has stolen the " + rival.Nickname + "'s organ " + stolen);
                 }
                 
             }
@@ -789,7 +789,7 @@ namespace Virus.Core
 
                     if (!ProtectiveSuitScenario(me, myCard, Scheduler.GenerateMove(rival.ID, 0), null))
                     {
-                        WriteToLog(rival.ShortDescription + " is going to lost his hand due to a latex glove played by " + me.ShortDescription);
+                        WriteToLog(rival.Nickname + " is going to lost his hand due to a latex glove played by " + me.Nickname);
                         DiscardAllHand(rival);
                     }
                 }
@@ -814,7 +814,7 @@ namespace Virus.Core
                     me.Body = toswitch.Body;
                     toswitch.Body = aux;
 
-                    WriteToLog(me.ShortDescription + " has switched his body by the " + toswitch.ShortDescription + "'s one.");
+                    WriteToLog(me.Nickname + " has switched his body by the " + toswitch.Nickname + "'s one.");
                 }
             }
             catch (Exception)
@@ -833,7 +833,7 @@ namespace Virus.Core
                     me.Hand = toswitch.Hand;
                     toswitch.Hand = aux;
 
-                    WriteToLog(me.ShortDescription + " has switched his hand with the " + toswitch.ShortDescription + "'s one.");
+                    WriteToLog(me.Nickname + " has switched his hand with the " + toswitch.Nickname + "'s one.");
 
                     // Avoids go to the previous turn when a Player in overtime plays this card.
                     if (PlayerInOvertime == null)
@@ -841,7 +841,7 @@ namespace Virus.Core
                         Turn--;
                     }
 
-                    WriteToLog(me.ShortDescription + " can play again with his new hand.");
+                    WriteToLog(me.Nickname + " can play again with his new hand.");
                 }
             }
             catch (Exception)
@@ -985,7 +985,7 @@ namespace Virus.Core
             if (rival.DoIHaveProtectiveSuit() && rival.Computer.DefendFromCard(player, myCard, move))
             {
 
-                WriteToLog(rival.ShortDescription + " has protected with a Protective Suit.", true);
+                WriteToLog(rival.Nickname + " has protected with a Protective Suit.", true);
                 if (WaitingTime != 0)
                 {
                     System.Threading.Thread.Sleep(WaitingTime);
@@ -1089,7 +1089,7 @@ namespace Virus.Core
         /// <returns>Error message if its</returns>
         public void PlayGameCardOrgan(Player player, Card myCard)
         {
-            WriteToLog(player.ShortDescription + " has played a " + myCard);
+            WriteToLog(player.Nickname + " has played a " + myCard);
             player.Body.SetOrgan(myCard);
         }
 
@@ -1102,13 +1102,13 @@ namespace Virus.Core
         /// <returns></returns>
         private void PlayGameCardMedicine(Player player, Card myCard, string move)
         {
-            WriteToLog(player.ShortDescription + " has used a " + myCard + " in his " + player.Body.Items[Scheduler.GetStringInt(move, 2)]);
+            WriteToLog(player.Nickname + " has used a " + myCard + " in his " + player.Body.Items[Scheduler.GetStringInt(move, 2)]);
             player.Body.Items[Scheduler.GetStringInt(move, 2)].NewMedicine(this, myCard);
         }
 
         public void PlayGameCardEvolvedMedicine(Player player, Card myCard, string move)
         {
-            WriteToLog(player.ShortDescription + " has used a " + myCard + " in his " + player.Body.Items[Scheduler.GetStringInt(move, 2)]);
+            WriteToLog(player.Nickname + " has used a " + myCard + " in his " + player.Body.Items[Scheduler.GetStringInt(move, 2)]);
             player.Body.Items[Scheduler.GetStringInt(move, 2)].NewEvolvedMedicine(this, myCard);
         }
 
@@ -1123,7 +1123,7 @@ namespace Virus.Core
         {
             if (!ProtectiveSuitScenario(player, myCard, move, wholemoves))
             {
-                WriteToLog(player.ShortDescription + " has used a " + myCard + " to " + Players[Scheduler.GetStringInt(move, 0)].ShortDescription + "'s " +
+                WriteToLog(player.Nickname + " has used a " + myCard + " to " + Players[Scheduler.GetStringInt(move, 0)].Nickname + "'s " +
                     Players[Scheduler.GetStringInt(move, 0)].Body.Items[Scheduler.GetStringInt(move, 2)]);
 
                 Players[Scheduler.GetStringInt(move, 0)].Body.SetVirus(myCard, Scheduler.GetStringInt(move, 2), this);
@@ -1134,7 +1134,7 @@ namespace Virus.Core
         {
             if (!ProtectiveSuitScenario(player, myCard, move, wholemoves))
             {
-                WriteToLog(player.ShortDescription + " has used a " + myCard + " to " + Players[Scheduler.GetStringInt(move, 0)].ShortDescription + "'s " +
+                WriteToLog(player.Nickname + " has used a " + myCard + " to " + Players[Scheduler.GetStringInt(move, 0)].Nickname + "'s " +
                 Players[Scheduler.GetStringInt(move, 0)].Body.Items[Scheduler.GetStringInt(move, 2)]);
 
                 Players[Scheduler.GetStringInt(move, 0)].Body.SetEvolvedVirus(myCard, Scheduler.GetStringInt(move, 2), this);
@@ -1147,12 +1147,12 @@ namespace Virus.Core
             Card virus = item.Modifiers[0];
             item.Modifiers.Remove(virus);
 
-            WriteToLog(player.ShortDescription + " has set in quarantine the " + virus + " that belonged to his " + item.ToString());
+            WriteToLog(player.Nickname + " has set in quarantine the " + virus + " that belonged to his " + item.ToString());
         }
 
         public void PlayOvertime(Player player)
         {
-            WriteToLog(player.ShortDescription + " has used Overtime.");
+            WriteToLog(player.Nickname + " has used Overtime.");
             PlayerInOvertime = player.ID;
         }
 
@@ -1187,7 +1187,7 @@ namespace Virus.Core
             Discards.Add(card);
             player.Hand.Remove(card);
 
-            WriteToLog(player.ShortDescription + " has put a " + card + " from his hand to deck.");
+            WriteToLog(player.Nickname + " has put a " + card + " from his hand to deck.");
         }
 
         /// <summary>

@@ -46,7 +46,9 @@ namespace Virus.Core
         private const string strNumberSecondOpinion = "NumberSecondOpinion";
         private const string strNumberProtectiveSuit = "NumberProtectiveSuit";
         private const string strNumberQuarantine = "NumberQuarantine";
+        private const string strPlayersNames = "Player's Names:";
         private const char splitter = ' ';
+        private const char splitterNames = ';';
         #endregion
 
         #region Default settings
@@ -176,6 +178,8 @@ namespace Virus.Core
         public int NumberSecondOpinion { get; set; }
         public int NumberProtectiveSuit { get; set; }
         public int NumberQuarantine { get; set; }
+
+        public List<string> PlayersNames { get; set; }
         #endregion
 
         /// <summary>
@@ -215,6 +219,11 @@ namespace Virus.Core
             NumberSecondOpinion = nNumberSecondOpinion;
             NumberProtectiveSuit = nNumberProtectiveSuit;
             NumberQuarantine = nNumberQuarantine;
+
+            PlayersNames = new List<string>();
+            PlayersNames.Add("Player 0");
+            PlayersNames.Add("Player 1");
+            PlayersNames.Add("Player 2");
         }
 
             /// <summary>
@@ -238,6 +247,7 @@ namespace Virus.Core
                     int counter = 1, value;
                     string line;
                     string[] args;
+                    bool namesReaded = false;
 
                     while ((line = sr.ReadLine()) != null)
                     {
@@ -246,181 +256,206 @@ namespace Virus.Core
                             // Avoid white lines and comments 
                             if (line.Length > 0 && line[0] != '#')
                             {
-                                args = line.Split(' ');
-
-                                if (args.Length > 1)
+                                if (!namesReaded && line.Substring(0, strPlayersNames.Length).Equals(strPlayersNames))
                                 {
-                                    switch (args[0])
+                                    int count = 0;
+                                    PlayersNames.Clear();
+                                    foreach (string name in line.Substring(strPlayersNames.Length).Split(splitterNames))
                                     {
-                                        case strNumberOrgans:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value > 0)
-                                            {
-                                                NumberOrgans = value;
-                                            }
-                                            break;
-                                        case strNumberMedicines:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value > 0)
-                                            {
-                                                NumberMedicines = value;
-                                            }
-                                            break;
-                                        case strNumberViruses:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value > 0)
-                                            {
-                                                NumberViruses = value;
-                                            }
-                                            break;
-                                        case strNumberThreatmentsSpreading:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value >= 0)
-                                            {
-                                                NumberThreatmentsSpreading = value;
-                                            }
-                                            break;
-                                        case strNumberThreatmentsTransplant:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value >= 0)
-                                            {
-                                                NumberThreatmentsTransplant = value;
-                                            }
-                                            break;
-                                        case strNumberThreatmentsOrganThief:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value >= 0)
-                                            {
-                                                NumberThreatmentsOrganThief = value;
-                                            }
-                                            break;
-                                        case strNumberThreatmentsLatexGlove:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value >= 0)
-                                            {
-                                                NumberThreatmentsLatexGlove = value;
-                                            }
-                                            break;
-                                        case strNumberThreatmentsMedicalError:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value >= 0)
-                                            {
-                                                NumberThreatmentsMedicalError = value;
-                                            }
-                                            break;
-                                        case strNumberWildcardOrgans:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value >= 0)
-                                            {
-                                                NumberWildcardOrgans = value;
-                                            }
-                                            break;
-                                        case strNumberWildcardViruses:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value >= 0)
-                                            {
-                                                NumberWildcardViruses = value;
-                                            }
-                                            break;
-                                        case strNumberWildcardMedicines:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value >= 0)
-                                            {
-                                                NumberWildcardMedicines = value;
-                                            }
-                                            break;
-                                        case strNumberCardInHand:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value > 0)
-                                            {
-                                                NumberCardInHand = value;
-                                            }
-                                            break;
-                                        case strNumberToWin:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value > 1 && value <= 6)
-                                            {
-                                                NumberToWin = Convert.ToInt32(args[1]);
-                                            }
-                                            break;
-
-                                        case strNumberBionicOrgans:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value >= 0)
-                                            {
-                                                NumberBionicOrgans = Convert.ToInt32(args[1]);
-                                            }
-                                            break;
-
-                                        case strNumberEvolvedMedicines:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value >= 0)
-                                            {
-                                                NumberEvolvedMedicines = Convert.ToInt32(args[1]);
-                                            }
-                                            break;
-
-                                        case strNumberEvolvedViruses:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value >= 0)
-                                            {
-                                                NumberEvolvedViruses = Convert.ToInt32(args[1]);
-                                            }
-                                            break;
-
-                                        case strNumberWildcardEvolvedMedicines:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value >= 0)
-                                            {
-                                                NumberWildcardEvolvedMedicines = Convert.ToInt32(args[1]);
-                                            }
-                                            break;
-
-                                        case strNumberWildcardEvolvedViruses:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value >= 0)
-                                            {
-                                                NumberWildcardEvolvedViruses = Convert.ToInt32(args[1]);
-                                            }
-                                            break;
-
-                                        case strNumberOvertime:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value >= 0)
-                                            {
-                                                NumberOvertime = Convert.ToInt32(args[1]);
-                                            }
-                                            break;
-
-                                        case strNumberSecondOpinion:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value >= 0)
-                                            {
-                                                NumberSecondOpinion = Convert.ToInt32(args[1]);
-                                            }
-                                            break;
-
-                                        case strNumberProtectiveSuit:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value >= 0)
-                                            {
-                                                NumberProtectiveSuit = Convert.ToInt32(args[1]);
-                                            }
-                                            break;
-                                        case strNumberQuarantine:
-                                            value = Convert.ToInt32(args[1]);
-                                            if (value >= 0)
-                                            {
-                                                NumberQuarantine = Convert.ToInt32(args[1]);
-                                            }
-                                            break;
+                                        if (count < 6)
+                                        {
+                                            PlayersNames.Add(name);
+                                            count++;
+                                        }
                                     }
+
+                                    while (count < 2)
+                                    {
+                                        PlayersNames.Add("Player " + count);
+                                        count++;
+                                    }
+                                    namesReaded = true;
+
+                                }
+                                else {
+
+                                    args = line.Split(' ');
+
+                                    if (args.Length > 1)
+                                    {
+                                        switch (args[0])
+                                        {
+                                            case strNumberOrgans:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value > 0)
+                                                {
+                                                    NumberOrgans = value;
+                                                }
+                                                break;
+                                            case strNumberMedicines:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value > 0)
+                                                {
+                                                    NumberMedicines = value;
+                                                }
+                                                break;
+                                            case strNumberViruses:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value > 0)
+                                                {
+                                                    NumberViruses = value;
+                                                }
+                                                break;
+                                            case strNumberThreatmentsSpreading:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value >= 0)
+                                                {
+                                                    NumberThreatmentsSpreading = value;
+                                                }
+                                                break;
+                                            case strNumberThreatmentsTransplant:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value >= 0)
+                                                {
+                                                    NumberThreatmentsTransplant = value;
+                                                }
+                                                break;
+                                            case strNumberThreatmentsOrganThief:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value >= 0)
+                                                {
+                                                    NumberThreatmentsOrganThief = value;
+                                                }
+                                                break;
+                                            case strNumberThreatmentsLatexGlove:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value >= 0)
+                                                {
+                                                    NumberThreatmentsLatexGlove = value;
+                                                }
+                                                break;
+                                            case strNumberThreatmentsMedicalError:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value >= 0)
+                                                {
+                                                    NumberThreatmentsMedicalError = value;
+                                                }
+                                                break;
+                                            case strNumberWildcardOrgans:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value >= 0)
+                                                {
+                                                    NumberWildcardOrgans = value;
+                                                }
+                                                break;
+                                            case strNumberWildcardViruses:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value >= 0)
+                                                {
+                                                    NumberWildcardViruses = value;
+                                                }
+                                                break;
+                                            case strNumberWildcardMedicines:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value >= 0)
+                                                {
+                                                    NumberWildcardMedicines = value;
+                                                }
+                                                break;
+                                            case strNumberCardInHand:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value > 0)
+                                                {
+                                                    NumberCardInHand = value;
+                                                }
+                                                break;
+                                            case strNumberToWin:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value > 1 && value <= 6)
+                                                {
+                                                    NumberToWin = Convert.ToInt32(args[1]);
+                                                }
+                                                break;
+
+                                            case strNumberBionicOrgans:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value >= 0)
+                                                {
+                                                    NumberBionicOrgans = Convert.ToInt32(args[1]);
+                                                }
+                                                break;
+
+                                            case strNumberEvolvedMedicines:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value >= 0)
+                                                {
+                                                    NumberEvolvedMedicines = Convert.ToInt32(args[1]);
+                                                }
+                                                break;
+
+                                            case strNumberEvolvedViruses:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value >= 0)
+                                                {
+                                                    NumberEvolvedViruses = Convert.ToInt32(args[1]);
+                                                }
+                                                break;
+
+                                            case strNumberWildcardEvolvedMedicines:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value >= 0)
+                                                {
+                                                    NumberWildcardEvolvedMedicines = Convert.ToInt32(args[1]);
+                                                }
+                                                break;
+
+                                            case strNumberWildcardEvolvedViruses:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value >= 0)
+                                                {
+                                                    NumberWildcardEvolvedViruses = Convert.ToInt32(args[1]);
+                                                }
+                                                break;
+
+                                            case strNumberOvertime:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value >= 0)
+                                                {
+                                                    NumberOvertime = Convert.ToInt32(args[1]);
+                                                }
+                                                break;
+
+                                            case strNumberSecondOpinion:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value >= 0)
+                                                {
+                                                    NumberSecondOpinion = Convert.ToInt32(args[1]);
+                                                }
+                                                break;
+
+                                            case strNumberProtectiveSuit:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value >= 0)
+                                                {
+                                                    NumberProtectiveSuit = Convert.ToInt32(args[1]);
+                                                }
+                                                break;
+                                            case strNumberQuarantine:
+                                                value = Convert.ToInt32(args[1]);
+                                                if (value >= 0)
+                                                {
+                                                    NumberQuarantine = Convert.ToInt32(args[1]);
+                                                }
+                                                break;
+                                        }
+                                    }
+
                                 }
                             }
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine("Error processing {0} in line {1}: {2}", FILE_PREFERENCES, counter, e.Message);
+                            Console.WriteLine("Error processing \"{0}\" in line {1}: {2}", FILE_PREFERENCES, counter, e.Message);
                         }
                         counter++;
                     }
@@ -468,6 +503,12 @@ namespace Virus.Core
 # is a comment, and the game will ignore it.
 
 ";
+
+                defaultSettings += "# The names have TO BE THE FIRST PARAMETER to pass to the program. Otherwise, it'll not read the remain setting file." + Environment.NewLine;
+                defaultSettings += "# Player's name (separated by semicolon "+splitterNames+"). Minimum: 2 players, maximum of 6." + Environment.NewLine;
+                defaultSettings += strPlayersNames + "Player 0"+splitterNames+"Player 1"+splitterNames+"Player 2" + Environment.NewLine;
+                defaultSettings += Environment.NewLine;
+
                 defaultSettings += "# Number of organs by color (default: 6)." + Environment.NewLine;
                 defaultSettings += String.Format("{0}{1}{2}" + Environment.NewLine, strNumberOrgans, splitter, nNumberOrgans);
                 defaultSettings += Environment.NewLine;

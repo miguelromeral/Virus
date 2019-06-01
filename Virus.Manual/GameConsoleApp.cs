@@ -14,9 +14,8 @@ namespace Virus.ConsoleApp
 
         #region Constructor
         public GameConsoleApp(
-            int numPlayers,
             int wa,
-            bool firstHuman = false) : base(numPlayers, wa, firstHuman)
+            bool firstHuman = false) : base(wa, firstHuman)
         {
             reader = new ReaderInput(this);
         }
@@ -56,7 +55,7 @@ namespace Virus.ConsoleApp
                 Player p = Players[CurrentTurn];
                 if (p.AI.Equals(ArtificialIntelligence.AICategory.Human))
                 {
-                    WriteToLog("Turn #" + Turn + " (" + p.ShortDescription + ").");
+                    WriteToLog("Turn #" + Turn + " (" + p.Nickname + ").");
                     if (p.Hand.Count > 0)
                     {
                         ReadUserInput();
@@ -307,7 +306,7 @@ namespace Virus.ConsoleApp
                 if (play)
                 {
 
-                    WriteToLog(rival.ShortDescription + " has protected with a Protective Suit.", true);
+                    WriteToLog(rival.Nickname + " has protected with a Protective Suit.", true);
 
 
 

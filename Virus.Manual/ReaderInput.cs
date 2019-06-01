@@ -30,7 +30,7 @@ namespace Virus.Core
                 o1 = Scheduler.GetStringInt(move, 2);
                 player = game.Players[p1];
                 item = player.Body.Items[o1];
-                Console.Write("{0}. {1,20} : ", (c + 1), player.ShortDescription);
+                Console.Write("{0}. {1,20} : ", (c + 1), player.Nickname);
                 Scheduler.ChangeConsoleOutput(item.Organ.Color);
                 item.Organ.PrintCard();
                 item.PrintModifiers();
@@ -69,10 +69,10 @@ namespace Virus.Core
                     btwo = two.Body.Items[o2];
                     Console.WriteLine("{0}.", c);
 
-                    Console.Write("   - {0,20}: ", one.ShortDescription);
+                    Console.Write("   - {0,20}: ", one.Nickname);
                     bone.PrintBodyItem();
                     Console.WriteLine("");
-                    Console.Write("   - {0,20}: ", two.ShortDescription);
+                    Console.Write("   - {0,20}: ", two.Nickname);
                     btwo.PrintBodyItem();
                     Console.WriteLine("");
 
@@ -113,7 +113,7 @@ namespace Virus.Core
                     o2 = Scheduler.GetStringInt(move, 6);
                     two = game.Players[p2];
                     btwo = two.Body.Items[o2];
-                    Console.WriteLine("{0}.     {1,20}: [{2,30}]", c, two.ShortDescription, btwo);
+                    Console.WriteLine("{0}.     {1,20}: [{2,30}]", c, two.Nickname, btwo);
                     c++;
                 }
 
@@ -141,7 +141,7 @@ namespace Virus.Core
                 return false;
             }
 
-            Console.Write("*** " + rival.ShortDescription + " is trying to play a ");
+            Console.Write("*** " + rival.Nickname + " is trying to play a ");
             Scheduler.ChangeConsoleOutput(c.Color);
             c.PrintCard();
             Scheduler.ChangeConsoleOutput();
@@ -187,7 +187,7 @@ namespace Virus.Core
                 {
                     int mNum = -1;
                     Int32.TryParse(moves[i].Substring(0, 1), out mNum);
-                    Console.WriteLine(String.Format("{0}.- {1}.", (i+ 1), game.Players[mNum].ShortDescription));
+                    Console.WriteLine(String.Format("{0}.- {1}.", (i+ 1), game.Players[mNum].Nickname));
                 }
 
                 int p = Convert.ToInt32(Console.ReadLine()) - 1;

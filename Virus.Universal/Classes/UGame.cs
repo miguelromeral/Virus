@@ -10,8 +10,8 @@ namespace Virus.Universal.Classes
     [Serializable]
     public class UGame : Game
     {
-        public UGame(int numPlayers, int waitingtime, bool firstHuman = false)
-            : base(numPlayers, waitingtime, firstHuman)
+        public UGame(int waitingtime, bool firstHuman = false)
+            : base(waitingtime, firstHuman)
         {
         }
         
