@@ -14,6 +14,13 @@ namespace Virus.Forms
         public CGame(int numPlayers, int waitingtime, TextBox log, bool firstHuman = false)
             : base(numPlayers, waitingtime, firstHuman, new CLogger(log))
         {
+            Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+            Players[0].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
+            Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            //Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            //Players[0].Hand[2] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+
         }
 
         public bool PlayGameCardByUser(Player player, int index,
@@ -87,6 +94,93 @@ namespace Virus.Forms
                     //PlayCardByMove(player, myCard, choosen, moves);
                     //return true;
             }
+        }
+
+        
+        public override bool ProceedProtectiveSuit(Player player, Player rival, Card myCard, string move, List<string> wholemoves)
+        {
+            bool psused = SomeoneHasDefend();
+
+            bool play = rival.DoIHaveProtectiveSuit();
+
+            if (play)
+            {
+                if (rival.AI == ArtificialIntelligence.AICategory.Human)
+                {
+                    string warning = String.Format(
+                        "{0} is trying to play a {1} against {2}. Do you want to protect?",
+                        player.ShortDescription, myCard.ToString(), GetMyCardAffectedFromMove(rival, myCard, move));
+                    
+                    play = (MessageBox.Show(warning, "Protective Suit chance",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                        MessageBoxDefaultButton.Button1) == System.Windows.Forms.DialogResult.Yes);
+
+
+
+                    if (play)
+                    {
+                        int index = -1;
+                        for (int i = 0; i < rival.Hand.Count; i++)
+                        {
+                            if (rival.Hand[i].Face == Card.CardFace.ProtectiveSuit)
+                            {
+                                index = i;
+                            }
+                        }
+                        DiscardFromHand(rival, index);
+                        rival.PlayedProtectiveSuit = true;
+                    }
+                }
+                else
+                {
+                    play = rival.Computer.DefendFromCard(player, myCard, move);
+                }
+
+                if (play)
+                {
+
+                    WriteToLog(rival.ShortDescription + " has protected with a Protective Suit.", true);
+
+
+
+                    if (wholemoves == null)
+                    {
+                        // Playable cards that doesn't require play a move.
+
+
+                    }
+                    else
+                    {
+
+                        if (!psused)
+                        {
+                            wholemoves = Referee.GetListMovements(player, myCard, true);
+                        }
+                        wholemoves = Referee.RemoveMovesPlayer(wholemoves, rival.ID, myCard, player);
+
+                        if (player.AI == ArtificialIntelligence.AICategory.Human)
+                        {
+                            if (wholemoves.Count == 0)
+                            {
+                                return true;
+                            }
+                            return PlayGameCardByUser(player, -1, wholemoves, myCard);
+                        }
+                        else
+                        {
+                            move = player.Computer.ChooseBestOptionProtectiveSuit(wholemoves);
+                            if (move != null)
+                            {
+                                PlayCardByMove(player, myCard, move, wholemoves, false);
+                            }
+                        }
+
+                    }
+
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

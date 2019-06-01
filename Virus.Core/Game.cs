@@ -1260,16 +1260,35 @@ namespace Virus.Core
 
             return copy;
         }
+        
 
-        public bool CouldPlayProtectiveSuite(Card card)
+        public string GetMyCardAffectedFromMove(Player Me, Card card, string move)
         {
+            string res = "you";
+            int index;
             switch (card.Face)
             {
+                case Card.CardFace.OrganThief:
+                case Card.CardFace.Transplant:
+                case Card.CardFace.EvolvedVirus:
                 case Card.CardFace.Virus:
-                    return true;
+                    index = Convert.ToInt32(move.ToCharArray()[2]);
+                    res = Me.Body.Items[0].Organ.ToString();
+                    break;
+                case Card.CardFace.SecondOpinion:
+                case Card.CardFace.LatexGlove:
+                    res = "your hand";
+                    break;
+                case Card.CardFace.MedicalError:
+                    res = "your whole body";
+                    break;
+                case Card.CardFace.Spreading:
                 default:
-                    return false;
+                    res = "you";
+                    break;
             }
+            return res;
         }
+
     }
 }

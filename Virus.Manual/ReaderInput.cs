@@ -145,7 +145,8 @@ namespace Virus.Core
             Scheduler.ChangeConsoleOutput(c.Color);
             c.PrintCard();
             Scheduler.ChangeConsoleOutput();
-            Console.WriteLine(" against you. Do you want to protect? [Y|y]: Yes, [N|n]: No. Default: Yes");
+            Console.WriteLine(" against {0}. Do you want to protect? [Y|y]: Yes, [N|n]: No. Default: Yes",
+                game.GetMyCardAffectedFromMove(Me, c, move));
 
             char option = Console.ReadKey().KeyChar;
 
@@ -173,8 +174,9 @@ namespace Virus.Core
                 return false;
             }
         }
-    
 
+
+        
 
         public string RequestMovementChoosenMedicalError(Player user, List<string> moves, Game game)
         {
