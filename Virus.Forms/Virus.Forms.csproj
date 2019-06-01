@@ -52,6 +52,8 @@
     <Compile Include="CCheckBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CGame.cs" />
+    <Compile Include="CLogger.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -136,6 +138,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\latexglove.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\logo_24.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\medicalerror.bmp">

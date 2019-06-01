@@ -38,23 +38,29 @@ namespace Virus.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GameForm));
             this.MainLayout = new System.Windows.Forms.FlowLayoutPanel();
             this.pUserHand = new System.Windows.Forms.FlowLayoutPanel();
+            this.bDiscard = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.lTurns = new System.Windows.Forms.Label();
             this.tbGame = new System.Windows.Forms.TextBox();
-            this.bDiscard = new System.Windows.Forms.Button();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.tbLog = new System.Windows.Forms.TextBox();
             this.pUserHand.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // MainLayout
             // 
             this.MainLayout.AutoScroll = true;
             this.MainLayout.AutoSize = true;
+            this.MainLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.MainLayout.Location = new System.Drawing.Point(13, 13);
+            this.MainLayout.Location = new System.Drawing.Point(4, 4);
             this.MainLayout.Name = "MainLayout";
-            this.MainLayout.Size = new System.Drawing.Size(618, 639);
+            this.tableLayoutPanel1.SetRowSpan(this.MainLayout, 2);
+            this.MainLayout.Size = new System.Drawing.Size(438, 656);
             this.MainLayout.TabIndex = 0;
             // 
             // pUserHand
@@ -63,14 +69,25 @@ namespace Virus.Forms
             this.pUserHand.AutoSize = true;
             this.pUserHand.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pUserHand.Controls.Add(this.bDiscard);
-            this.pUserHand.Location = new System.Drawing.Point(637, 393);
+            this.pUserHand.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pUserHand.Location = new System.Drawing.Point(449, 335);
             this.pUserHand.Name = "pUserHand";
-            this.pUserHand.Size = new System.Drawing.Size(695, 259);
+            this.pUserHand.Size = new System.Drawing.Size(438, 325);
             this.pUserHand.TabIndex = 1;
+            // 
+            // bDiscard
+            // 
+            this.bDiscard.Location = new System.Drawing.Point(3, 3);
+            this.bDiscard.Name = "bDiscard";
+            this.bDiscard.Size = new System.Drawing.Size(189, 36);
+            this.bDiscard.TabIndex = 0;
+            this.bDiscard.Text = "Begin to discard";
+            this.bDiscard.UseVisualStyleBackColor = true;
+            this.bDiscard.Click += new System.EventHandler(this.bDiscard_Click);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(903, 27);
+            this.button1.Location = new System.Drawing.Point(894, 335);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(163, 40);
             this.button1.TabIndex = 2;
@@ -89,36 +106,75 @@ namespace Virus.Forms
             // 
             // tbGame
             // 
-            this.tbGame.Location = new System.Drawing.Point(637, 73);
+            this.tbGame.BackColor = System.Drawing.SystemColors.InfoText;
+            this.tbGame.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tbGame.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbGame.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.tbGame.Location = new System.Drawing.Point(449, 4);
             this.tbGame.Multiline = true;
             this.tbGame.Name = "tbGame";
+            this.tbGame.ReadOnly = true;
             this.tbGame.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbGame.Size = new System.Drawing.Size(695, 314);
+            this.tbGame.Size = new System.Drawing.Size(438, 324);
             this.tbGame.TabIndex = 4;
+            this.tbGame.WordWrap = false;
             // 
-            // bDiscard
+            // tableLayoutPanel1
             // 
-            this.bDiscard.Location = new System.Drawing.Point(3, 3);
-            this.bDiscard.Name = "bDiscard";
-            this.bDiscard.Size = new System.Drawing.Size(189, 36);
-            this.bDiscard.TabIndex = 0;
-            this.bDiscard.Text = "Discard selected";
-            this.bDiscard.UseVisualStyleBackColor = true;
-            this.bDiscard.Click += new System.EventHandler(this.bDiscard_Click);
+            this.tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
+            this.tableLayoutPanel1.ColumnCount = 3;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Controls.Add(this.tbLog, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.tbGame, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.MainLayout, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.pUserHand, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.button1, 2, 1);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.MinimumSize = new System.Drawing.Size(100, 50);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1338, 664);
+            this.tableLayoutPanel1.TabIndex = 5;
+            // 
+            // tbLog
+            // 
+            this.tbLog.BackColor = System.Drawing.SystemColors.InfoText;
+            this.tbLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tbLog.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbLog.ForeColor = System.Drawing.SystemColors.MenuHighlight;
+            this.tbLog.Location = new System.Drawing.Point(894, 4);
+            this.tbLog.MaxLength = 999999999;
+            this.tbLog.Multiline = true;
+            this.tbLog.Name = "tbLog";
+            this.tbLog.ReadOnly = true;
+            this.tbLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbLog.Size = new System.Drawing.Size(440, 324);
+            this.tbLog.TabIndex = 5;
             // 
             // GameForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1344, 664);
-            this.Controls.Add(this.tbGame);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoSize = true;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ClientSize = new System.Drawing.Size(1338, 664);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.lTurns);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.pUserHand);
-            this.Controls.Add(this.MainLayout);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximumSize = new System.Drawing.Size(1920, 1080);
+            this.MinimumSize = new System.Drawing.Size(1360, 720);
             this.Name = "GameForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "GameForm";
             this.pUserHand.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -134,5 +190,7 @@ namespace Virus.Forms
         private Label lTurns;
         private TextBox tbGame;
         private Button bDiscard;
+        private TableLayoutPanel tableLayoutPanel1;
+        private TextBox tbLog;
     }
 }

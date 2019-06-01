@@ -14,7 +14,7 @@ namespace Virus.Forms
 {
     public partial class GameForm : Form
     {
-        public Game Game;
+        public CGame Game;
 
         public GameForm()
         {
@@ -24,7 +24,7 @@ namespace Virus.Forms
 
         private void InitGame()
         {
-            Game = new Game(3, 5000, true);
+            Game = new CGame(3, 5000, tbLog, true);
 
             InitPanels();
             UpdateUserHand();
@@ -107,7 +107,7 @@ namespace Virus.Forms
                     Card c = p.Hand[i];
                     pc = UserHandPanels[i];
 
-                    var cb = CreateButtonCheckBoxCard(c, 75, 100, p.ID, i);
+                    var cb = CreateButtonCheckBoxCard(c, 0.4, p.ID, i, true);
                     UserHandCards.Add(cb);
                     pc.Controls.Clear();
                     pc.Controls.Add(cb);
@@ -159,11 +159,11 @@ namespace Virus.Forms
 
                 BodyItem item = p.Body.Items[i];
 
-                pItem.Controls.Add(CreateButtonCheckBoxCard(item.Organ, 75, 100, id, i));
+                pItem.Controls.Add(CreateButtonCheckBoxCard(item.Organ, 0.4, id, i, false));
 
                 for (int j = 0; j < item.Modifiers.Count; j++)
                 {
-                    pItem.Controls.Add(CreateButtonCheckBoxCard(item.Modifiers[j], 25, 37, id, i));
+                    pItem.Controls.Add(CreateButtonCheckBoxCard(item.Modifiers[j], 0.25, id, i, false));
                 }
 
             }
@@ -179,6 +179,15 @@ namespace Virus.Forms
         {
             lTurns.Text = "Turn #" + Game.Turn;
             tbGame.Text = Game.ToString();
+            
+            if(Game.GetPlayerByID(Game.CurrentTurn).AI == ArtificialIntelligence.AICategory.Human)
+            {
+                ChangeUserButtons(true);
+            }
+            else
+            {
+                ChangeUserButtons(false);
+            }
         }
 
         private void UpdateGUI()
@@ -188,13 +197,58 @@ namespace Virus.Forms
             UpdateUserHand();
         }
 
-        private CCheckBox CreateButtonCheckBoxCard(Card c, int width, int height, int playerid, int index)
+        public void CardClicked(object sender, EventArgs e)
         {
+            CCheckBox cb = (CCheckBox)sender;
+
+            if (cb.InHand)
+            {
+                if(Discarding || !cb.Checked)
+                    return;
+                
+                if(CardSelected != null)
+                    CardSelected.Checked = false;
+
+                Player me = Game.GetPlayerByID(cb.PlayerId);
+
+                List<string> moves = Game.Referee.GetListMovements(me, cb.Card, false);
+
+                if(Game.PlayGameCardByUser(me, cb.Index, moves, cb.Card))
+                {
+                    Game.DrawCardsToFill(me);
+                    Game.Turn++;
+                    UpdateGUI();
+                }
+
+                //switch (cb.Card.Face)
+                //{
+                //    case Card.CardFace.Organ:
+                //        Game.PlayGameCardOrgan(me, cb.Card);
+                //        break;
+                //    default:
+                //        CardSelected = cb;
+                //        break;
+                //}
+
+            }
+            else
+            {
+
+            }
+        }
+
+        public CCheckBox CardSelected;
+
+        private CCheckBox CreateButtonCheckBoxCard(Card c, double perc, int playerid, int index, bool user)
+        {
+            int width = (int) (200 * perc);
+            int height = (int) (279 * perc);
             Image myimage = new Bitmap(GetImageFromCard(c));
             CCheckBox b = new CCheckBox()
             {
                 //Text = c.ToString(),
                 Card = c,
+                InHand = user,
                 PlayerId = playerid,
                 Index = index,
                 BackgroundImage = myimage,
@@ -202,6 +256,7 @@ namespace Virus.Forms
                 Height = height,
                 Appearance = Appearance.Button
             };
+            b.Click += CardClicked;
 
             b.BackgroundImage = new Bitmap(b.BackgroundImage, b.Width, b.Height);
             return b;
@@ -300,28 +355,60 @@ namespace Virus.Forms
             return path;
         }
 
+        private bool Discarding = false;
+
         private void bDiscard_Click(object sender, EventArgs e)
         {
-            bool discarded = false;
-            Player p = null;
-            foreach(var cb in UserHandCards)
+            Button b = (Button)sender;
+            if (Discarding)
             {
-                if (cb.Checked)
+                bool discarded = false;
+                Player p = null;
+                foreach (var cb in UserHandCards)
                 {
-                    if (p == null)
-                        p = Game.GetPlayerByID(cb.PlayerId);
+                    if (cb.Checked)
+                    {
+                        if (p == null)
+                            p = Game.GetPlayerByID(cb.PlayerId);
 
-                    Game.DiscardFromHand(p, cb.Card);
-                    discarded = true;
+                        Game.DiscardFromHand(p, cb.Card);
+                        discarded = true;
+                    }
                 }
-            }
-            if (discarded)
-            {
-                Game.DrawCardsToFill(p);
-                Game.Turn++;
-            }
-            UpdateGUI();
+                if (discarded)
+                {
+                    Game.DrawCardsToFill(p);
+                    Game.Turn++;
+                }
+                UpdateGUI();
 
+                Discarding = false;
+                b.Text = "Begin to discard";
+            }
+            else
+            {
+                Discarding = true;
+                b.Text = "Discard selected";
+                ClearAllCheckedCardHand();
+            }
+        }
+
+
+        private void ChangeUserButtons(bool enable)
+        {
+            foreach (var cb in UserHandCards)
+            {
+                cb.Enabled = enable;
+            }
+            bDiscard.Enabled = enable;
+        }
+
+        private void ClearAllCheckedCardHand()
+        {
+            foreach (var cb in UserHandCards)
+            {
+                cb.Checked = false;
+            }
         }
     }
 }

@@ -13,6 +13,7 @@ namespace Virus.Forms
         public Card Card { get; set; }
         public int PlayerId { get; set; }
         public int Index { get; set; }
-
+        
+        public bool InHand { get; set; }
     }
 }

@@ -94,9 +94,10 @@ namespace Virus.Core
         /// </summary>
         /// <param name="numPlayers">Number of players in the game</param>
         /// <param name="firstHuman">First player is a human</param>
-        public Game(int numPlayers, int waitingtime, bool firstHuman = false)
+        public Game(int numPlayers, int waitingtime, bool firstHuman = false, Logger l = null)
         {
-            Logger = new Logger();
+            Logger = (l == null ? new Logger() : l);
+
             WriteToLog("We're getting ready Virus!", true);
 
             Settings = new Settings(this);
@@ -1086,7 +1087,7 @@ namespace Virus.Core
         /// <param name="player">Player who uses it</param>
         /// <param name="myCard">Organ card</param>
         /// <returns>Error message if its</returns>
-        private void PlayGameCardOrgan(Player player, Card myCard)
+        public void PlayGameCardOrgan(Player player, Card myCard)
         {
             WriteToLog(player.ShortDescription + " has played a " + myCard);
             player.Body.SetOrgan(myCard);

@@ -53,7 +53,7 @@ namespace Virus.Core
         /// <param name="message">Text to be printed in the logger</param>
         /// <param name="print">True if want to also redirect this text to console output</param>
         /// <returns>True if it could be written to the logger.</returns>
-        public bool Write(string message, bool print = false)
+        public virtual bool Write(string message, bool print = false)
         {
             try
             {

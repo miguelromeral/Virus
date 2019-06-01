@@ -63,6 +63,7 @@ namespace Virus.Core
         public Scenario(Game g, Player p, string m, Card c, int s, List<string> list, Scenario r = null)
         {
             // Creates a instance copy.
+            g.Logger = null;
             Game = Game.DeepClone(g);
             Game.Logger = null;
             Game.IsInScenario = true;
