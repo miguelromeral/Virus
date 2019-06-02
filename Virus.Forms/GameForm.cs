@@ -15,21 +15,18 @@ namespace Virus.Forms
     public partial class GameForm : Form
     {
         public CGame Game;
+        public CCheckBox CardSelected;
+        public Player Me;
 
         public GameForm()
         {
             InitializeComponent();
-            InitGame();
-        }
 
-        private void InitGame()
-        {
             Game = new CGame(3, 5000, tbLog, true);
-
+            Me = Game.Players[0];
             InitPanels();
-            UpdateUserHand();
+            UpdateGUI();
         }
-
 
         private Dictionary<int, List<Panel>> BodyItemPanels = new Dictionary<int, List<Panel>>();
 
@@ -119,11 +116,10 @@ namespace Virus.Forms
 
                 int i;
                 Panel pc;
-                for (i=0; i<p.Hand.Count; i++)
+                for (i = 0; i < p.Hand.Count; i++)
                 {
                     Card c = p.Hand[i];
                     pc = UserHandPanels[i];
-
                     var cb = CreateButtonCheckBoxCard(c, 0.4, p.ID, i, true);
                     UserHandCards.Add(cb);
                     pc.Controls.Clear();
@@ -134,15 +130,41 @@ namespace Virus.Forms
                     pc = UserHandPanels[i];
                     pc.Controls.Clear();
                     i++;
+                    
                 }
+            }
+
+            if (Game.IsMyTurn(Me))
+            {
+                ChangeUserButtons(true);
+            }
+            else
+            {
+                ChangeUserButtons(false);
+            }
+
+        }
+        
+        private void DoMove()
+        {
+            UpdateGUI();
+            CheckGameOver();
+            while (!Game.IsMyTurn(Me))
+            {
+                Game.PlayTurn();
+                UpdateGUI();
+                CheckGameOver();
+                //System.Threading.Thread.Sleep(2000);
             }
         }
 
-
         private void button1_Click(object sender, EventArgs e)
         {
-            Game.PlayTurn();
+
+            //new Task(delegate { DoMove(); }).Start();
+            DoMove();
             UpdateGUI();
+
         }
 
         private void UpdateAllPlayerPanels()
@@ -196,15 +218,6 @@ namespace Virus.Forms
         {
             lTurns.Text = "Turn #" + Game.Turn;
             tbGame.Text = Game.ToString();
-            
-            if(Game.GetPlayerByID(Game.CurrentTurn).AI == ArtificialIntelligence.AICategory.Human)
-            {
-                ChangeUserButtons(true);
-            }
-            else
-            {
-                ChangeUserButtons(false);
-            }
         }
 
         private void UpdateGUI()
@@ -214,47 +227,185 @@ namespace Virus.Forms
             UpdateUserHand();
         }
 
-        public void CardClicked(object sender, EventArgs e)
-        {
-            CCheckBox cb = (CCheckBox)sender;
+        private List<string> CurrentMoves;
 
+        private bool EventCard(CCheckBox cb)
+        {
             if (cb.InHand)
             {
-                if(Discarding || !cb.Checked)
-                    return;
-                
-                if(CardSelected != null)
+                // No actions when choosing the discards
+                if (Discarding)
+                {
+                    return false;
+                }
+
+                if (CardSelected != null)
                     CardSelected.Checked = false;
 
                 Player me = Game.GetPlayerByID(cb.PlayerId);
 
                 List<string> moves = Game.Referee.GetListMovements(me, cb.Card, false);
 
-                if(Game.PlayGameCardByUser(me, cb.Index, moves, cb.Card))
+                if (moves.Count == 1)
                 {
+                    Game.PlayGameCardByUser(me, cb.Index, moves, cb.Card);
                     Game.DrawCardsToFill(me);
                     Game.Turn++;
                     UpdateGUI();
+                    CurrentMoves = null;
+                    return true;
                 }
+                else
+                {
+                    Card.CardFace face = cb.Card.Face;
+                    switch (cb.Card.Face)
+                    {
+                        // Cards to only show a inputbox:
+                        case Card.CardFace.SecondOpinion:
+                        case Card.CardFace.MedicalError:
 
-                //switch (cb.Card.Face)
-                //{
-                //    case Card.CardFace.Organ:
-                //        Game.PlayGameCardOrgan(me, cb.Card);
-                //        break;
-                //    default:
-                //        CardSelected = cb;
-                //        break;
-                //}
+                            string[] options = new string[Game.Players.Count - 1];
+                            int i = 0;
+                            foreach (Player p in Game.Players)
+                            {
+                                if (p.ID != Me.ID)
+                                {
+                                    options[i] = p.Nickname;
+                                    i++;
+                                }
+                            }
 
+                            #region DIALOG
+                            //Set buttons language Czech/English/German/Slovakian/Spanish (default English)
+                            InputBox.SetLanguage(InputBox.Language.English);
+
+                            //Save the DialogResult as res
+                            DialogResult res = InputBox.ShowDialog("To which player do you want to use this card?",
+                            "Play this card",   //Text message (mandatory), Title (optional)
+                                InputBox.Icon.Question, //Set icon type (default info)
+                                                        //InputBox.Icon.Information, //Set icon type (default info)
+                                InputBox.Buttons.OkCancel, //Set buttons (default ok)
+                                InputBox.Type.ComboBox, //Set type (default nothing)
+                                options, //String field as ComboBox items (default null)
+                                true //Set visible in taskbar (default false)
+                                );
+                            #endregion
+
+                            //Check InputBox result
+                            if (res == System.Windows.Forms.DialogResult.OK || res == System.Windows.Forms.DialogResult.Yes)
+                            {
+                                string user = InputBox.ResultValue;
+                                string move;
+
+                                foreach (Player p in Game.Players)
+                                {
+                                    if (p.Nickname == user)
+                                    {
+                                        move = Scheduler.GenerateMove(p.ID, 0);
+                                        if (Game.PlayUserCardByMove(Me, cb.Card, move, moves))
+                                        {
+                                            CurrentMoves = null;
+                                            return true;
+                                        }
+                                        else
+                                        {
+                                            // TODO
+                                            return false;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+
+                        // ????????
+                        //case Card.CardFace.Spreading:
+                        default:
+                            CardSelected = cb;
+                            CurrentMoves = moves;
+                            return false;
+                    }
+                    return false;
+                }
             }
             else
             {
-
+                bool movedone = false;
+                if (CardSelected != null && CurrentMoves != null)
+                {
+                    bool allow = false;
+                    switch (CardSelected.Card.Face)
+                    {
+                        case Card.CardFace.Medicine:
+                        case Card.CardFace.EvolvedMedicine:
+                        case Card.CardFace.Virus:
+                        case Card.CardFace.EvolvedVirus:
+                            if (cb.Card.Face == Card.CardFace.Organ)
+                            {
+                                allow = true;
+                            }
+                            break;
+                        case Card.CardFace.LatexGlove:
+                        case Card.CardFace.OrganThief:
+                        case Card.CardFace.Overtime:
+                        case Card.CardFace.ProtectiveSuit:
+                        case Card.CardFace.Quarantine:
+                        case Card.CardFace.Spreading:
+                        case Card.CardFace.Transplant:
+                        default:
+                            allow = false;
+                            break;
+                    }
+                    if (allow)
+                    {
+                        string move = Game.GetMoveGivenCCheckBox(CardSelected, cb);
+                        if (move != null)
+                        {
+                            movedone = Game.PlayUserCardByMove(Me, CardSelected.Card, move, CurrentMoves);
+                        }
+                    }
+                }
+                if (movedone)
+                {
+                    return true;
+                }
+                else
+                {
+                    cb.Checked = false;
+                    if (CardSelected != null)
+                        CardSelected.Checked = false;
+                    CardSelected = null;
+                    CurrentMoves = null;
+                    return false;
+                }
             }
         }
 
-        public CCheckBox CardSelected;
+        public void CardClicked(object sender, EventArgs e)
+        {
+            bool done = EventCard((CCheckBox)sender);
+            if (done)
+            {
+                DoMove();
+            }
+        }
+        
+        private void CheckGameOver()
+        {
+            if (Game.GameOver)
+            {
+                if (Game.AmITheWinner(Me.ID))
+                {
+                    MessageBox.Show("Congratulations! You've won this game!", "You're the winner!");
+                }
+                else
+                {
+                    Player p = Game.GetTheWinner();
+                    MessageBox.Show(p.Nickname+" has won this game. Try next time.", "Game over");
+                }
+                Application.Exit();
+
+            }
+        }
 
         private CCheckBox CreateButtonCheckBoxCard(Card c, double perc, int playerid, int index, bool user)
         {
@@ -397,10 +548,13 @@ namespace Virus.Forms
                     Game.DrawCardsToFill(p);
                     Game.Turn++;
                 }
-                UpdateGUI();
+
 
                 Discarding = false;
                 b.Text = "Begin to discard";
+
+                DoMove();
+
             }
             else
             {

@@ -14,12 +14,20 @@ namespace Virus.Forms
         public CGame(int numPlayers, int waitingtime, TextBox log, bool firstHuman = false)
             : base(waitingtime, firstHuman, new CLogger(log))
         {
-            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+            Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            Players[0].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
+            Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
             //Players[0].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
-            //Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
-            //Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            Players[0].Hand[0] = new Card(Card.CardColor.Wildcard, Card.CardFace.Organ);
+            //Players[0].Hand[1] = new Card(Card.CardColor.Blue, Card.CardFace.EvolvedMedicine);
+            //Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.SecondOpinion);
             //Players[0].Hand[2] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+
+            Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            Players[1].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+            Players[1].Hand[0] = new Card(Card.CardColor.Wildcard, Card.CardFace.Organ);
+            Players[1].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
+
 
         }
 
@@ -95,6 +103,79 @@ namespace Virus.Forms
                     //return true;
             }
         }
+
+
+        public bool PlayUserCardByMove(Player player, Card myCard, string move, List<string> wholemoves, bool discard = true)
+        {
+            if (!wholemoves.Contains(move))
+            {
+                return false;
+            }
+
+            bool nextturn = true;
+
+            switch (myCard.Face)
+            {
+                case Card.CardFace.Medicine:
+                    RemoveCardFromHand(player, myCard);
+                    PlayGameCardMedicine(player, myCard, move);
+                    break;
+                case Card.CardFace.EvolvedMedicine:
+                    RemoveCardFromHand(player, myCard);
+                    PlayGameCardEvolvedMedicine(player, myCard, move);
+                    break;
+
+
+                case Card.CardFace.Virus:
+                    if (discard)
+                        RemoveCardFromHand(player, myCard);
+                    PlayGameCardVirus(player, myCard, move, wholemoves);
+                    break;
+                case Card.CardFace.EvolvedVirus:
+                    RemoveCardFromHand(player, myCard);
+                    PlayGameCardEvolvedVirus(player, myCard, move, wholemoves);
+                    break;
+
+                case Card.CardFace.MedicalError:
+                    if (discard)
+                        DiscardFromHand(player, myCard);
+                    PlayMedicalError(player, myCard, move, wholemoves);
+                    break;
+                case Card.CardFace.SecondOpinion:
+                    if (discard)
+                        DiscardFromHand(player, myCard);
+                    PlaySecondOpinion(player, myCard, move, wholemoves);
+                    //nextturn = false;
+                    break;
+                default:
+                    return false;
+            }
+
+            if (nextturn)
+            {
+                DrawCardsToFill(player);
+                Turn++;
+            }
+            return true;
+        }
+
+
+
+        public string GetMoveGivenCCheckBox(CCheckBox source, CCheckBox dest)
+        {
+            switch (source.Card.Face)
+            {
+                case Card.CardFace.Medicine:
+                case Card.CardFace.EvolvedMedicine:
+                case Card.CardFace.Virus:
+                case Card.CardFace.EvolvedVirus:
+                    return Scheduler.GenerateMove(dest.PlayerId, dest.Index);
+                default:
+                    break;
+            }
+            return null;
+        }
+
 
         
         public override bool ProceedProtectiveSuit(Player player, Player rival, Card myCard, string move, List<string> wholemoves)

@@ -77,6 +77,7 @@ namespace Virus.Forms
             // 
             // button1
             // 
+            this.button1.Enabled = false;
             this.button1.Location = new System.Drawing.Point(198, 3);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(163, 40);
@@ -137,7 +138,7 @@ namespace Virus.Forms
             this.tbLog.BackColor = System.Drawing.SystemColors.InfoText;
             this.tbLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbLog.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbLog.ForeColor = System.Drawing.SystemColors.MenuHighlight;
+            this.tbLog.ForeColor = System.Drawing.Color.Lime;
             this.tbLog.Location = new System.Drawing.Point(894, 4);
             this.tbLog.MaxLength = 999999999;
             this.tbLog.Multiline = true;

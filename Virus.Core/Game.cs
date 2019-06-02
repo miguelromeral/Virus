@@ -386,6 +386,22 @@ namespace Virus.Core
             return false;
         }
 
+        public Player GetTheWinner()
+        {
+            if (GameOver)
+            {
+                foreach(var p in Players)
+                {
+                    if(p.HealthyOrgans == Settings.NumberToWin)
+                    {
+                        return p;
+                    }
+                }
+                return null;
+            }
+            return null;
+        }
+
 
         /// <summary>
         /// Start the current game.
@@ -802,7 +818,7 @@ namespace Virus.Core
         /// <param name="me">Player who has used the card.</param>
         /// <param name="move">Move that indicates who switch the whole body</param>
         /// <returns></returns>
-        public void PlayMedicalError(Player me, Card myCard, string move, List<string> wholemoves)
+        protected void PlayMedicalError(Player me, Card myCard, string move, List<string> wholemoves)
         {
             try
             {
@@ -1100,13 +1116,13 @@ namespace Virus.Core
         /// <param name="myCard">Medicine card</param>
         /// <param name="move">Move to indicates in which organ uses it</param>
         /// <returns></returns>
-        private void PlayGameCardMedicine(Player player, Card myCard, string move)
+        protected void PlayGameCardMedicine(Player player, Card myCard, string move)
         {
             WriteToLog(player.Nickname + " has used a " + myCard + " in his " + player.Body.Items[Scheduler.GetStringInt(move, 2)]);
             player.Body.Items[Scheduler.GetStringInt(move, 2)].NewMedicine(this, myCard);
         }
 
-        public void PlayGameCardEvolvedMedicine(Player player, Card myCard, string move)
+        protected void PlayGameCardEvolvedMedicine(Player player, Card myCard, string move)
         {
             WriteToLog(player.Nickname + " has used a " + myCard + " in his " + player.Body.Items[Scheduler.GetStringInt(move, 2)]);
             player.Body.Items[Scheduler.GetStringInt(move, 2)].NewEvolvedMedicine(this, myCard);
@@ -1119,7 +1135,7 @@ namespace Virus.Core
         /// <param name="myCard">Virus card</param>
         /// <param name="move">Move to put this virus</param>
         /// <returns>Error message if its</returns>
-        private void PlayGameCardVirus(Player player, Card myCard, string move, List<string> wholemoves)
+        protected void PlayGameCardVirus(Player player, Card myCard, string move, List<string> wholemoves)
         {
             if (!ProtectiveSuitScenario(player, myCard, move, wholemoves))
             {
@@ -1261,6 +1277,15 @@ namespace Virus.Core
             return copy;
         }
         
+
+        public bool IsMyTurn(Player player)
+        {
+            if (CurrentTurn == player.ID)
+                return true;
+
+            return false;
+        }
+
 
         public string GetMyCardAffectedFromMove(Player Me, Card card, string move)
         {
