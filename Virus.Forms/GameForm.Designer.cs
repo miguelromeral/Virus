@@ -73,11 +73,9 @@ namespace Virus.Forms
             this.bDiscard.TabIndex = 0;
             this.bDiscard.Text = "Begin to discard";
             this.bDiscard.UseVisualStyleBackColor = true;
-            this.bDiscard.Click += new System.EventHandler(this.bDiscard_Click);
             // 
             // button1
             // 
-            this.button1.Enabled = false;
             this.button1.Location = new System.Drawing.Point(198, 3);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(163, 40);

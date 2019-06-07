@@ -1278,9 +1278,9 @@ namespace Virus.Core
         }
         
 
-        public bool IsMyTurn(Player player)
+        public bool IsMyTurn(int playerid)
         {
-            if (CurrentTurn == player.ID)
+            if (CurrentTurn == playerid)
                 return true;
 
             return false;

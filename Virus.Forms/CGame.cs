@@ -14,19 +14,26 @@ namespace Virus.Forms
         public CGame(int numPlayers, int waitingtime, TextBox log, bool firstHuman = false)
             : base(waitingtime, firstHuman, new CLogger(log))
         {
-            Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[0].Body.Items[0].NewEvolvedVirus(new Card(Card.CardColor.Red, Card.CardFace.EvolvedVirus), this);
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+            //Players[0].Body.Items[1].NewEvolvedVirus(new Card(Card.CardColor.Blue, Card.CardFace.EvolvedVirus), this);
+
             Players[0].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
-            Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
-            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
-            Players[0].Hand[0] = new Card(Card.CardColor.Wildcard, Card.CardFace.Organ);
-            //Players[0].Hand[1] = new Card(Card.CardColor.Blue, Card.CardFace.EvolvedMedicine);
-            //Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.SecondOpinion);
-            //Players[0].Hand[2] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+            ////Players[0].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
+            //Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.EvolvedVirus);
+            ////Players[0].Hand[1] = new Card(Card.CardColor.Blue, Card.CardFace.EvolvedMedicine);
+            ////Players[0].Hand[1] = new Card(Card.CardColor.Purple, Card.CardFace.SecondOpinion);
+            ////Players[0].Hand[2] = new Card(Card.CardColor.Purple, Card.CardFace.ProtectiveSuit);
 
             Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            Players[1].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
-            Players[1].Hand[0] = new Card(Card.CardColor.Wildcard, Card.CardFace.Organ);
-            Players[1].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
+            Players[2].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            ////Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Transplant);
+            ////Players[1].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
+            //Players[2].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
 
 
         }
@@ -52,55 +59,6 @@ namespace Virus.Forms
                     return true;
                 default:
                     return false;
-                    //string choosen = null;
-                    //switch (myCard.Face)
-                    //{
-                    //    case Card.CardFace.Transplant:
-                    //        choosen = reader.RequestMovementChoosenTransplant(moves, this);
-                    //        break;
-
-                    //    case Card.CardFace.Spreading:
-                    //        List<List<string>> wholeMoves = Scheduler.GetListOfListsSpreadingMoves(Referee.GetListMovements(player, myCard));
-                    //        if (wholeMoves.Count == 0)
-                    //        {
-                    //            return false;
-                    //        }
-                    //        if (wholeMoves.Count > 0)
-                    //        {
-                    //            List<string> choosenlist = new List<string>();
-                    //            foreach (var move in wholeMoves)
-                    //            {
-                    //                string input = ProcessSpreadingItem(move);
-                    //                if (input == null)
-                    //                {
-                    //                    return false;
-                    //                }
-                    //                else
-                    //                {
-                    //                    choosenlist.Add(input);
-                    //                }
-                    //            }
-                    //            PlayGameCardSpreading(player, myCard, Scheduler.GetMoveByMultiple(choosenlist), moves);
-                    //            return true;
-
-                    //        }
-                    //        break;
-
-                    //    case Card.CardFace.MedicalError:
-                    //    case Card.CardFace.SecondOpinion:
-                    //        choosen = reader.RequestMovementChoosenMedicalError(player, moves, this);
-                    //        break;
-
-                    //    default:
-                    //        choosen = reader.RequestMovementChoosen(player, moves);
-                    //        break;
-                    //}
-
-                    //if (choosen == null)
-                    //    return false;
-
-                    //PlayCardByMove(player, myCard, choosen, moves);
-                    //return true;
             }
         }
 
@@ -136,6 +94,23 @@ namespace Virus.Forms
                     PlayGameCardEvolvedVirus(player, myCard, move, wholemoves);
                     break;
 
+                case Card.CardFace.OrganThief:
+                    if (discard)
+                        DiscardFromHand(player, myCard);
+                    PlayOrganThief(player, myCard, move, wholemoves);
+                    break;
+                    
+                case Card.CardFace.Quarantine:
+                    DiscardFromHand(player, myCard);
+                    PlayQuarantine(player, move);
+                    break;
+
+                case Card.CardFace.Transplant:
+                    if (discard)
+                        DiscardFromHand(player, myCard);
+                    PlayGameCardTransplant(player, myCard, move, wholemoves);
+                    break;
+
                 case Card.CardFace.MedicalError:
                     if (discard)
                         DiscardFromHand(player, myCard);
@@ -161,17 +136,43 @@ namespace Virus.Forms
 
 
 
-        public string GetMoveGivenCCheckBox(CCheckBox source, CCheckBox dest)
+        public string GetMoveGivenCCheckBox(CCheckBox source, CCheckBox dest, string action = null)
         {
-            switch (source.Card.Face)
+            if(action == null)
             {
-                case Card.CardFace.Medicine:
-                case Card.CardFace.EvolvedMedicine:
-                case Card.CardFace.Virus:
-                case Card.CardFace.EvolvedVirus:
-                    return Scheduler.GenerateMove(dest.PlayerId, dest.Index);
-                default:
-                    break;
+                switch (source.Card.Face)
+                {
+                    case Card.CardFace.Medicine:
+                    case Card.CardFace.EvolvedMedicine:
+                    case Card.CardFace.Virus:
+                    case Card.CardFace.EvolvedVirus:
+                    case Card.CardFace.OrganThief:
+                    case Card.CardFace.Quarantine:
+                        return Scheduler.GenerateMove(dest.PlayerId, dest.Index);
+                    // It'll be threated with other cards.
+                    case Card.CardFace.Transplant:
+                        
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                switch (action)
+                {
+                    case GameForm.ACTION_TRANSPLANT:
+                        if(source == null || dest == null)
+                        {
+                            return null;
+                        }
+                        return Scheduler.GetManyMoveItem(new string[]
+                                            {
+                                                Scheduler.GenerateMove(source.PlayerId, source.Index),
+                                                Scheduler.GenerateMove(dest.PlayerId, dest.Index)
+                                            });
+                    default:
+                        return null;
+                }
             }
             return null;
         }

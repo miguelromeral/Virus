@@ -133,7 +133,8 @@ namespace Virus.Core
             
             // Makes the choice of defend or not.
             bool shouldi = ShouldIDefend(rival, c, move);
-            
+            //shouldi = true;
+
             if (shouldi)
             {
                 // Discards its protective suit card now it has used.

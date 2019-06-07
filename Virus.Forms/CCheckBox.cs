@@ -15,5 +15,11 @@ namespace Virus.Forms
         public int Index { get; set; }
         
         public bool InHand { get; set; }
+
+
+        public string ToString()
+        {
+            return String.Format("C:{0} | P:{1} | I:{2} | Hand:{3}", Card.ToString(), PlayerId, Index, InHand);
+        }
     }
 }
