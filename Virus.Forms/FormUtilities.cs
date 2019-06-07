@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,8 @@ namespace Virus.Forms
         public Label LTurns { get; set; }
         public TextBox TBState { get; set; }
         public Button BDiscards { get; set; }
-        public int UserID { get; set; }
+
+        public Player Me { get; }
 
 
 
@@ -30,17 +32,28 @@ namespace Virus.Forms
         private List<Panel> UserHandPanels = new List<Panel>();
         private List<CCheckBox> UserHandCards = new List<CCheckBox>();
 
-        public FormUtilities(GameForm form, Game g, TableLayoutPanel layout, Panel UserHand)
+
+        public enum Action
+        {
+            None,
+            Selecting,
+            Discarding
+        }
+
+        private List<CCheckBox> SelectedCards = new List<CCheckBox>();
+        private Action action = Action.None;
+
+
+        public FormUtilities(GameForm form, Game g, Player m, TableLayoutPanel layout, Panel UserHand)
         {
             Form = form;
             Game = g;
+            Me = m;
             UserHandPanel = UserHand;
             InitPanels(layout);
         }
-        public FormUtilities()
-        {
-        }
 
+        #region GUI
         public void UpdateGUI()
         {
             UpdateAllPlayerPanels();
@@ -53,8 +66,7 @@ namespace Virus.Forms
             foreach (var p in Game.Players)
                 UpdatePlayerPanel(p.ID);
         }
-
-
+        
         private Panel GetBodyItemPanel(int id, int item)
         {
             List<Panel> list = null;
@@ -81,14 +93,17 @@ namespace Virus.Forms
                 BodyItem item = p.Body.Items[i];
 
                 CCheckBox cb = FormUtilities.CreateButtonCheckBoxCard(item.Organ, 0.4, id, i, false);
-                cb.Click += CardClicked;
+
+                //cb.Click += CardClicked;
+                cb.Click += CardClicked2;
 
                 pItem.Controls.Add(cb);
 
                 for (int j = 0; j < item.Modifiers.Count; j++)
                 {
                     cb = FormUtilities.CreateButtonCheckBoxCard(item.Modifiers[j], 0.25, id, i, false);
-                    cb.Click += CardClicked;
+                    //cb.Click += CardClicked;
+                    cb.Click += CardClicked2;
 
                     pItem.Controls.Add(cb);
                 }
@@ -101,18 +116,65 @@ namespace Virus.Forms
                 i++;
             }
         }
-
-
-
+        
         private void UpdateGamePanel()
         {
             LTurns.Text = "Turn #" + Game.Turn;
             TBState.Text = Game.ToString();
         }
+        #endregion
+
+        public void CardClicked2(object sender, EventArgs e)
+        {
+            CCheckBox cb = (CCheckBox)sender;
+            switch (action)
+            {
+                case Action.None:
+                    {
+                        //if (!cb.InHand)
+                        //{
+                        //    cb.Checked = false;
+                        //    return;
+                        //}
+                        //else
+                        //{
+                        //    SelectedCards.Add(cb);
+
+
+                        //}
+                    }
+                    break;
+                case Action.Discarding:
+                    {
+                        // Check or uncheck card to discard or not.
+                        if (cb.Checked)
+                        {
+                            SelectedCards.Add(cb);
+                            //if (SelectedCards.Count == Game.Settings.NumberCardInHand)
+                            //{
+                            //    // Automatic click to discard all hand.
+                            //    bDiscard_Click(BDiscards, e);
+                            //}
+                        }
+                        else
+                        {
+                            SelectedCards.Remove(cb);
+                        }
+                    }
+                    break;
+                default:
+                    MessageBox.Show("NO ACTIONS!");
+                    return;
+            }
+        }
+
+
+
+
 
         public void CardClicked(object sender, EventArgs e)
         {
-            bool done = Form.EventCard((CCheckBox)sender);
+            //bool done = Form.EventCard((CCheckBox)sender);
             //if (done)
             //{
             //    DoMove();
@@ -134,7 +196,8 @@ namespace Virus.Forms
                     Card c = p.Hand[i];
                     pc = UserHandPanels[i];
                     var cb = FormUtilities.CreateButtonCheckBoxCard(c, 0.4, p.ID, i, true);
-                    cb.Click += CardClicked;
+                    //cb.Click += CardClicked;
+                    cb.Click += CardClicked2;
                     UserHandCards.Add(cb);
                     pc.Controls.Clear();
                     pc.Controls.Add(cb);
@@ -148,7 +211,7 @@ namespace Virus.Forms
                 }
             }
 
-            if (Game.IsMyTurn(UserID))
+            if (Game.IsMyTurn(Me.ID))
             {
                 ChangeUserButtons(true);
             }
@@ -173,43 +236,71 @@ namespace Virus.Forms
 
         bool Discarding;
 
-        private void bDiscard_Click(object sender, EventArgs e)
+        public void bDiscard_Click(object sender, EventArgs e)
         {
             Button b = (Button)sender;
-            if (Discarding)
+
+            if(action != Action.Discarding)
             {
-                bool discarded = false;
-                Player p = null;
-                foreach (var cb in UserHandCards)
-                {
-                    if (cb.Checked)
-                    {
-                        if (p == null)
-                            p = Game.GetPlayerByID(cb.PlayerId);
-
-                        Game.DiscardFromHand(p, cb.Card);
-                        discarded = true;
-                    }
-                }
-                if (discarded)
-                {
-                    Game.DrawCardsToFill(p);
-                    Game.Turn++;
-                }
-
-
-                Discarding = false;
-                b.Text = "Begin to discard";
-
-                Form.DoMove();
-
+                ClearAllCheckedCardHand();
+                action = Action.Discarding;
+                b.Text = "End discarding";
             }
             else
             {
-                Discarding = true;
-                b.Text = "Discard selected";
-                ClearAllCheckedCardHand();
+                action = Action.None;
+                b.Text = "Discard";
+
+                if (SelectedCards.Count > 0)
+                {
+                    foreach (var cb in SelectedCards)
+                    {
+                        Game.DiscardFromHand(Me, cb.Card);
+                    }
+                    SelectedCards.Clear();
+                    Game.DrawCardsToFill(Me);
+                    Game.Turn++;
+                    UpdateGUI();
+                }
             }
+
+
+
+            //Button b = (Button)sender;
+            //if (Discarding)
+            //{
+            //    bool discarded = false;
+            //    Player p = null;
+            //    foreach (var cb in UserHandCards)
+            //    {
+            //        if (cb.Checked)
+            //        {
+            //            if (p == null)
+            //                p = Game.GetPlayerByID(cb.PlayerId);
+
+            //            Game.DiscardFromHand(p, cb.Card);
+            //            discarded = true;
+            //        }
+            //    }
+            //    if (discarded)
+            //    {
+            //        Game.DrawCardsToFill(p);
+            //        Game.Turn++;
+            //    }
+
+
+            //    Discarding = false;
+            //    b.Text = "Begin to discard";
+
+            //    Form.DoMove();
+
+            //}
+            //else
+            //{
+            //    Discarding = true;
+            //    b.Text = "Discard selected";
+            //    ClearAllCheckedCardHand();
+            //}
         }
 
 
@@ -298,23 +389,54 @@ namespace Virus.Forms
         {
             int width = (int)(200 * perc);
             int height = (int)(279 * perc);
-            Image myimage = new Bitmap(FormUtilities.GetImageFromCard(c));
+
+            Image myimage = GetImageFromCard(c);
+
             CCheckBox b = new CCheckBox()
             {
                 //Text = c.ToString(),
+                
                 Card = c,
                 InHand = user,
                 PlayerId = playerid,
+                Percentage = perc,
                 Index = index,
+                CardImage = myimage,
                 BackgroundImage = myimage,
                 Width = width,
                 Height = height,
                 Appearance = Appearance.Button
             };
+            b.CheckedChanged += new System.EventHandler(b.SetTransparency);
+
+
+
             b.BackgroundImage = new Bitmap(b.BackgroundImage, b.Width, b.Height);
+            
+
             return b;
         }
-        
+
+
+
+        public static Image SetImageOpacity(Image image, double per, float opacity)
+        {
+            Bitmap bmp = new Bitmap((int) (per * image.Width), (int) (per * image.Height));
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                ColorMatrix matrix = new ColorMatrix();
+                matrix.Matrix33 = opacity;
+                ImageAttributes attributes = new ImageAttributes();
+                attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default,
+                                                  ColorAdjustType.Bitmap);
+                g.DrawImage(image, new Rectangle(0, 0, bmp.Width, bmp.Height),
+                                   0, 0, image.Width, image.Height,
+                                   GraphicsUnit.Pixel, attributes);
+            }
+            return bmp;
+        }
+
+
         protected static Image GetImageFromCard(Card c)
         {
             return new Bitmap(GetImageFromCardString(c));

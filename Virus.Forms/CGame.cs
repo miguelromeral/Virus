@@ -138,43 +138,44 @@ namespace Virus.Forms
 
         public string GetMoveGivenCCheckBox(CCheckBox source, CCheckBox dest, string action = null)
         {
-            if(action == null)
-            {
-                switch (source.Card.Face)
-                {
-                    case Card.CardFace.Medicine:
-                    case Card.CardFace.EvolvedMedicine:
-                    case Card.CardFace.Virus:
-                    case Card.CardFace.EvolvedVirus:
-                    case Card.CardFace.OrganThief:
-                    case Card.CardFace.Quarantine:
-                        return Scheduler.GenerateMove(dest.PlayerId, dest.Index);
-                    // It'll be threated with other cards.
-                    case Card.CardFace.Transplant:
-                        
-                    default:
-                        break;
-                }
-            }
-            else
-            {
-                switch (action)
-                {
-                    case GameForm.ACTION_TRANSPLANT:
-                        if(source == null || dest == null)
-                        {
-                            return null;
-                        }
-                        return Scheduler.GetManyMoveItem(new string[]
-                                            {
-                                                Scheduler.GenerateMove(source.PlayerId, source.Index),
-                                                Scheduler.GenerateMove(dest.PlayerId, dest.Index)
-                                            });
-                    default:
-                        return null;
-                }
-            }
             return null;
+            //if(action == null)
+            //{
+            //    switch (source.Card.Face)
+            //    {
+            //        case Card.CardFace.Medicine:
+            //        case Card.CardFace.EvolvedMedicine:
+            //        case Card.CardFace.Virus:
+            //        case Card.CardFace.EvolvedVirus:
+            //        case Card.CardFace.OrganThief:
+            //        case Card.CardFace.Quarantine:
+            //            return Scheduler.GenerateMove(dest.PlayerId, dest.Index);
+            //        // It'll be threated with other cards.
+            //        case Card.CardFace.Transplant:
+                        
+            //        default:
+            //            break;
+            //    }
+            //}
+            //else
+            //{
+            //    switch (action)
+            //    {
+            //        case GameForm.ACTION_TRANSPLANT:
+            //            if(source == null || dest == null)
+            //            {
+            //                return null;
+            //            }
+            //            return Scheduler.GetManyMoveItem(new string[]
+            //                                {
+            //                                    Scheduler.GenerateMove(source.PlayerId, source.Index),
+            //                                    Scheduler.GenerateMove(dest.PlayerId, dest.Index)
+            //                                });
+            //        default:
+            //            return null;
+            //    }
+            //}
+            //return null;
         }
 
 
