@@ -13,19 +13,20 @@ namespace Virus.Forms
 {
     public class FormUtilities
     {
-        private Game Game;
+        private CGame Game;
         private GameForm Form;
 
         public Label LTurns { get; set; }
         public TextBox TBState { get; set; }
         public Button BDiscards { get; set; }
 
+
         public Player Me { get; }
 
 
 
         private List<Panel> PlayerPanels = new List<Panel>();
-        private Panel UserHandPanel;
+        //private Panel UserHandPanel;
 
 
         private Dictionary<int, List<Panel>> BodyItemPanels = new Dictionary<int, List<Panel>>();
@@ -37,19 +38,23 @@ namespace Virus.Forms
         {
             None,
             Selecting,
-            Discarding
+            Discarding,
+            OneInteraction,
+            TwoInteraction,
+            ManyInteraction
         }
 
         private List<CCheckBox> SelectedCards = new List<CCheckBox>();
         private Action action = Action.None;
 
+        public TableLayoutPanel HandPanel;
 
-        public FormUtilities(GameForm form, Game g, Player m, TableLayoutPanel layout, Panel UserHand)
+        public FormUtilities(GameForm form, CGame g, Player m, TableLayoutPanel layout, TableLayoutPanel layouthand)
         {
             Form = form;
             Game = g;
             Me = m;
-            UserHandPanel = UserHand;
+            HandPanel = layouthand;
             InitPanels(layout);
         }
 
@@ -119,31 +124,110 @@ namespace Virus.Forms
         
         private void UpdateGamePanel()
         {
-            LTurns.Text = "Turn #" + Game.Turn;
+            //LTurns.Text = "Turn #" + Game.Turn;
             TBState.Text = Game.ToString();
         }
+        
+        private void ClearAllCheckedCardHand()
+        {
+            foreach (var cb in UserHandCards)
+            {
+                cb.Checked = false;
+            }
+        }
+
+        private void InitPanels(TableLayoutPanel MainLayout)
+        {
+            MainLayout.ColumnCount = Game.Settings.NumberToWin;
+            MainLayout.ColumnStyles.Clear();
+            for (int i = 0; i < Game.Settings.NumberToWin; i++)
+            {
+                MainLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, (float)(1 / Game.Settings.NumberToWin)));
+                //MainLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100));
+
+            }
+            MainLayout.RowCount = Game.Players.Count * 2;
+            MainLayout.RowStyles.Clear();
+            for (int i = 0; i < Game.Players.Count; i++)
+            {
+                MainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50));
+                MainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 200));
+            }
+
+
+            HandPanel.ColumnCount = Game.Settings.NumberCardInHand;
+            HandPanel.ColumnStyles.Clear();
+
+            int count = 0;
+            foreach (var p in Game.Players)
+            {
+                Label label = new Label()
+                {
+                    Text = p.Nickname
+                };
+
+                FlowLayoutPanel pBody = new FlowLayoutPanel()
+                {
+                    Name = "panel_user_" + p.ID,
+                    FlowDirection = FlowDirection.LeftToRight,
+                    BorderStyle = BorderStyle.FixedSingle,
+                    AutoScroll = false,
+                    AutoSize = true,
+                    AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                };
+                PlayerPanels.Add(pBody);
+
+                List<Panel> bil = new List<Panel>();
+                for (int i = 0; i < Game.Settings.NumberToWin; i++)
+                {
+                    FlowLayoutPanel pItem = new FlowLayoutPanel()
+                    {
+                        FlowDirection = FlowDirection.LeftToRight,
+                        AutoScroll = false,
+                        AutoSize = true,
+                        AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                    };
+                    bil.Add(pItem);
+
+                    MainLayout.Controls.Add(pItem, i, count + 1);
+                }
+                BodyItemPanels.Add(p.ID, bil);
+
+                MainLayout.Controls.Add(label, 0, count);
+                //MainLayout.Controls.Add(pBody);
+                count += 2;
+            }
+            for (int i = 0; i < Game.Settings.NumberCardInHand; i++)
+            {
+                FlowLayoutPanel pHand = new FlowLayoutPanel()
+                {
+                    FlowDirection = FlowDirection.LeftToRight,
+                    AutoScroll = true,
+                    AutoSize = true,
+                    AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                };
+                UserHandPanels.Add(pHand);
+                HandPanel.Controls.Add(pHand, i, 0);
+            }
+        }
         #endregion
+
+        private void SetSelected()
+        {
+            LTurns.Text = action.ToString() + "-";
+            foreach(var cb in SelectedCards)
+            {
+                LTurns.Text += cb.Card.ToString() + ",";
+            }
+        }
 
         public void CardClicked2(object sender, EventArgs e)
         {
             CCheckBox cb = (CCheckBox)sender;
+
+
             switch (action)
             {
-                case Action.None:
-                    {
-                        //if (!cb.InHand)
-                        //{
-                        //    cb.Checked = false;
-                        //    return;
-                        //}
-                        //else
-                        //{
-                        //    SelectedCards.Add(cb);
-
-
-                        //}
-                    }
-                    break;
                 case Action.Discarding:
                     {
                         // Check or uncheck card to discard or not.
@@ -162,13 +246,174 @@ namespace Virus.Forms
                         }
                     }
                     break;
-                default:
-                    MessageBox.Show("NO ACTIONS!");
-                    return;
+                case Action.None:
+                    {
+                        if (cb.InHand)
+                        {
+                            foreach (var s in SelectedCards)
+                            {
+                                s.Checked = false;
+                            }
+                            SelectedCards.Clear();
+
+                            SelectedCards.Add(cb);
+                            if(CurrentMoves == null)
+                            {
+                                CurrentMoves = Game.Referee.GetListMovements(Me, cb.Card, false);
+                            }
+
+                            switch (CurrentMoves.Count)
+                            {
+                                case 0:
+                                    cb.Checked = false;
+                                    SelectedCards.Clear();
+                                    CurrentMoves = null;
+                                    break;
+                                case 1:
+                                    Game.PlayGameCardByUser(Me, cb.Index, CurrentMoves, cb.Card);
+                                    Game.DrawCardsToFill(Me);
+                                    Game.Turn++;
+                                    SelectedCards.Clear();
+                                    UpdateGUI();
+                                    CurrentMoves = null;
+                                    break;
+                                default:
+                                    switch (cb.Card.Face)
+                                    {
+                                        // Cards that only need one more card to interact with
+                                        case Card.CardFace.EvolvedMedicine:
+                                        case Card.CardFace.EvolvedVirus:
+                                        case Card.CardFace.Medicine:
+                                        case Card.CardFace.OrganThief:
+                                        case Card.CardFace.Quarantine:
+                                        case Card.CardFace.Virus:
+                                            action = Action.OneInteraction;
+                                            break;
+
+                                        // Two cards interaction
+                                        case Card.CardFace.Transplant:
+                                            action = Action.TwoInteraction;
+                                            break;
+
+                                        // N cards interaction
+                                        case Card.CardFace.Spreading:
+                                            action = Action.ManyInteraction;
+                                            break;
+
+                                        // Cards that need a inputbox dialog
+                                        case Card.CardFace.MedicalError:
+                                        case Card.CardFace.SecondOpinion:
+                                            {
+                                                string[] options = new string[Game.Players.Count - 1];
+                                                int i = 0;
+                                                foreach (Player p in Game.Players)
+                                                {
+                                                    if (p.ID != Me.ID)
+                                                    {
+                                                        options[i] = p.Nickname;
+                                                        i++;
+                                                    }
+                                                }
+
+                                                #region DIALOG
+                                                //Set buttons language Czech/English/German/Slovakian/Spanish (default English)
+                                                InputBox.SetLanguage(InputBox.Language.English);
+
+                                                //Save the DialogResult as res
+                                                DialogResult res = InputBox.ShowDialog("To which player do you want to use this card?",
+                                                "Play this card",   //Text message (mandatory), Title (optional)
+                                                    InputBox.Icon.Question, //Set icon type (default info)
+                                                                            //InputBox.Icon.Information, //Set icon type (default info)
+                                                    InputBox.Buttons.OkCancel, //Set buttons (default ok)
+                                                    InputBox.Type.ComboBox, //Set type (default nothing)
+                                                    options, //String field as ComboBox items (default null)
+                                                    true //Set visible in taskbar (default false)
+                                                    );
+                                                #endregion
+
+                                                //Check InputBox result
+                                                if (res == System.Windows.Forms.DialogResult.OK || res == System.Windows.Forms.DialogResult.Yes)
+                                                {
+                                                    string user = InputBox.ResultValue;
+                                                    string move;
+
+                                                    foreach (Player p in Game.Players)
+                                                    {
+                                                        if (p.Nickname == user)
+                                                        {
+                                                            move = Scheduler.GenerateMove(p.ID, 0);
+                                                            Game.PlayUserCardByMove(Me, cb.Card, move, CurrentMoves);
+                                                        }
+                                                    }
+                                                }
+                                                SelectedCards.Clear();
+                                                CurrentMoves = null;
+                                            }
+                                            break;
+
+                                        // Cards that doesn't need any other interaction
+                                        case Card.CardFace.LatexGlove: break;
+                                        case Card.CardFace.Organ: break;
+                                        case Card.CardFace.Overtime: break;
+                                        case Card.CardFace.ProtectiveSuit: break;
+                                    }
+                                    break;
+                            }
+
+                        }
+                        else
+                        {
+                            cb.Checked = false;
+                            CurrentMoves = null;
+                        }
+                    }
+                    break;
+                case Action.OneInteraction:
+                    if (!cb.InHand)
+                    {
+                        SelectedCards.Add(cb);
+                        bool movedone = false;
+                        if (SelectedCards.Count > 0 && CurrentMoves != null && cb.Card.Face == Card.CardFace.Organ)
+                        {
+                            Card selected = SelectedCards[0].Card;
+                            string move = Game.GetMoveGivenSelectedCards(SelectedCards);
+                            if (move != null)
+                            {
+                                movedone = Game.PlayUserCardByMove(Me, selected, move, CurrentMoves);
+                            }
+                        }
+                        if (movedone)
+                        {
+                            Game.DrawCardsToFill(Me);
+                            Game.Turn++;
+                            UpdateGUI();
+                            CurrentMoves = null;
+                        }
+                        else
+                        {
+                            cb.Checked = false;
+                            foreach(var c in SelectedCards)
+                            {
+                                c.Checked = false;
+                            }
+                            SelectedCards.Clear();
+                            CurrentMoves = null;                            
+                        }
+                    }
+                    else
+                    {
+                        ClearAllCheckedCardHand();
+                        SelectedCards.Clear();
+                        CurrentMoves = null;
+                        cb.Checked = false;
+                        action = Action.None;
+                    }
+                    break;
             }
+            SetSelected();
         }
 
-
+        private List<string> CurrentMoves;
 
 
 
@@ -233,9 +478,7 @@ namespace Virus.Forms
             }
             BDiscards.Enabled = enable;
         }
-
-        bool Discarding;
-
+        
         public void bDiscard_Click(object sender, EventArgs e)
         {
             Button b = (Button)sender;
@@ -304,86 +547,6 @@ namespace Virus.Forms
         }
 
 
-        private void ClearAllCheckedCardHand()
-        {
-            foreach (var cb in UserHandCards)
-            {
-                cb.Checked = false;
-            }
-        }
-
-        private void InitPanels(TableLayoutPanel MainLayout)
-        {
-            MainLayout.ColumnCount = Game.Settings.NumberToWin;
-            MainLayout.ColumnStyles.Clear();
-            for (int i = 0; i < Game.Settings.NumberToWin; i++)
-            {
-                MainLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, (float)(1 / Game.Settings.NumberToWin)));
-                //MainLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100));
-
-            }
-            MainLayout.RowCount = Game.Players.Count * 2;
-            MainLayout.RowStyles.Clear();
-            for (int i = 0; i < Game.Players.Count; i++)
-            {
-                MainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50));
-                MainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 200));
-            }
-            int count = 0;
-            foreach (var p in Game.Players)
-            {
-                Label label = new Label()
-                {
-                    Text = p.Nickname
-                };
-
-                FlowLayoutPanel pBody = new FlowLayoutPanel()
-                {
-                    Name = "panel_user_" + p.ID,
-                    FlowDirection = FlowDirection.LeftToRight,
-                    BorderStyle = BorderStyle.FixedSingle,
-                    AutoScroll = false,
-                    AutoSize = true,
-                    AutoSizeMode = AutoSizeMode.GrowAndShrink,
-                };
-                PlayerPanels.Add(pBody);
-
-                List<Panel> bil = new List<Panel>();
-                for (int i = 0; i < Game.Settings.NumberToWin; i++)
-                {
-                    FlowLayoutPanel pItem = new FlowLayoutPanel()
-                    {
-                        FlowDirection = FlowDirection.LeftToRight,
-                        AutoScroll = false,
-                        AutoSize = true,
-                        AutoSizeMode = AutoSizeMode.GrowAndShrink,
-                    };
-                    bil.Add(pItem);
-
-                    MainLayout.Controls.Add(pItem, i, count + 1);
-                }
-                BodyItemPanels.Add(p.ID, bil);
-
-                MainLayout.Controls.Add(label, 0, count);
-                //MainLayout.Controls.Add(pBody);
-                count += 2;
-            }
-            for (int i = 0; i < Game.Settings.NumberCardInHand; i++)
-            {
-                FlowLayoutPanel pHand = new FlowLayoutPanel()
-                {
-                    FlowDirection = FlowDirection.LeftToRight,
-                    AutoScroll = true,
-                    AutoSize = true,
-                    AutoSizeMode = AutoSizeMode.GrowAndShrink,
-                };
-                UserHandPanels.Add(pHand);
-                UserHandPanel.Controls.Add(pHand);
-            }
-        }
-
-
-
 
         public static CCheckBox CreateButtonCheckBoxCard(Card c, double perc, int playerid, int index, bool user)
         {
@@ -416,9 +579,7 @@ namespace Virus.Forms
 
             return b;
         }
-
-
-
+        
         public static Image SetImageOpacity(Image image, double per, float opacity)
         {
             Bitmap bmp = new Bitmap((int) (per * image.Width), (int) (per * image.Height));
@@ -435,8 +596,7 @@ namespace Virus.Forms
             }
             return bmp;
         }
-
-
+        
         protected static Image GetImageFromCard(Card c)
         {
             return new Bitmap(GetImageFromCardString(c));

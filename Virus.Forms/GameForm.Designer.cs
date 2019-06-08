@@ -47,6 +47,7 @@ namespace Virus.Forms
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tbLog = new System.Windows.Forms.TextBox();
             this.MainLayout = new System.Windows.Forms.TableLayoutPanel();
+            this.tHand = new System.Windows.Forms.TableLayoutPanel();
             this.pUserHand.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -59,6 +60,7 @@ namespace Virus.Forms
             this.pUserHand.Controls.Add(this.bDiscard);
             this.pUserHand.Controls.Add(this.button1);
             this.pUserHand.Controls.Add(this.lTurns);
+            this.pUserHand.Controls.Add(this.tHand);
             this.pUserHand.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pUserHand.Location = new System.Drawing.Point(449, 335);
             this.pUserHand.Name = "pUserHand";
@@ -164,6 +166,19 @@ namespace Virus.Forms
             this.MainLayout.Size = new System.Drawing.Size(438, 656);
             this.MainLayout.TabIndex = 6;
             // 
+            // tHand
+            // 
+            this.tHand.ColumnCount = 2;
+            this.tHand.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tHand.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tHand.Location = new System.Drawing.Point(3, 49);
+            this.tHand.Name = "tHand";
+            this.tHand.RowCount = 1;
+            this.tHand.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tHand.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tHand.Size = new System.Drawing.Size(415, 170);
+            this.tHand.TabIndex = 4;
+            // 
             // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
@@ -199,5 +214,6 @@ namespace Virus.Forms
         private TableLayoutPanel tableLayoutPanel1;
         protected TextBox tbLog;
         private TableLayoutPanel MainLayout;
+        private TableLayoutPanel tHand;
     }
 }

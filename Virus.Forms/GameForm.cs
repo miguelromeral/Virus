@@ -15,7 +15,6 @@ namespace Virus.Forms
     public partial class GameForm : Form
     {
         public CGame Game;
-        public CCheckBox CardSelected;
         private FormUtilities Utilities;
 
         public GameForm()
@@ -27,7 +26,7 @@ namespace Virus.Forms
             Game = new CGame(3, 5000, tbLog, true);
 
 
-            Utilities = new FormUtilities(this, Game, Game.Players[0], MainLayout, pUserHand)
+            Utilities = new FormUtilities(this, Game, Game.Players[0], MainLayout, tHand)
             {
                 LTurns = lTurns,
                 TBState = tbGame,
