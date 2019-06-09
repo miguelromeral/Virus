@@ -20,6 +20,7 @@ namespace Virus.Forms
             //Players[0].Body.Items[1].NewEvolvedVirus(new Card(Card.CardColor.Blue, Card.CardFace.EvolvedVirus), this);
 
             Players[0].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
+            Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
             //Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
             ////Players[0].Body.SetOrgan(new Card(Card.CardColor.Green, Card.CardFace.Organ));
             //Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.EvolvedVirus);
@@ -32,6 +33,7 @@ namespace Virus.Forms
             //Players[1].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
             ////Players[2].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
             Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Transplant);
+            Players[0].Hand[1] = new Card(Card.CardColor.Wildcard, Card.CardFace.Medicine);
             ////Players[1].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
             //Players[2].Body.SetOrgan(new Card(Card.CardColor.Yellow, Card.CardFace.Organ));
 
@@ -136,44 +138,52 @@ namespace Virus.Forms
 
 
 
-        public string GetMoveGivenCCheckBox(CCheckBox source, CCheckBox dest, string action = null)
+        public string GetMoveGivenSelectedCards(List<CCheckBox> selected)
         {
-            if(action == null)
-            {
-                switch (source.Card.Face)
-                {
-                    case Card.CardFace.Medicine:
-                    case Card.CardFace.EvolvedMedicine:
-                    case Card.CardFace.Virus:
-                    case Card.CardFace.EvolvedVirus:
-                    case Card.CardFace.OrganThief:
-                    case Card.CardFace.Quarantine:
-                        return Scheduler.GenerateMove(dest.PlayerId, dest.Index);
-                    // It'll be threated with other cards.
-                    case Card.CardFace.Transplant:
-                        
-                    default:
-                        break;
-                }
+            if (selected == null || selected.Count == 0) {
+                return null;
             }
-            else
+
+            Card first = selected[0].Card;
+            selected.Remove(selected[0]);
+
+            switch (first.Face)
             {
-                switch (action)
-                {
-                    case GameForm.ACTION_TRANSPLANT:
-                        if(source == null || dest == null)
-                        {
-                            return null;
-                        }
-                        return Scheduler.GetManyMoveItem(new string[]
-                                            {
-                                                Scheduler.GenerateMove(source.PlayerId, source.Index),
-                                                Scheduler.GenerateMove(dest.PlayerId, dest.Index)
-                                            });
-                    default:
+                case Card.CardFace.EvolvedMedicine:
+                case Card.CardFace.EvolvedVirus:
+                case Card.CardFace.Medicine:
+                case Card.CardFace.OrganThief:
+                case Card.CardFace.Quarantine:
+                case Card.CardFace.Virus:
+                    CCheckBox dest = selected[0];
+                    return Scheduler.GenerateMove(dest.PlayerId, dest.Index);
+
+
+                // Two cards interaction
+                case Card.CardFace.Transplant:
+                    //if (source == null || dest == null)
+                    //    //            {
+                    //    //                return null;
+                    //    //            }
+                    //    //            return Scheduler.GetManyMoveItem(new string[]
+                    //    //                                {
+                    //    //                                    Scheduler.GenerateMove(source.PlayerId, source.Index),
+                    //    //                                    Scheduler.GenerateMove(dest.PlayerId, dest.Index)
+                    //    //                                });
                         return null;
-                }
+
+                // N cards interaction
+                case Card.CardFace.Spreading:
+                    return null;
+                    
+                //case Card.CardFace.MedicalError:
+                //case Card.CardFace.SecondOpinion:
+                //case Card.CardFace.LatexGlove: break;
+                //case Card.CardFace.Organ: break;
+                //case Card.CardFace.Overtime: break;
+                //case Card.CardFace.ProtectiveSuit: break;
             }
+            
             return null;
         }
 
