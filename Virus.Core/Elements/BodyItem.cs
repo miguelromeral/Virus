@@ -45,16 +45,16 @@ namespace Virus.Core
         /// <summary>
         /// Main card of the item: the Organ.
         /// </summary>
-        public Card Organ;
+        public Card Organ { get; private set; }
         /// <summary>
         /// List of cards that have been played to its Organ.
         /// </summary>
-        public List<Card> Modifiers;
+        public List<Card> Modifiers { get; private set; }
 
         /// <summary>
         /// Valuable criteria to clasify this body item. Usefull for AI.
         /// </summary>
-        public int Points = Scheduler.POINTS_ORGAN;
+        public int Points { get; set; }
         
         /// <summary>
         /// Current status of the body item in function of the cards played on its Organ.
@@ -91,7 +91,9 @@ namespace Virus.Core
                 }
             }
         }
-
+        /// <summary>
+        /// Indicates if the body item is helathy. If it is, it'll count for the player to win the game.
+        /// </summary>
         public bool IsHealthy
         {
             get
@@ -118,6 +120,7 @@ namespace Virus.Core
         public BodyItem(Card o)
         {
             Organ = o;
+            Points = ScoreRules.POINTS_ORGAN;
             Modifiers = new List<Card>();
         }
         #endregion
@@ -130,13 +133,17 @@ namespace Virus.Core
         /// <returns>String with a error message if it cannot be added. Null if all right.</returns>
         public bool NewMedicine(Game game, Card medicine)
         {
+            if (medicine.Face != Card.CardFace.Medicine)
+                return false;
+            
+
             if (medicine.Color == Card.CardColor.Wildcard)
             {
-                Points += (Scheduler.POINTS_MEDICINE / 2);
+                Points += (ScoreRules.POINTS_MEDICINE / 2);
             }
             else
             {
-                Points += Scheduler.POINTS_MEDICINE;
+                Points += ScoreRules.POINTS_MEDICINE;
             }
 
             switch (Status)
@@ -161,13 +168,17 @@ namespace Virus.Core
         }
         public bool NewEvolvedMedicine(Game game, Card medicine)
         {
+            if (medicine.Face != Card.CardFace.EvolvedMedicine)
+                return false;
+
+
             if (medicine.Color == Card.CardColor.Wildcard)
             {
-                Points += (int) ((Scheduler.POINTS_MEDICINE * 1.25) / 2);
+                Points += (int) ((ScoreRules.POINTS_MEDICINE * 1.25) / 2);
             }
             else
             {
-                Points += (int)(Scheduler.POINTS_MEDICINE * 1.25);
+                Points += (int)(ScoreRules.POINTS_MEDICINE * 1.25);
             }
 
             switch (Status)
@@ -241,11 +252,11 @@ namespace Virus.Core
                 // It's easier to remove a wildcard virus!
                 if (virus.Color == Card.CardColor.Wildcard)
                 {
-                    Points -= (Scheduler.POINTS_VIRUS / 2);
+                    Points -= (ScoreRules.POINTS_VIRUS / 2);
                 }
                 else
                 {
-                    Points -= Scheduler.POINTS_VIRUS;
+                    Points -= ScoreRules.POINTS_VIRUS;
                 }
             }
 
@@ -283,11 +294,11 @@ namespace Virus.Core
                 // It's easier to remove a wildcard virus!
                 if (virus.Color == Card.CardColor.Wildcard)
                 {
-                    Points -= (int)((Scheduler.POINTS_MEDICINE * 1.25) / 2);
+                    Points -= (int)((ScoreRules.POINTS_MEDICINE * 1.25) / 2);
                 }
                 else
                 {
-                    Points -= (int)(Scheduler.POINTS_MEDICINE * 1.25);
+                    Points -= (int)(ScoreRules.POINTS_MEDICINE * 1.25);
                 }
             }
 

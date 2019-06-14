@@ -43,13 +43,15 @@ namespace Virus.Forms
             this.bDiscard = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.lTurns = new System.Windows.Forms.Label();
+            this.tHand = new System.Windows.Forms.TableLayoutPanel();
             this.tbGame = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tbLog = new System.Windows.Forms.TextBox();
             this.MainLayout = new System.Windows.Forms.TableLayoutPanel();
-            this.tHand = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.pUserHand.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // pUserHand
@@ -57,9 +59,7 @@ namespace Virus.Forms
             this.pUserHand.AutoScroll = true;
             this.pUserHand.AutoSize = true;
             this.pUserHand.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pUserHand.Controls.Add(this.bDiscard);
-            this.pUserHand.Controls.Add(this.button1);
-            this.pUserHand.Controls.Add(this.lTurns);
+            this.pUserHand.Controls.Add(this.tableLayoutPanel2);
             this.pUserHand.Controls.Add(this.tHand);
             this.pUserHand.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pUserHand.Location = new System.Drawing.Point(449, 335);
@@ -71,16 +71,16 @@ namespace Virus.Forms
             // 
             this.bDiscard.Location = new System.Drawing.Point(3, 3);
             this.bDiscard.Name = "bDiscard";
-            this.bDiscard.Size = new System.Drawing.Size(189, 36);
+            this.bDiscard.Size = new System.Drawing.Size(94, 36);
             this.bDiscard.TabIndex = 0;
             this.bDiscard.Text = "Begin to discard";
             this.bDiscard.UseVisualStyleBackColor = true;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(198, 3);
+            this.button1.Location = new System.Drawing.Point(103, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(163, 40);
+            this.button1.Size = new System.Drawing.Size(94, 40);
             this.button1.TabIndex = 2;
             this.button1.Text = "Pass turn";
             this.button1.UseVisualStyleBackColor = true;
@@ -89,11 +89,26 @@ namespace Virus.Forms
             // lTurns
             // 
             this.lTurns.AutoSize = true;
-            this.lTurns.Location = new System.Drawing.Point(367, 0);
+            this.tableLayoutPanel2.SetColumnSpan(this.lTurns, 2);
+            this.lTurns.Location = new System.Drawing.Point(3, 50);
             this.lTurns.Name = "lTurns";
             this.lTurns.Size = new System.Drawing.Size(51, 20);
             this.lTurns.TabIndex = 3;
             this.lTurns.Text = "label1";
+            // 
+            // tHand
+            // 
+            this.tHand.ColumnCount = 2;
+            this.tHand.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tHand.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tHand.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.tHand.Location = new System.Drawing.Point(3, 109);
+            this.tHand.Name = "tHand";
+            this.tHand.RowCount = 1;
+            this.tHand.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tHand.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 170F));
+            this.tHand.Size = new System.Drawing.Size(415, 170);
+            this.tHand.TabIndex = 4;
             // 
             // tbGame
             // 
@@ -166,18 +181,24 @@ namespace Virus.Forms
             this.MainLayout.Size = new System.Drawing.Size(438, 656);
             this.MainLayout.TabIndex = 6;
             // 
-            // tHand
+            // tableLayoutPanel2
             // 
-            this.tHand.ColumnCount = 2;
-            this.tHand.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tHand.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tHand.Location = new System.Drawing.Point(3, 49);
-            this.tHand.Name = "tHand";
-            this.tHand.RowCount = 1;
-            this.tHand.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tHand.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tHand.Size = new System.Drawing.Size(415, 170);
-            this.tHand.TabIndex = 4;
+            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.Controls.Add(this.button1, 1, 0);
+            this.tableLayoutPanel2.Controls.Add(this.bDiscard, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.lTurns, 0, 1);
+            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel2.MinimumSize = new System.Drawing.Size(200, 100);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 2;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(200, 100);
+            this.tableLayoutPanel2.TabIndex = 5;
             // 
             // GameForm
             // 
@@ -196,9 +217,10 @@ namespace Virus.Forms
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "GameForm";
             this.pUserHand.ResumeLayout(false);
-            this.pUserHand.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -215,5 +237,6 @@ namespace Virus.Forms
         protected TextBox tbLog;
         private TableLayoutPanel MainLayout;
         private TableLayoutPanel tHand;
+        private TableLayoutPanel tableLayoutPanel2;
     }
 }

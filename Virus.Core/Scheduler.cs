@@ -47,9 +47,6 @@ namespace Virus.Core
         /// </summary>
         public const string ACTION_CHOOSING = "ChoosingCars";
 
-        public const int POINTS_ORGAN = 1000;
-        public const int POINTS_MEDICINE = 300;
-        public const int POINTS_VIRUS = 200;
         #endregion
 
         /// <summary>
@@ -289,14 +286,21 @@ namespace Virus.Core
                     for(int i=1; i<whole.Count; i++)
                     {
                         List<string> l = whole[i];
-                        foreach(string eli in all)
+                        if(all.Count == 0)
                         {
-                            foreach(string elf in l)
-                            {
-                                aux.Add(GetManyMoveItem(new string[] { eli, elf }));
-                            }
+                            all = l;
                         }
-                        all = aux;
+                        else
+                        {
+                            foreach (string eli in all)
+                            {
+                                foreach (string elf in l)
+                                {
+                                    aux.Add(GetManyMoveItem(new string[] { eli, elf }));
+                                }
+                            }
+                            all = aux;
+                        }
                         aux = new List<string>();
                     }
 

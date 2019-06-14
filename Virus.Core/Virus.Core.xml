@@ -218,17 +218,17 @@
             Not in game state.
             </summary>
         </member>
-        <member name="F:Virus.Core.BodyItem.Organ">
+        <member name="P:Virus.Core.BodyItem.Organ">
             <summary>
             Main card of the item: the Organ.
             </summary>
         </member>
-        <member name="F:Virus.Core.BodyItem.Modifiers">
+        <member name="P:Virus.Core.BodyItem.Modifiers">
             <summary>
             List of cards that have been played to its Organ.
             </summary>
         </member>
-        <member name="F:Virus.Core.BodyItem.Points">
+        <member name="P:Virus.Core.BodyItem.Points">
             <summary>
             Valuable criteria to clasify this body item. Usefull for AI.
             </summary>
@@ -236,6 +236,11 @@
         <member name="P:Virus.Core.BodyItem.Status">
             <summary>
             Current status of the body item in function of the cards played on its Organ.
+            </summary>
+        </member>
+        <member name="P:Virus.Core.BodyItem.IsHealthy">
+            <summary>
+            Indicates if the body item is helathy. If it is, it'll count for the player to win the game.
             </summary>
         </member>
         <member name="M:Virus.Core.BodyItem.#ctor(Virus.Core.Card)">
@@ -369,12 +374,12 @@
             Medical error is used to switch your whole body to ahy other of your rivals.
             </summary>
         </member>
-        <member name="F:Virus.Core.Card.Color">
+        <member name="P:Virus.Core.Card.Color">
             <summary>
             Color of the card.
             </summary>
         </member>
-        <member name="F:Virus.Core.Card.Face">
+        <member name="P:Virus.Core.Card.Face">
             <summary>
             Face of the card.
             </summary>
@@ -420,9 +425,9 @@
             Player. A user with his corresponding body.
             </summary>
         </member>
-        <member name="F:Virus.Core.Player.AI">
+        <member name="P:Virus.Core.Player.AI">
             <summary>
-            Artificial Intelligence of the player. Hard difficulity.
+            Artificial Intelligence of the player. Hard difficulity
             </summary>
         </member>
         <member name="F:Virus.Core.Player.Computer">
@@ -492,17 +497,17 @@
             Game. It has the players, bodies, cards and all functionality.
             </summary>
         </member>
-        <member name="F:Virus.Core.Game.Players">
+        <member name="P:Virus.Core.Game.Players">
             <summary>
             List of players in this game.
             </summary>
         </member>
-        <member name="F:Virus.Core.Game.Deck">
+        <member name="P:Virus.Core.Game.Deck">
             <summary>
             Stack of cards without been played yet.
             </summary>
         </member>
-        <member name="F:Virus.Core.Game.Discards">
+        <member name="P:Virus.Core.Game.Discards">
             <summary>
             Stack of cards that have been already played.
             </summary>
@@ -520,11 +525,6 @@
         <member name="P:Virus.Core.Game.Referee">
             <summary>
             Referee that indicates all availables moves.
-            </summary>
-        </member>
-        <member name="P:Virus.Core.Game.Settings">
-            <summary>
-            Settings parameters of the game.
             </summary>
         </member>
         <member name="P:Virus.Core.Game.IsInScenario">
@@ -547,7 +547,7 @@
             Total cards in the game.
             </summary>
         </member>
-        <member name="M:Virus.Core.Game.#ctor(System.Int32,System.Boolean,Virus.Core.Logger)">
+        <member name="M:Virus.Core.Game.#ctor(System.Boolean,Virus.Core.Logger)">
             <summary>
             Game constructor. It inits the current game and its parameters and config.
             </summary>
@@ -1000,11 +1000,6 @@
             Settings parameters of the game.
             </summary>
         </member>
-        <member name="P:Virus.Core.Settings.Game">
-            <summary>
-            Game instance.
-            </summary>
-        </member>
         <member name="F:Virus.Core.Settings.FILE_PREFERENCES">
             <summary>
             Filename from load / to save parameters.
@@ -1139,12 +1134,6 @@
             <summary>
             Number of healthy organs required to win the game.
             </summary>
-        </member>
-        <member name="M:Virus.Core.Settings.#ctor(Virus.Core.Game)">
-            <summary>
-            Constructor of the settings.
-            </summary>
-            <param name="g"></param>
         </member>
         <member name="M:Virus.Core.Settings.SetDefaultParameters">
             <summary>

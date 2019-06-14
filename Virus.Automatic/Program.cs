@@ -11,7 +11,10 @@ namespace Virus.Automatic
     {
         static void Main(string[] args)
         {
-            Game virus = new Game(0, firstHuman:false);
+            Game virus = new Game(firstHuman: false)
+            {
+                WaitingTime = 0
+            };
             virus.Start();
             Console.WriteLine("Press any key to exit");
             Console.ReadLine();

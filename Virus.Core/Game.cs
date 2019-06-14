@@ -18,19 +18,19 @@ namespace Virus.Core
         /// <summary>
         /// List of players in this game.
         /// </summary>
-        public List<Player> Players;
+        public List<Player> Players { get; private set; }
         /// <summary>
         /// Stack of cards without been played yet.
         /// </summary>
-        private List<Card> Deck;
+        private List<Card> Deck { get; set; }
         /// <summary>
         /// Stack of cards that have been already played.
         /// </summary>
-        private List<Card> Discards;
+        private List<Card> Discards { get; set; }
         /// <summary>
         /// Number of turns in the current game.
         /// </summary>
-        public int Turn { get; set; }
+        public int Turn { get; protected set; }
         /// <summary>
         /// Logger class to register every action in the game.
         /// </summary>
@@ -38,11 +38,7 @@ namespace Virus.Core
         /// <summary>
         /// Referee that indicates all availables moves.
         /// </summary>
-        public Referee Referee { get; }
-        /// <summary>
-        /// Settings parameters of the game.
-        /// </summary>
-        public Settings Settings { get; set; }
+        public Referee Referee { get; private set; }
         /// <summary>
         /// Specifies if the Game is the real (false) or it's in a scenario (true)
         /// </summary>
@@ -54,11 +50,7 @@ namespace Virus.Core
         {
             get { return (Turn - 1) % Players.Count; }
         }
-
-        public int PreviousTurn
-        {
-            get { return (CurrentTurn == 0 ? Players.Count - 1: CurrentTurn - 1 ); }
-        }
+        
         
         /// <summary>
         /// Check if the game is over (any user have the healthy organs required).
@@ -94,13 +86,12 @@ namespace Virus.Core
         /// </summary>
         /// <param name="numPlayers">Number of players in the game</param>
         /// <param name="firstHuman">First player is a human</param>
-        public Game(int waitingtime, bool firstHuman = false, Logger l = null)
+        public Game(bool firstHuman = false, Logger l = null)
         {
             Logger = (l == null ? new Logger() : l);
 
             WriteToLog("We're getting ready Virus!", true);
-
-            Settings = new Settings(this);
+            
             Settings.LoadGamePreferences();
 
             Referee = new Referee(this);
@@ -114,7 +105,6 @@ namespace Virus.Core
             {
                 TotalCardsInGame.Add(c);
             }
-            WaitingTime = waitingtime;
             WriteToLog(Deck.Count+" cards shuffled.", true);
             Discards = new List<Card>();
             WriteToLog("Discard stack created.");
@@ -447,8 +437,16 @@ namespace Virus.Core
 
 
 
-            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+            Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+
+            Players[0].Body.Items[0].NewVirus(new Card(Card.CardColor.Red, Card.CardFace.Virus), this);
+            Players[0].Body.Items[1].NewVirus(new Card(Card.CardColor.Blue, Card.CardFace.Virus), this);
+
+            Players[1].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+
+            Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Spreading);
+
 
             //Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Medicine);
             //Players[0].Hand[1] = new Card(Card.CardColor.Blue, Card.CardFace.EvolvedMedicine);
@@ -637,7 +635,7 @@ namespace Virus.Core
         /// </summary>
         /// <param name="wait">True if the user will have to press a key to continue with the move.</param>
         /// <param name="printHand">True if print the player hand.</param>
-        public void PlayTurn(bool wait = false, bool printHand = false)
+        public virtual void PlayTurn(bool wait = false, bool printHand = false)
         {
             Player p = Players[CurrentTurn];
 
@@ -656,19 +654,27 @@ namespace Virus.Core
                 Console.ReadLine();
             }
 
-            if (p.Hand.Count > 0)
-            {
-                p.Computer.PlayTurn();
-            }
-            else
-            {
-                if(PlayerInOvertime != null && PlayerInOvertime == p.ID)
-                {
-                    PlayerInOvertime = null;
-                }
-                WriteToLog("The player has no cards in his hand. Pass the turn.");
-            }
+            p.Computer.PlayTurn();
+            PassTurn(p);
+        }
 
+        protected bool ClearOvertimeFlag(Player p)
+        {
+            if (PlayerInOvertime != null && PlayerInOvertime == p.ID)
+            {
+                PlayerInOvertime = null;
+                return true;
+            }
+            return false;
+        }
+
+        public bool PassTurn(Player p)
+        {
+            if(p.Hand.Count > 0)
+            {
+                ClearOvertimeFlag(p);
+                WriteToLog("The player "+p.Nickname+" has no cards in his hand. Pass the turn.");
+            }
 
             if (PlayerInOvertime == null || PlayerInOvertime != p.ID)
             {
@@ -676,8 +682,11 @@ namespace Virus.Core
                 DrawCardsToFill(p);
                 Turn++;
                 ClearFlagsProtectiveSuite();
+                return true;
             }
+            return false;
         }
+
 
         private void ClearFlagsProtectiveSuite()
         {

@@ -20,10 +20,8 @@ namespace Virus.Forms
         public GameForm()
         {
             InitializeComponent();
-
-
-
-            Game = new CGame(3, 5000, tbLog, true);
+            
+            Game = new CGame(3, tbLog, true);
 
 
             Utilities = new FormUtilities(this, Game, Game.Players[0], MainLayout, tHand)

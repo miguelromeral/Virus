@@ -10,7 +10,7 @@ namespace Virus.Core
     /// Card of the game.
     /// </summary>
     [Serializable]
-    public class Card
+    public sealed class Card
     {
         #region ENUMARATIONS
         /// <summary>
@@ -96,11 +96,11 @@ namespace Virus.Core
         /// <summary>
         /// Color of the card.
         /// </summary>
-        public CardColor Color;
+        public CardColor Color { get; }
         /// <summary>
         /// Face of the card.
         /// </summary>
-        public CardFace Face;
+        public CardFace Face { get; }
 
         /// <summary>
         /// Value. A qualified value to allow AI choose between the best move possible.

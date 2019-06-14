@@ -15,9 +15,10 @@ namespace Virus.ConsoleApp
         #region Constructor
         public GameConsoleApp(
             int wa,
-            bool firstHuman = false) : base(wa, firstHuman)
+            bool firstHuman = false) : base(firstHuman)
         {
             reader = new ReaderInput(this);
+            WaitingTime = wa;
         }
         #endregion
 

@@ -97,7 +97,7 @@ namespace Virus.Forms
 
                 BodyItem item = p.Body.Items[i];
 
-                CCheckBox cb = FormUtilities.CreateButtonCheckBoxCard(item.Organ, 0.4, id, i, false);
+                CCheckBox cb = FormUtilities.CreateButtonCheckBoxCard(item.Organ, 0.6, id, i, false);
 
                 //cb.Click += CardClicked;
                 cb.Click += CardClicked2;
@@ -106,7 +106,7 @@ namespace Virus.Forms
 
                 for (int j = 0; j < item.Modifiers.Count; j++)
                 {
-                    cb = FormUtilities.CreateButtonCheckBoxCard(item.Modifiers[j], 0.25, id, i, false);
+                    cb = FormUtilities.CreateButtonCheckBoxCard(item.Modifiers[j], 0.3, id, i, false);
                     //cb.Click += CardClicked;
                     cb.Click += CardClicked2;
 
@@ -114,7 +114,7 @@ namespace Virus.Forms
                 }
 
             }
-            while (i < Game.Settings.NumberToWin)
+            while (i < Settings.NumberToWin)
             {
                 pItem = GetBodyItemPanel(id, i);
                 pItem.Controls.Clear();
@@ -138,11 +138,11 @@ namespace Virus.Forms
 
         private void InitPanels(TableLayoutPanel MainLayout)
         {
-            MainLayout.ColumnCount = Game.Settings.NumberToWin;
+            MainLayout.ColumnCount = Settings.NumberToWin;
             MainLayout.ColumnStyles.Clear();
-            for (int i = 0; i < Game.Settings.NumberToWin; i++)
+            for (int i = 0; i < Settings.NumberToWin; i++)
             {
-                MainLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, (float)(1 / Game.Settings.NumberToWin)));
+                MainLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, (float)(1 / Settings.NumberToWin)));
                 //MainLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100));
 
             }
@@ -155,7 +155,7 @@ namespace Virus.Forms
             }
 
 
-            HandPanel.ColumnCount = Game.Settings.NumberCardInHand;
+            HandPanel.ColumnCount = Settings.NumberCardInHand;
             HandPanel.ColumnStyles.Clear();
 
             int count = 0;
@@ -178,7 +178,7 @@ namespace Virus.Forms
                 PlayerPanels.Add(pBody);
 
                 List<Panel> bil = new List<Panel>();
-                for (int i = 0; i < Game.Settings.NumberToWin; i++)
+                for (int i = 0; i < Settings.NumberToWin; i++)
                 {
                     FlowLayoutPanel pItem = new FlowLayoutPanel()
                     {
@@ -197,7 +197,7 @@ namespace Virus.Forms
                 //MainLayout.Controls.Add(pBody);
                 count += 2;
             }
-            for (int i = 0; i < Game.Settings.NumberCardInHand; i++)
+            for (int i = 0; i < Settings.NumberCardInHand; i++)
             {
                 FlowLayoutPanel pHand = new FlowLayoutPanel()
                 {
@@ -271,11 +271,14 @@ namespace Virus.Forms
                                     break;
                                 case 1:
                                     Game.PlayGameCardByUser(Me, cb.Index, CurrentMoves, cb.Card);
-                                    Game.DrawCardsToFill(Me);
-                                    Game.Turn++;
+                                    if (Game.PlayerInOvertime != Me.ID || Me.Hand.Count == 0)
+                                    {
+                                        Game.PassTurn(Me);
+                                    }
                                     SelectedCards.Clear();
-                                    UpdateGUI();
                                     CurrentMoves = null;
+                                    UpdateGUI();
+
                                     break;
                                 default:
                                     switch (cb.Card.Face)
@@ -384,20 +387,20 @@ namespace Virus.Forms
                         }
                         if (movedone)
                         {
-                            Game.DrawCardsToFill(Me);
-                            Game.Turn++;
+                            Game.PassTurn(Me);
                             UpdateGUI();
+                            SelectedCards.Clear();
                             CurrentMoves = null;
                         }
                         else
                         {
                             cb.Checked = false;
-                            foreach(var c in SelectedCards)
+                            foreach (var c in SelectedCards)
                             {
                                 c.Checked = false;
                             }
                             SelectedCards.Clear();
-                            CurrentMoves = null;                            
+                            CurrentMoves = null;
                         }
                     }
                     else
@@ -409,12 +412,158 @@ namespace Virus.Forms
                         action = Action.None;
                     }
                     break;
+                case Action.TwoInteraction:
+                    if (!cb.InHand)
+                    {
+                        SelectedCards.Add(cb);
+
+                        if (SelectedCards.Count == 3)
+                        {
+                            bool movedone = false;
+                            if (SelectedCards.Count > 0 && CurrentMoves != null && cb.Card.Face == Card.CardFace.Organ)
+                            {
+                                Card selected = SelectedCards[0].Card;
+                                string move = Game.GetMoveGivenSelectedCards(SelectedCards);
+                                if (move != null)
+                                {
+                                    movedone = Game.PlayUserCardByMove(Me, selected, move, CurrentMoves);
+                                }
+                            }
+                            if (movedone)
+                            {
+                                Game.PassTurn(Me);
+                                SelectedCards.Clear();
+                                UpdateGUI();
+                                CurrentMoves = null;
+                            }
+                            else
+                            {
+                                cb.Checked = false;
+                                foreach (var c in SelectedCards)
+                                {
+                                    c.Checked = false;
+                                }
+                                SelectedCards.Clear();
+                                CurrentMoves = null;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach(var c in SelectedCards)
+                        {
+                            c.Checked = false;
+                        }
+                        SelectedCards.Clear();
+                        CurrentMoves = null;
+                        cb.Checked = false;
+                        action = Action.None;
+                    }
+                    break;
+                case Action.ManyInteraction:
+                    if(cb == SelectedCards[0])
+                    {
+                        bool first = true;
+
+                        // Only with spreading:
+
+
+                        List<string> combinations = new List<string>();
+                        string move = null;
+
+                        SelectedCards.Remove(cb);
+                        foreach(var c in SelectedCards)
+                        {
+                            if(c.Card.Face != Card.CardFace.Organ)
+                            {
+                                foreach (var cc in SelectedCards)
+                                {
+                                    cc.Checked = false;
+                                }
+                                cb.Checked = false;
+                                SelectedCards.Clear();
+                                CurrentMoves = null;
+                                cb.Checked = false;
+                                action = Action.None;
+                            }
+
+                            if (first)
+                            {
+                                move = Scheduler.GenerateMove(c.PlayerId, c.Index);
+                                first = false;
+                            }
+                            else
+                            {
+                                move = Scheduler.GetManyMoveItem(new string[] {
+                                    move,
+                                    Scheduler.GenerateMove(c.PlayerId, c.Index)
+                                });
+                                combinations.Add(move);
+                                first = true;
+                            }
+                        }
+
+                        
+                        bool movedone = false;
+                        Card selected = cb.Card;
+                        move = null;
+                        move = GetMoveSpreadingByListUser(combinations);
+                        if (move != null)
+                        {
+                            movedone = Game.PlayUserCardByMove(Me, selected, move, CurrentMoves);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Spreading movement not allowed.");
+                        }
+
+                        UpdateGUI();
+                        SelectedCards.Clear();
+                        action = Action.None;
+                        CurrentMoves = null;
+                    }
+                    else
+                    {
+                        SelectedCards.Add(cb);
+                    }
+                    break;
             }
             SetSelected();
         }
 
         private List<string> CurrentMoves;
 
+
+        private string GetMoveSpreadingByListUser(List<string> combinations)
+        {
+            List<string> allowed = new List<string>();
+            bool isin = false;
+            foreach(string m in CurrentMoves)
+            {
+                int i = 0;
+                while(i<combinations.Count)
+                {
+                    string c = combinations[i];
+                
+                    if (!m.Contains(c))
+                    {
+                        goto keep;
+                    }
+                    i++;
+                }
+
+                keep: if (i == combinations.Count)
+                {
+                    allowed.Add(m);
+                }
+            }
+
+            if(allowed.Count >= 1)
+            {
+                return allowed[0];
+            }
+            return null;
+        }
 
 
         public void CardClicked(object sender, EventArgs e)
@@ -447,7 +596,7 @@ namespace Virus.Forms
                     pc.Controls.Clear();
                     pc.Controls.Add(cb);
                 }
-                while (i < Game.Settings.NumberCardInHand)
+                while (i < Settings.NumberCardInHand)
                 {
                     pc = UserHandPanels[i];
                     pc.Controls.Clear();
@@ -501,8 +650,7 @@ namespace Virus.Forms
                         Game.DiscardFromHand(Me, cb.Card);
                     }
                     SelectedCards.Clear();
-                    Game.DrawCardsToFill(Me);
-                    Game.Turn++;
+                    Game.PassTurn(Me);
                     UpdateGUI();
                 }
             }

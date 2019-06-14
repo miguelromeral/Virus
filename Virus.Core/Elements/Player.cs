@@ -14,11 +14,12 @@ namespace Virus.Core
     [Serializable]
     public class Player
     {
+
         #region PROPERTIES
         /// <summary>
-        /// Artificial Intelligence of the player. Hard difficulity.
+        /// Artificial Intelligence of the player. Hard difficulity
         /// </summary>
-        public ArtificialIntelligence.AICategory AI;
+        public ArtificialIntelligence.AICategory AI { get; private set; }
 
         /// <summary>
         /// Artificial Intelligence entity (or "mind") that indicates how to play.
@@ -87,9 +88,8 @@ namespace Virus.Core
             else
             {
                 Computer = new ArtificialIntelligence(game, this);
-                //AI = Computer.RandomIA();
+                //_ai = Computer.RandomIA();
                 AI = ArtificialIntelligence.AICategory.Medium;
-                //AI = ArtificialIntelligence.AICategory.Hard;
             }
         }
         #endregion

@@ -11,13 +11,8 @@ namespace Virus.Core
     /// Settings parameters of the game.
     /// </summary>
     [Serializable]
-    public class Settings
+    public static class Settings
     {
-        /// <summary>
-        /// Game instance.
-        /// </summary>
-        public Game Game { get; set; }
-        
         /// <summary>
         /// Filename from load / to save parameters.
         /// </summary>
@@ -119,82 +114,74 @@ namespace Virus.Core
         /// <summary>
         /// Number of organs of each color in the game.
         /// </summary>
-        public int NumberOrgans { get; set; }
+        public static int NumberOrgans { get; set; }
         /// <summary>
         /// Number of medicines of each color in the game.
         /// </summary>
-        public int NumberMedicines { get; set; }
+        public static int NumberMedicines { get; set; }
         /// <summary>
         /// Number of viruses of each color in the game.
         /// </summary>
-        public int NumberViruses { get; set; }
+        public static int NumberViruses { get; set; }
         /// <summary>
         /// Number of spreading cards available in the game.
         /// </summary>
-        public int NumberThreatmentsSpreading { get; set; }
+        public static int NumberThreatmentsSpreading { get; set; }
         /// <summary>
         /// Number of transplant cards availables in the game.
         /// </summary>
-        public int NumberThreatmentsTransplant { get; set; }
+        public static int NumberThreatmentsTransplant { get; set; }
         /// <summary>
         /// Number of organ thief cards availables in the game.
         /// </summary>
-        public int NumberThreatmentsOrganThief { get; set; }
+        public static int NumberThreatmentsOrganThief { get; set; }
         /// <summary>
         /// Number of latex glove cards availables in the game.
         /// </summary>
-        public int NumberThreatmentsLatexGlove { get; set; }
+        public static int NumberThreatmentsLatexGlove { get; set; }
         /// <summary>
         /// Number of medical error cards availables inn the game.
         /// </summary>
-        public int NumberThreatmentsMedicalError { get; set; }
+        public static int NumberThreatmentsMedicalError { get; set; }
         /// <summary>
         /// Number of wildcard organs in the game.
         /// </summary>
-        public int NumberWildcardOrgans { get; set; }
+        public static int NumberWildcardOrgans { get; set; }
         /// <summary>
         /// Number of wildcard medicines in the game.
         /// </summary>
-        public int NumberWildcardMedicines { get; set; }
+        public static int NumberWildcardMedicines { get; set; }
         /// <summary>
         /// Number of wildcard viruses in the game.
         /// </summary>
-        public int NumberWildcardViruses { get; set; }
+        public static int NumberWildcardViruses { get; set; }
         /// <summary>
         /// Number of cards in a hand of a player in the game.
         /// </summary>
-        public int NumberCardInHand { get; set; }
+        public static int NumberCardInHand { get; set; }
         /// <summary>
         /// Number of healthy organs required to win the game.
         /// </summary>
-        public int NumberToWin { get; set; }
+        public static int NumberToWin { get; set; }
 
-        public int NumberBionicOrgans { get; set; }
-        public int NumberEvolvedMedicines { get; set; }
-        public int NumberEvolvedViruses { get; set; }
-        public int NumberWildcardEvolvedMedicines { get; set; }
-        public int NumberWildcardEvolvedViruses { get; set; }
-        public int NumberOvertime { get; set; }
-        public int NumberSecondOpinion { get; set; }
-        public int NumberProtectiveSuit { get; set; }
-        public int NumberQuarantine { get; set; }
+        public static int NumberBionicOrgans { get; set; }
+        public static int NumberEvolvedMedicines { get; set; }
+        public static int NumberEvolvedViruses { get; set; }
+        public static int NumberWildcardEvolvedMedicines { get; set; }
+        public static int NumberWildcardEvolvedViruses { get; set; }
+        public static int NumberOvertime { get; set; }
+        public static int NumberSecondOpinion { get; set; }
+        public static int NumberProtectiveSuit { get; set; }
+        public static int NumberQuarantine { get; set; }
 
-        public List<string> PlayersNames { get; set; }
+        public static List<string> PlayersNames { get; set; }
         #endregion
-
-        /// <summary>
-        /// Constructor of the settings.
-        /// </summary>
-        /// <param name="g"></param>
-        public Settings(Game g)
-        {
-            Game = g;
-        }
+        
 
         /// <summary>
         /// Set default parameters of the game.
         /// </summary>
-        public void SetDefaultParameters()
+        public static void SetDefaultParameters()
         {
             NumberOrgans = nNumberOrgans;
             NumberMedicines = nNumberMedicines;
@@ -230,7 +217,7 @@ namespace Virus.Core
             /// Load the game preferences from the settings file.
             /// </summary>
             /// <returns>True if it could have been loaded successfully</returns>
-            public bool LoadGamePreferences()
+        public static bool LoadGamePreferences()
         {
             // If the file settins doesn't exist, it's generated rigth here.
             if (!File.Exists(FILE_PREFERENCES))
@@ -475,7 +462,7 @@ namespace Virus.Core
         /// Generate the file preferences with default values
         /// </summary>
         /// <returns>True if the file could generate.</returns>
-        public bool CreateFilePreferencesDefault()
+        public static bool CreateFilePreferencesDefault()
         {
             try
             {

@@ -98,11 +98,11 @@ namespace Virus.Core
                 if (organ.Color == Card.CardColor.Wildcard)
                 {
                     // A Wildcard organ could substitute anyone. It's better valued.
-                    item.Points += (Scheduler.POINTS_ORGAN / 5);
+                    item.Points += (ScoreRules.POINTS_ORGAN / 5);
                 }
                 if (organ.Color == Card.CardColor.Bionic)
                 {
-                    item.Points += (Scheduler.POINTS_ORGAN / 4);
+                    item.Points += (ScoreRules.POINTS_ORGAN / 4);
                 }
                 Items.Add(item);
 
@@ -147,7 +147,7 @@ namespace Virus.Core
 
         public int OrgansLeftToWin(Game game)
         {
-            int count = game.Settings.NumberToWin;
+            int count = Settings.NumberToWin;
             foreach(var item in Items)
             {
                 if (item.IsHealthy)

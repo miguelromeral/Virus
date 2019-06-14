@@ -72,7 +72,7 @@ namespace Virus.Universal.Pages
 
 
                 List<Panel> list = new List<Panel>();
-                for (int i = 0; i < Game.Settings.NumberToWin; i++)
+                for (int i = 0; i < Settings.NumberToWin; i++)
                 {
                     StackPanel spl = new StackPanel() { Orientation = Orientation.Horizontal };
 

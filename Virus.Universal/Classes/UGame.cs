@@ -11,8 +11,9 @@ namespace Virus.Universal.Classes
     public class UGame : Game
     {
         public UGame(int waitingtime, bool firstHuman = false)
-            : base(waitingtime, firstHuman)
+            : base(firstHuman)
         {
+            WaitingTime = waitingtime;
         }
         
 

@@ -84,8 +84,11 @@ namespace Virus.Core
         /// <summary>
         /// Do the move of this player.
         /// </summary>
-        public void PlayTurn()
+        public bool PlayTurn()
         {
+            if (Me.Hand.Count == 0)
+                return false;
+
             // List of every possible move with each card.
             // Each list (of lists) contains the list of possible moves for the Card with index X.
             List<List<string>> movesByCard = Game.GetListOfMovesWholeHand(Me);
@@ -114,6 +117,7 @@ namespace Virus.Core
                     PlayTurnAIRandom(movesByCard);
                     break;
             }
+            return true;
         }
 
         /// <summary>
