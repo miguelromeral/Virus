@@ -120,6 +120,11 @@ namespace Virus.Core
             return true;
         }
 
+        public static explicit operator ArtificialIntelligence(AICategory? v)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Defend itself (or not) from a rival Card payed (Protective Suit functionality).
         /// </summary>

@@ -69,6 +69,10 @@ namespace Virus.Core
                 return false;
             }
         }
+
+        /// <summary>
+        /// Player's ID who has used in the current turn Overtime card.
+        /// </summary>
         public int? PlayerInOvertime { get; set; }
 
 
@@ -77,15 +81,18 @@ namespace Virus.Core
         /// </summary>
         public List<Card> TotalCardsInGame { get; set; }
 
+        /// <summary>
+        /// Time to wait for the next turn. 0 for have to press a key to continue.
+        /// </summary>
         public int WaitingTime { get; set; }
-#endregion
+        #endregion
 
         #region INITIALIZERS
         /// <summary>
         /// Game constructor. It inits the current game and its parameters and config.
         /// </summary>
-        /// <param name="numPlayers">Number of players in the game</param>
         /// <param name="firstHuman">First player is a human</param>
+        /// <param name="l">Logger of the game. Null if its a copy</param>
         public Game(bool firstHuman = false, Logger l = null)
         {
             Logger = (l == null ? new Logger() : l);
@@ -257,11 +264,11 @@ namespace Virus.Core
 
             return deck;
         }
-  
+
         /// <summary>
         /// Inits all the players and set the main values.
         /// </summary>
-        /// <param name="numPlayers">Number of players in the game.</param>
+        /// <param name="PlayersNames">List of player's names</param>
         /// <param name="firstHuman">First player is human</param>
         /// <returns></returns>
         private bool InitializePlayers(List<string> PlayersNames, bool firstHuman = false)
@@ -293,9 +300,8 @@ namespace Virus.Core
         }
 
         /// <summary>
-        /// Shuffle the whole deck stack.
+        /// Shuffle the whole deck stack. <see cref="http://www.vcskicks.com/randomize_array.php">Soyrce</see>
         /// </summary>
-        /// <see cref="http://www.vcskicks.com/randomize_array.php"/>
         /// <typeparam name="Card">Card</typeparam>
         /// <param name="inputList">List of cards to randomize</param>
         /// <returns>List of cards shuffled</returns>
@@ -315,11 +321,12 @@ namespace Virus.Core
             return randomList; //return the new random list
         }
         #endregion
-        
+
         /// <summary>
         /// Gets a new card from the deck stack and removes it.
         /// </summary>
         /// <param name="me">Player who is drawing a new card</param>
+        /// <param name="inscenario">If the current game is in scenario of the AI. In that case, the card will automatically be random</param>
         /// <returns>Card recovered from the deck</returns>
         public Card DrawNewCard(Player me, bool inscenario = false)
         {
@@ -355,7 +362,11 @@ namespace Virus.Core
             return newCard;
         }
 
-
+        /// <summary>
+        /// Gets a list of a list with all the moves of a player's hand.
+        /// </summary>
+        /// <param name="p">Player to get all the moves allowed.</param>
+        /// <returns></returns>
         public List<List<string>> GetListOfMovesWholeHand(Player p)
         {
             List<List<string>> wholeMoves = new List<List<string>>();
@@ -369,6 +380,11 @@ namespace Virus.Core
             return wholeMoves;
         }
 
+        /// <summary>
+        /// Checks if the player's ID is the winner right now
+        /// </summary>
+        /// <param name="id">Player's ID to check.</param>
+        /// <returns></returns>
         public bool AmITheWinner(int id)
         {
             if (GetPlayerByID(id).HealthyOrgans == Settings.NumberToWin)
@@ -376,6 +392,10 @@ namespace Virus.Core
             return false;
         }
 
+        /// <summary>
+        /// Returns  the winner  of the game.
+        /// </summary>
+        /// <returns></returns>
         public Player GetTheWinner()
         {
             if (GameOver)
@@ -396,7 +416,6 @@ namespace Virus.Core
         /// <summary>
         /// Start the current game.
         /// </summary>
-        /// <param name="milis">Number of miliseconds to wait for the next move automatically. If its 0, you'll have to press a key</param>
         public void Start() {
             Console.WriteLine("Press any key to begin the Virus!");
             Console.ReadLine();
@@ -437,15 +456,15 @@ namespace Virus.Core
 
 
 
-            Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
-            Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Red, Card.CardFace.Organ));
+            //Players[0].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
 
-            Players[0].Body.Items[0].NewVirus(new Card(Card.CardColor.Red, Card.CardFace.Virus), this);
-            Players[0].Body.Items[1].NewVirus(new Card(Card.CardColor.Blue, Card.CardFace.Virus), this);
+            //Players[0].Body.Items[0].NewVirus(new Card(Card.CardColor.Red, Card.CardFace.Virus), this);
+            //Players[0].Body.Items[1].NewVirus(new Card(Card.CardColor.Blue, Card.CardFace.Virus), this);
 
-            Players[1].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
+            //Players[1].Body.SetOrgan(new Card(Card.CardColor.Blue, Card.CardFace.Organ));
 
-            Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Spreading);
+            //Players[0].Hand[0] = new Card(Card.CardColor.Purple, Card.CardFace.Spreading);
 
 
             //Players[0].Hand[0] = new Card(Card.CardColor.Red, Card.CardFace.Medicine);
@@ -555,6 +574,9 @@ namespace Virus.Core
             return res;
         }
 
+        /// <summary>
+        /// Print in console the game state
+        /// </summary>
         public void PrintCurrentGameState()
         {
 
@@ -658,6 +680,11 @@ namespace Virus.Core
             PassTurn(p);
         }
 
+        /// <summary>
+        /// Clear the player's overtime flags for the current turn.
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
         protected bool ClearOvertimeFlag(Player p)
         {
             if (PlayerInOvertime != null && PlayerInOvertime == p.ID)
@@ -668,6 +695,11 @@ namespace Virus.Core
             return false;
         }
 
+        /// <summary>
+        /// Pass the current turn
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
         public bool PassTurn(Player p)
         {
             if(p.Hand.Count > 0)
@@ -700,6 +732,8 @@ namespace Virus.Core
         /// Draws as many cards needed until fill the player hand.
         /// </summary>
         /// <param name="player"></param>
+        /// <param name="max"></param>
+        /// <param name="insecenario"></param>
         public void DrawCardsToFill(Player player, int max = 0, bool insecenario = false)
         {
             if (max == 0)
@@ -740,11 +774,14 @@ namespace Virus.Core
 
             return null;
         }
-        
+
         /// <summary>
         /// Do a transplant in the game. Switch two body items.
         /// </summary>
+        /// <param name="me"></param>
+        /// <param name="myCard"></param>
         /// <param name="move">Move to spread</param>
+        /// <param name="wholemoves"></param>
         /// <returns>Error message if couldn't be switched</returns>
         public void PlayGameCardTransplant(Player me, Card myCard, string move, List<string> wholemoves)
         {
@@ -773,12 +810,14 @@ namespace Virus.Core
             catch (Exception)
             {}
         }
-        
+
         /// <summary>
         /// Steal one body item to one player.
         /// </summary>
         /// <param name="me">Player to receive the new body item</param>
+        /// <param name="myCard"></param>
         /// <param name="move">Move that indicates who and what to steal</param>
+        /// <param name="wholemoves"></param>
         /// <returns>Error message if there is</returns>
         public void PlayOrganThief(Player me, Card myCard, string move, List<string> wholemoves)
         {
@@ -799,11 +838,12 @@ namespace Virus.Core
             catch (Exception)
             {}
         }
-        
+
         /// <summary>
         /// Remove any hand of the players but me.
         /// </summary>
         /// <param name="me">Player who has used the card.</param>
+        /// <param name="myCard"></param>
         /// <returns>Error message if it is</returns>
         public void PlayLatexGlove(Player me, Card myCard)
         {
@@ -825,7 +865,9 @@ namespace Virus.Core
         /// Switch two bodies.
         /// </summary>
         /// <param name="me">Player who has used the card.</param>
+        /// <param name="myCard"></param>
         /// <param name="move">Move that indicates who switch the whole body</param>
+        /// <param name="wholemoves"></param>
         /// <returns></returns>
         protected void PlayMedicalError(Player me, Card myCard, string move, List<string> wholemoves)
         {
@@ -846,6 +888,13 @@ namespace Virus.Core
             {}
         }
 
+        /// <summary>
+        /// Switch hands between the current turn's player and other's one.
+        /// </summary>
+        /// <param name="me">Current player.</param>
+        /// <param name="myCard">Card used.</param>
+        /// <param name="move">Move to be performed.</param>
+        /// <param name="wholemoves">List of whole possibly moves.</param>
         public void PlaySecondOpinion(Player me, Card myCard, string move, List<string> wholemoves)
         {
             try
@@ -879,6 +928,8 @@ namespace Virus.Core
         /// <param name="player">Player who plays the card</param>
         /// <param name="myCard">Card used</param>
         /// <param name="move">Move with the option selected</param>
+        /// <param name="wholemoves">List of whole moves allowed</param>
+        /// <param name="discard">Indicates if we have to discard the card</param>
         /// <returns></returns>
         public void PlayCardByMove(Player player, Card myCard, string move, List<string> wholemoves, bool discard = true)
         {
@@ -957,7 +1008,12 @@ namespace Virus.Core
             }
         }
 
-        
+        /// <summary>
+        /// Get the list of affected players when a spreading card is used.
+        /// </summary>
+        /// <param name="me"></param>
+        /// <param name="move"></param>
+        /// <returns></returns>
         public List<Player> GetListPlayesInSpreadingMove(Player me, string move)
         {
             List<Player> rivals = new List<Player>();
@@ -975,6 +1031,14 @@ namespace Virus.Core
             return rivals;
         }
 
+        /// <summary>
+        /// State of the game when a Protective Suit is being played.
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="myCard"></param>
+        /// <param name="move"></param>
+        /// <param name="wholemoves"></param>
+        /// <returns></returns>
         public bool ProtectiveSuitScenario(Player player, Card myCard, string move, List<string> wholemoves)
         {
             if (!IsInScenario)
@@ -1004,6 +1068,15 @@ namespace Virus.Core
             }
         }
 
+        /// <summary>
+        /// Performs the operations when a Protective Suit has been played.
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="rival"></param>
+        /// <param name="myCard"></param>
+        /// <param name="move"></param>
+        /// <param name="wholemoves"></param>
+        /// <returns></returns>
         public virtual bool ProceedProtectiveSuit(Player player, Player rival, Card myCard, string move, List<string> wholemoves)
         {
             bool psused = SomeoneHasDefend();
@@ -1048,6 +1121,13 @@ namespace Virus.Core
             return false;
         }
 
+        /// <summary>
+        /// Get the rival's player with the current move.
+        /// </summary>
+        /// <param name="me"></param>
+        /// <param name="card"></param>
+        /// <param name="move"></param>
+        /// <returns></returns>
         public Player GetPlayerByMove(Player me, Card card, string move)
         {
             int index;
@@ -1075,6 +1155,10 @@ namespace Virus.Core
             }
         }
 
+        /// <summary>
+        /// Indicates if some player has used a Protective Suit in the current turn.
+        /// </summary>
+        /// <returns></returns>
         protected bool SomeoneHasDefend()
         {
             foreach(Player p in Players)
@@ -1090,7 +1174,10 @@ namespace Virus.Core
         /// <summary>
         /// Play a spreading card given the move selected.
         /// </summary>
+        /// <param name="player"></param>
+        /// <param name="myCard"></param>
         /// <param name="move">All moves to spreading in only one string</param>
+        /// <param name="wholemoves"></param>
         /// <returns>Error message if its</returns>
         public void PlayGameCardSpreading(Player player, Card myCard, string move, List<string> wholemoves)
         {
@@ -1131,6 +1218,12 @@ namespace Virus.Core
             player.Body.Items[Scheduler.GetStringInt(move, 2)].NewMedicine(this, myCard);
         }
 
+        /// <summary>
+        /// Performs evolved medicine move.
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="myCard"></param>
+        /// <param name="move"></param>
         protected void PlayGameCardEvolvedMedicine(Player player, Card myCard, string move)
         {
             WriteToLog(player.Nickname + " has used a " + myCard + " in his " + player.Body.Items[Scheduler.GetStringInt(move, 2)]);
@@ -1143,6 +1236,7 @@ namespace Virus.Core
         /// <param name="player">Player who uses this card.</param>
         /// <param name="myCard">Virus card</param>
         /// <param name="move">Move to put this virus</param>
+        /// <param name="wholemoves"></param>
         /// <returns>Error message if its</returns>
         protected void PlayGameCardVirus(Player player, Card myCard, string move, List<string> wholemoves)
         {
@@ -1155,6 +1249,13 @@ namespace Virus.Core
             }
         }
 
+        /// <summary>
+        /// Perform evolved virus move given its card.
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="myCard"></param>
+        /// <param name="move"></param>
+        /// <param name="wholemoves"></param>
         public void PlayGameCardEvolvedVirus(Player player, Card myCard, string move, List<string> wholemoves)
         {
             if (!ProtectiveSuitScenario(player, myCard, move, wholemoves))
@@ -1166,6 +1267,11 @@ namespace Virus.Core
             }
         }
 
+        /// <summary>
+        /// Performs the quarantine move.
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="move"></param>
         public void PlayQuarantine(Player player, string move)
         {
             BodyItem item = player.Body.Items[Scheduler.GetStringInt(move, 2)];
@@ -1175,6 +1281,10 @@ namespace Virus.Core
             WriteToLog(player.Nickname + " has set in quarantine the " + virus + " that belonged to his " + item.ToString());
         }
 
+        /// <summary>
+        /// Play the overtime card by a user.
+        /// </summary>
+        /// <param name="player"></param>
         public void PlayOvertime(Player player)
         {
             WriteToLog(player.Nickname + " has used Overtime.");
@@ -1237,7 +1347,11 @@ namespace Virus.Core
             WriteToLog(card + " has been moved to discard stack.");
         }
         
-
+        /// <summary>
+        /// Get a player given its ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Player GetPlayerByID(int id)
         {
             foreach(Player p in Players)
@@ -1250,7 +1364,12 @@ namespace Virus.Core
             return null;
         }
 
-
+        /// <summary>
+        /// Gets a deep clone of the whole game instance.
+        /// </summary>
+        /// <typeparam name="Game"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static Game DeepClone<Game>(Game obj)
         {
             using (var ms = new MemoryStream())
@@ -1263,7 +1382,12 @@ namespace Virus.Core
             }
         }
 
-
+        /// <summary>
+        /// Writes messages in the logger.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="print"></param>
+        /// <returns></returns>
         public bool WriteToLog(string message, bool print = false)
         {
             if (Logger == null)
@@ -1271,7 +1395,10 @@ namespace Virus.Core
             return Logger.Write(message, print);
         }
 
-
+        /// <summary>
+        /// Returns the players ordered by points.
+        /// </summary>
+        /// <returns></returns>
         public List<Player> TopPlayers()
         {
             List<Player> copy = new List<Player>();
@@ -1286,7 +1413,11 @@ namespace Virus.Core
             return copy;
         }
         
-
+        /// <summary>
+        /// Indicates if is the turn of a given player.
+        /// </summary>
+        /// <param name="playerid"></param>
+        /// <returns></returns>
         public bool IsMyTurn(int playerid)
         {
             if (CurrentTurn == playerid)
@@ -1295,7 +1426,13 @@ namespace Virus.Core
             return false;
         }
 
-
+        /// <summary>
+        /// Return a string with the item affected by a player attack.
+        /// </summary>
+        /// <param name="Me"></param>
+        /// <param name="card"></param>
+        /// <param name="move"></param>
+        /// <returns></returns>
         public string GetMyCardAffectedFromMove(Player Me, Card card, string move)
         {
             string res = "you";

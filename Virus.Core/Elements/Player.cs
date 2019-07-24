@@ -46,6 +46,9 @@ namespace Virus.Core
         /// </summary>
         public Body Body;
 
+        /// <summary>
+        /// Indicates if the user has used a Protective Suit card in the current turn.
+        /// </summary>
         public bool PlayedProtectiveSuit = false;
 
 
@@ -74,6 +77,7 @@ namespace Virus.Core
         /// Player constructor.
         /// </summary>
         /// <param name="game">Game</param>
+        /// <param name="nick">Nickname of the player</param>
         /// <param name="human">Indicates if the player will be a human (true) or PC (false)</param>
         public Player(Game game, string nick, bool human = false)
         {
@@ -166,7 +170,10 @@ namespace Virus.Core
             return -1;
         }
 
-
+        /// <summary>
+        /// Indicates if the user has in his hand a Protective Suit card
+        /// </summary>
+        /// <returns></returns>
         public bool DoIHaveProtectiveSuit()
         {
             foreach(Card c in Hand)
@@ -179,7 +186,12 @@ namespace Virus.Core
             return false;
         }
 
-
+        /// <summary>
+        /// Performs a deep copy of the player instance.
+        /// </summary>
+        /// <typeparam name="Player">Player class</typeparam>
+        /// <param name="obj">Player to be copied</param>
+        /// <returns>Player copied</returns>
         public static Player DeepClone<Player>(Player obj)
         {
             using (var ms = new MemoryStream())

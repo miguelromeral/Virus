@@ -166,6 +166,13 @@ namespace Virus.Core
             }
 
         }
+
+        /// <summary>
+        /// Set new evolved mmedicine.
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="medicine"></param>
+        /// <returns></returns>
         public bool NewEvolvedMedicine(Game game, Card medicine)
         {
             if (medicine.Face != Card.CardFace.EvolvedMedicine)
@@ -287,6 +294,13 @@ namespace Virus.Core
                     return "UNKNOWN STATE PUTTING THE VIRUS.";
             }
         }
+
+        /// <summary>
+        /// Set a evolved virus on an organ.
+        /// </summary>
+        /// <param name="virus"></param>
+        /// <param name="game"></param>
+        /// <returns></returns>
         public string NewEvolvedVirus(Card virus, Game game)
         {
             if (Status != State.Immunized)
@@ -336,6 +350,9 @@ namespace Virus.Core
             return String.Format("({0,14}:{1,9})", Organ.ToString(), ModifiersToString(), Points);
         }
 
+        /// <summary>
+        /// Print the body item with colors.
+        /// </summary>
         public void PrintBodyItem()
         {
             PrintOrgan();
@@ -343,6 +360,9 @@ namespace Virus.Core
             PrintModifiers();
         }
 
+        /// <summary>
+        /// Print the current organ.
+        /// </summary>
         public void PrintOrgan()
         {
             Scheduler.ChangeConsoleOutput(Organ.Color);
@@ -351,6 +371,9 @@ namespace Virus.Core
             Scheduler.ChangeConsoleOutput();
         }
 
+        /// <summary>
+        /// Print the modifiers of a card.
+        /// </summary>
         public void PrintModifiers()
         {
             foreach (Card mod in Modifiers)
@@ -361,6 +384,10 @@ namespace Virus.Core
             Scheduler.ChangeConsoleOutput();
         }
 
+        /// <summary>
+        /// Get all de modifiers of a card.
+        /// </summary>
+        /// <returns></returns>
         public string GetModifiers()
         {
             string res = String.Empty;
@@ -371,6 +398,10 @@ namespace Virus.Core
             return res;
         }
 
+        /// <summary>
+        /// Return the modifiers in string.
+        /// </summary>
+        /// <returns></returns>
         public string ModifiersToString()
         {
             string printed = String.Empty;

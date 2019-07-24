@@ -42,6 +42,9 @@ namespace Virus.Core
             /// Wildcard color. It can be used like a red, yellow, green or blue.
             /// </summary>
             Wildcard,
+            /// <summary>
+            /// Bionic color. For organs only. No cards can affect this color directly.
+            /// </summary>
             Bionic
         }
 
@@ -83,11 +86,29 @@ namespace Virus.Core
             /// Medical error is used to switch your whole body to ahy other of your rivals.
             /// </summary>
             MedicalError,
+            /// <summary>
+            /// Evolved Medicine. If this card is played on a free organ, its become vaccinated automatically.
+            /// </summary>
             EvolvedMedicine,
+            /// <summary>
+            /// This card can only be removed by a evolved medicine.
+            /// </summary>
             EvolvedVirus,
+            /// <summary>
+            /// Allow a user switch his hand between other's one.
+            /// </summary>
             SecondOpinion,
+            /// <summary>
+            /// Deletes a virus of your body from the current game.
+            /// </summary>
             Quarantine,
+            /// <summary>
+            /// Allows the player to play every card in his hand.
+            /// </summary>
             Overtime,
+            /// <summary>
+            /// Allows a player to defend from other player attack.
+            /// </summary>
             ProtectiveSuit
         }
         #endregion
@@ -159,6 +180,9 @@ namespace Virus.Core
             return value;
         }
 
+        /// <summary>
+        /// Print the cards main values.
+        /// </summary>
         public void PrintCard()
         {
             string value = "{0,8} {1,8}";
